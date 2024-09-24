@@ -1,0 +1,7 @@
+import { env } from '../../config/env.config'
+
+export const cryptingConstant = {
+  PASSWORD_CRYPTING_ALGORITHM: env.PASSWORD_CRYPTING_ALGORITHM,
+  PASSWORD_CRYPTING_SECRET_KEY: env.PASSWORD_CRYPTING_SECRET_KEY,
+  PASSWORD_CRYPTING_IV: env.PASSWORD_CRYPTING_IV,
+}

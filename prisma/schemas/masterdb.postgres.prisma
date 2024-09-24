@@ -1,0 +1,51 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../clients/postgres/masterdb"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("MASTER_DB_CONNECTION_STRING")
+}
+
+model Admin {
+  userId    String    @id @default(dbgenerated("gen_random_uuid()")) @map("userid") @db.Uuid
+  username  String    @unique @db.VarChar(40)
+  password  String    @db.VarChar(40)
+  isActive  Boolean?  @default(true) @map("is_active")
+  createAt  DateTime? @default(now()) @map("create_at") @db.Date
+  createBy  String?   @default("undefined") @map("create_by") @db.VarChar(40)
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Date
+  updatedBy String?   @default("undefined") @map("updated_by") @db.VarChar(40)
+
+  @@map("admin")
+}
+
+model Config {
+  configId        String    @id @default(dbgenerated("gen_random_uuid()")) @map("configid") @db.Uuid
+  sessionDuration Int?      @default(30) @map("session_duration")
+  createAt        DateTime? @default(now()) @map("create_at") @db.Date
+  createBy        String?   @default("undefined") @map("create_by") @db.VarChar(40)
+  updatedAt       DateTime? @default(now()) @map("updated_at") @db.Date
+  updatedBy       String?   @default("undefined") @map("updated_by") @db.VarChar(40)
+
+  @@map("config")
+}
+
+model Host {
+  hostId            String    @id @default(dbgenerated("gen_random_uuid()")) @map("hostid") @db.Uuid
+  username          String    @unique @db.VarChar(40)
+  password          String    @db.VarChar(40)
+  hostName          String?   @default("") @map("hostname") @db.VarChar(100)
+  contractStartDate DateTime? @map("contract_start_date") @db.Date
+  contractEndDate   DateTime? @map("contract_end_date") @db.Date
+  createAt          DateTime? @default(now()) @map("create_at") @db.Date
+  createBy          String?   @default("undefined") @map("create_by") @db.VarChar(40)
+  updatedAt         DateTime? @default(now()) @map("updated_at") @db.Date
+  updatedBy         String?   @default("undefined") @map("updated_by") @db.VarChar(40)
+  hostCode          String    @unique @map("hostcode") @db.VarChar(8)
+  status            Boolean   @unique @map("status") @db.Boolean
+
+  @@map("host")
+}

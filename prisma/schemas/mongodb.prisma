@@ -1,0 +1,35 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+  output        = "../clients/mongodb"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_CONNECTION_STRING")
+}
+
+type UserInfo {
+  hostInfo   HostInfo
+  username   String
+  vendorInfo VendorInfo?
+}
+
+type HostInfo {
+  hostCode String
+  hostName String
+}
+
+type VendorInfo {
+  vendorName String
+}
+
+model SessionData {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  accessToken String   @unique
+  createdAt   Int
+  expiredAt   Int
+  sessionId   String
+  updatedAt   Int
+  userInfo    UserInfo
+}

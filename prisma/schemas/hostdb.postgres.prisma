@@ -1,0 +1,165 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../clients/postgres/hostdb"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DEFAULT_HOST_DB_CONNECTION_STRING")
+}
+
+model Event {
+  eventId     String    @unique(map: "event_pkey") @default(uuid()) @map("eventid") @db.Uuid
+  name        String    @map("eventname") @db.VarChar(50)
+  description String?
+  logo        String?   @map("logo") @db.VarChar
+  startDate   DateTime? @map("startdate") @db.Date
+  endDate     DateTime? @map("enddate") @db.Date
+  location    String?   @map("location") @db.VarChar(500)
+  createAt    DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+  x           Int?      @map("x")
+  y           Int?      @map("y")
+  status      String?   @default("On-going") @map("status") @db.VarChar(50)
+
+  @@map("event")
+}
+
+model EventRegister {
+  eventId        String    @unique @map("eventid") @db.Uuid
+  vendorId       String    @unique @map("vendorid") @db.Uuid
+  registerStatus Int?      @default(0) @map("registerStatus")
+  createAt       DateTime? @default(now()) @map("create_at") @db.Date
+  createBy       String?   @default("undefined") @map("create_by") @db.VarChar(40)
+  updatedAt      DateTime? @default(now()) @map("updated_at") @db.Date
+  updatedBy      String?   @default("undefined") @map("updated_by") @db.VarChar(40)
+
+  @@id([eventId, vendorId])
+  @@map("event_register")
+}
+
+model Vendor {
+  vendorId   String    @unique(map: "vendor_pkey_unique") @default(uuid()) @map("vendorid") @db.Uuid
+  username   String    @unique @db.VarChar(40)
+  password   String    @db.VarChar(100)
+  vendorName String?   @map("vendorname") @db.VarChar(500)
+  phone      String?   @map("phone") @db.VarChar(10)
+  email      String?   @map("email") @db.VarChar(100)
+  image      String?   @map("image") @db.VarChar
+  address    String?   @map("address") @db.VarChar(500)
+  ulQr       String?   @map("ulQr") @db.VarChar
+  category   String?   @default("") @db.VarChar(40)
+  createAt   DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt  DateTime? @default(now()) @map("updated_at") @db.Date
+
+  @@map("vendor")
+}
+
+model Order {
+  orderId     String    @default(uuid()) @map("orderid") @db.Uuid
+  eventId     String    @map("eventid") @db.Uuid
+  vendorId    String    @map("vendorid") @db.VarChar(100)
+  totalAmount Int?      @map("totalamount")
+  totalPrice  Decimal   @db.Decimal(10, 2)
+  createAt    DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+
+  @@id([orderId, eventId, vendorId])
+  @@map("order")
+}
+
+model OrderDetail {
+  orderDetail String    @default(uuid()) @map("orderdetail") @db.Uuid
+  eventId     String    @map("eventid") @db.Uuid
+  vendorId    String    @map("vendorid") @db.VarChar(100)
+  orderId     String    @map("orderid") @db.Uuid
+  quantity    Int?      @map("quantity")
+  unitPrice   Decimal   @map("unitPrice") @db.Decimal(10, 2)
+  totalPrice  Decimal   @map("totalprice") @db.Decimal(12, 4)
+  createAt    DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+
+  @@id([eventId, vendorId, orderId])
+  @@map("orderdetail")
+}
+
+model Product {
+  productId   String    @default(uuid()) @map("productid") @db.Uuid
+  categoryId  String    @map("categoryid") @db.Uuid
+  productName String    @map("name") @db.VarChar
+  description String?   @map("description") @db.VarChar
+  quantity    Int?      @map("quantity")
+  count       Int?      @map("count")
+  createAt    DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+  status      Boolean?  @default(false) @map("status")
+
+  @@id([productId])
+  @@map("product")
+}
+
+model Config {
+  configId        String    @unique(map: "config_pkey") @default(dbgenerated("gen_random_uuid()")) @map("configid") @db.Uuid
+  sessionDuration Int?      @default(30) @map("session_duration")
+  createAt        DateTime? @default(now()) @map("create_at") @db.Date
+  createBy        String?   @default("undefined") @map("create_by") @db.VarChar(40)
+  updatedAt       DateTime? @default(now()) @map("updated_at") @db.Date
+  updatedBy       String?   @default("undefined") @map("updated_by") @db.VarChar(40)
+
+  @@map("config")
+}
+
+model ProductItem {
+  productItemId String    @unique @default(uuid()) @map("productItemId") @db.Uuid
+  productId     String    @map("productid") @db.Uuid
+  vendorid      String    @map("vendorid") @db.Uuid
+  name          String    @map("name") @db.VarChar(253)
+  description   String    @map("description") @db.VarChar(300)
+  productOrigin String    @map("productorigin") @db.VarChar
+  outofstock    Boolean   @default(false) @map("outofstock")
+  price         Decimal   @map("price") @db.Decimal(10, 0)
+  unit          String    @map("unit") @db.VarChar(10)
+  createAt      DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
+  status        Boolean   @default(false) @map("status")
+
+  @@id([productId, vendorid])
+  @@map("productItem")
+}
+
+model Transaction {
+  transactionId   String    @default(uuid()) @map("transactionid") @db.Uuid
+  orderId         String    @map("orderid") @db.Uuid
+  eventId         String    @map("eventid") @db.Uuid
+  transactionType String?   @map("transactiontype") @db.VarChar
+  paymentTime     DateTime? @default(now()) @map("paymentTime") @db.Date
+  price           Decimal   @default(0.0) @map("price") @db.Decimal(10, 2)
+  status          String    @default("pending") @map("status") @db.VarChar(20)
+
+  @@id([transactionId, orderId, eventId])
+  @@map("transaction")
+}
+
+model Category {
+  categoryId   String    @default(uuid()) @map("categoryid") @db.Uuid
+  categoryName String    @map("categoryname") @db.VarChar(100)
+  createAt     DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt    DateTime? @default(now()) @map("updated_at") @db.Date
+  status       Boolean   @default(false) @map("status")
+
+  @@id([categoryId])
+  @@map("category")
+}
+
+model Menu {
+  menuId    String    @default(uuid()) @map("menuid") @db.Uuid
+  eventId   String    @map("eventid") @db.Uuid
+  vendorId  String    @map("vendorid") @db.Uuid
+  menuName  String    @map("menuname") @db.VarChar(100)
+  createAt  DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Date
+
+  @@id([menuId, eventId, vendorId])
+  @@map("menu")
+}

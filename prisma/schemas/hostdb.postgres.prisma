@@ -70,15 +70,15 @@ model Order {
 }
 
 model OrderDetail {
-  orderDetail String    @default(uuid()) @map("orderdetail") @db.Uuid
-  eventId     String    @map("eventid") @db.Uuid
-  vendorId    String    @map("vendorid") @db.VarChar(100)
-  orderId     String    @map("orderid") @db.Uuid
-  quantity    Int?      @map("quantity")
-  unitPrice   Decimal   @map("unitPrice") @db.Decimal(10, 2)
-  totalPrice  Decimal   @map("totalprice") @db.Decimal(12, 4)
-  createAt    DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+  orderDetailId String    @default(uuid()) @map("orderDetailId") @db.Uuid
+  eventId       String    @map("eventid") @db.Uuid
+  vendorId      String    @map("vendorid") @db.VarChar(100)
+  orderId       String    @map("orderid") @db.Uuid
+  quantity      Int?      @map("quantity")
+  unitPrice     Decimal   @map("unitPrice") @db.Decimal(10, 2)
+  totalPrice    Decimal   @map("totalprice") @db.Decimal(12, 4)
+  createAt      DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
 
   @@id([eventId, vendorId, orderId])
   @@map("orderdetail")

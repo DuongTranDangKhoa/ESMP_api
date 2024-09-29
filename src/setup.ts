@@ -14,6 +14,7 @@ import { APIErrors } from './errors'
 import cors from '@elysiajs/cors'
 import { AuthenticatedUserHeader } from './modules/user/user.schema'
 import { productItemGroup } from './modules/productitem'
+import { orderDetailGroup } from './modules/orderDetail'
 
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -32,6 +33,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/vendor', (app) => app.use(vendorGroup)) // vendor route
         .group('/product', (app) => app.use(productGroup)) // product route
         .group('/order', (app) => app.use(orderGroup)) // order route
+        .group('/orderdetail', (app) => app.use(orderDetailGroup))
         .group('/productitem',(app) => app.use(productItemGroup)) // product)
         // .group('/transaction', (app) => app.use(transactionGroup)) // transaction route
         .group('/debug/host', debuggingGroup), // authenticated debug route

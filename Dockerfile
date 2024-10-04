@@ -1,16 +1,31 @@
-FROM oven/bun:1.1.12-debian AS builder
-WORKDIR /bun_app
+name: Docker Image Build and Push
 
-COPY package.json bun.lockb ./
-RUN bun install
+on:
+  push:
+    branches: [ "deploy" ]
 
-COPY . .
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-FROM oven/bun:1.1.12-debian
-WORKDIR /bun_app
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-COPY --from=builder /bun_app /bun_app
+    - name: Login Dockerhub
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
-EXPOSE 2510
+    - name: Enable Docker BuildKit
+      run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
 
-ENTRYPOINT [ "bun", "start" ]
+    - name: Build Docker image without cache
+      run: docker build --no-cache -t esmp-bun-app .
+
+    - name: Tag Docker image as latest
+      run: docker tag esmp-bun-app:latest ${{ secrets.DOCKER_USERNAME }}/esmp-bun-app:latest
+
+    - name: Push Docker image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/esmp-bun-app:latest

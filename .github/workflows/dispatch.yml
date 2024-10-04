@@ -1,10 +1,10 @@
 name: Trigger Dispatch
 
 on:
-  push:
-    branches:
-      - deploy
-
+  workflow_run:
+    workflows: ["Docker Image Build and Push"]
+    types:
+      - completed
 jobs:
   trigger_dispatch:
     runs-on: ubuntu-latest

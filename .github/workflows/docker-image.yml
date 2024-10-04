@@ -1,0 +1,25 @@
+name: Docker Image Build and Push
+
+on:
+  push:
+    branches: [ "deploy" ]
+    
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Login Dockerhub
+      env:
+        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
+        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - name: Build Docker image
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/esmp-bun-app:${{ github.sha }} .
+    - name: Tag Docker image as latest
+      run: docker tag esmp-bun-app:latest ${{ secrets.DOCKER_USERNAME }}/esmp-bun-app:latest
+    - name: Push Docker image
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/esmp-bun-app:latest

@@ -8,7 +8,7 @@ COPY ./package.json ./
 COPY ./bun.lockb ./
 RUN bun install
 
-COPY prisma prisma
+COPY prisma ./prisma
 RUN bun db:generate
 
 COPY . /bun_app

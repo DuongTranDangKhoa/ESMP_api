@@ -5,6 +5,7 @@ prisma/clients/
 prisma/migrations/
 .vscode/
 .env*
+modules/
 .prettierrc
 .prettierignore
 .gitignore

@@ -21,7 +21,7 @@ jobs:
       run: |
         echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV.
     - name: Build Docker image
-      run: docker build -t esmp-bun-app 
+      run: docker build -t esmp-bun-app .
     
     - name: Tag Docker image as latest
       run: docker tag esmp-bun-app:latest ${{ secrets.DOCKER_USERNAME }}/esmp-bun-app:latest

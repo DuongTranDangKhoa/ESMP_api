@@ -19,8 +19,6 @@ jobs:
 
     - name: Enable Docker BuildKit
       run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
-    - name: List files in the build context
-      run: ls -la ./src
 
     - name: Build Docker image without cache
       run: docker build --no-cache -t esmp-bun-app .

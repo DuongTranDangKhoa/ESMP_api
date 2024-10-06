@@ -1,9 +1,11 @@
-node_modules/**
-logs/**
-prisma/clients/**
-prisma/migrations/**
-.vscode/**
+node_modules/
+**/node_modules/
+logs/
+prisma/clients/
+prisma/migrations/
+.vscode/
 .env*
+modules/
 .prettierrc
 .prettierignore
 .gitignore

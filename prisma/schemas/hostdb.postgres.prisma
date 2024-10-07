@@ -4,6 +4,20 @@ generator client {
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
+generator prismabox {
+  provider                    = "prismabox"
+  // you can optionally specify the output location. Defaults to ./prismabox
+  output                      = "../prismabox/postgres/hostdb"
+  // if you want, you can customize the imported variable name that is used for the schemes. Defaults to "Type" which is what the standard typebox package offers
+  typeboxImportVariableName   = "t"
+  // you also can specify the dependency from which the above import should happen. This is useful if a package re-exports the typebox package and you would like to use that
+  typeboxImportDependencyName = "elysia"
+  // by default the generated schemes do not allow additional properties. You can allow them by setting this to true
+  additionalProperties        = true
+  // optionally enable the data model generation. See the data model section below for more info
+  inputModel                  = true
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DEFAULT_HOST_DB_CONNECTION_STRING")
@@ -16,42 +30,84 @@ model Event {
   logo        String?   @map("logo") @db.VarChar
   startDate   DateTime? @map("startdate") @db.Date
   endDate     DateTime? @map("enddate") @db.Date
-  location    String?   @map("location") @db.VarChar(500)
+  venue       String?   @map("location") @db.VarChar(500)
   createAt    DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
   x           Int?      @map("x")
   y           Int?      @map("y")
+  onWeb       Bytes     @map("onWeb")
+  profit      Decimal   @map("price") @db.Decimal(10, 2)
   status      String?   @default("On-going") @map("status") @db.VarChar(50)
 
   @@map("event")
 }
 
-model EventRegister {
-  eventId        String    @unique @map("eventid") @db.Uuid
-  vendorId       String    @unique @map("vendorid") @db.Uuid
-  registerStatus Int?      @default(0) @map("registerStatus")
-  createAt       DateTime? @default(now()) @map("create_at") @db.Date
-  createBy       String?   @default("undefined") @map("create_by") @db.VarChar(40)
-  updatedAt      DateTime? @default(now()) @map("updated_at") @db.Date
-  updatedBy      String?   @default("undefined") @map("updated_by") @db.VarChar(40)
+model EventPayment {
+  eventPayment       String    @unique @default(uuid()) @map("eventPaymentId") @db.Uuid
+  eventId            String    @map("eventid") @db.Uuid
+  vendorId           String    @map("vendorid") @db.Uuid
+  locationId         String    @unique @map("locationid") @db.Uuid
+  deposit            Decimal   @map("deposit") @db.Decimal(10, 2)
+  depositPaymentDate DateTime? @map("depositpaymentdate") @db.Date
+  total              Decimal   @map("total") @db.Decimal(10, 2)
+  totalPaymentDate   DateTime? @map("totalpaymentdate") @db.Date
+  createDate         DateTime? @default(now()) @map("create_at") @db.Date
+  status             String?   @default("Pending") @map("status") @db.VarChar(50)
 
-  @@id([eventId, vendorId])
+  @@id([eventId, vendorId, locationId])
   @@map("event_register")
 }
 
+model Location {
+  locationId String  @unique @default(uuid()) @map("locationid") @db.Uuid
+  eventId    String  @map("eventid") @db.Uuid
+  typeId     String  @map("typeid") @db.Uuid
+  vendorId   String  @map("vendorid") @db.Uuid
+  shape      String  @map("shape") @db.VarChar(50)
+  direction  String  @map("direction") @db.VarChar(50)
+  x          Int?    @map("x")
+  y          Int?    @map("y")
+  length     Int?    @map("length")
+  width      Int?    @map("width")
+  status     String? @map("status") @db.VarChar(50)
+
+  @@id([locationId, eventId, typeId])
+  @@map("location")
+}
+
+model LocationType {
+  typeId   String  @unique @default(uuid()) @map("typeid") @db.Uuid
+  eventId  String  @map("eventid") @db.Uuid
+  typeName String  @map("typename") @db.VarChar(50)
+  price    Decimal @map("price") @db.Decimal(10, 2)
+  status   String? @map("status") @db.VarChar(50)
+
+  @@id([typeId])
+  @@map("locationtype")
+}
+
+model Theme {
+  themeId String   @unique @default(uuid()) @map("themeid") @db.Uuid
+  status  Boolean? @default(false) @map("status")
+
+  @@id([themeId])
+  @@map("theme")
+}
+
 model Vendor {
-  vendorId   String    @unique(map: "vendor_pkey_unique") @default(uuid()) @map("vendorid") @db.Uuid
-  username   String    @unique @db.VarChar(40)
-  password   String    @db.VarChar(100)
-  vendorName String?   @map("vendorname") @db.VarChar(500)
-  phone      String?   @map("phone") @db.VarChar(10)
-  email      String?   @map("email") @db.VarChar(100)
-  image      String?   @map("image") @db.VarChar
-  address    String?   @map("address") @db.VarChar(500)
-  ulQr       String?   @map("ulQr") @db.VarChar
-  category   String?   @default("") @db.VarChar(40)
-  createAt   DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt  DateTime? @default(now()) @map("updated_at") @db.Date
+  vendorId    String    @unique(map: "vendor_pkey_unique") @default(uuid()) @map("vendorid") @db.Uuid
+  username    String    @unique @db.VarChar(40)
+  password    String    @db.VarChar(100)
+  vendorName  String?   @map("vendorname") @db.VarChar(500)
+  phone       String?   @map("phone") @db.VarChar(10)
+  email       String?   @map("email") @db.VarChar(100)
+  image       String?   @map("image") @db.VarChar
+  address     String?   @map("address") @db.VarChar(500)
+  urlQr       String?   @map("ulQr") @db.VarChar
+  category    String?   @default("") @db.VarChar(40)
+  createDate  DateTime? @default(now()) @map("create_at") @db.Date
+  updatedDate DateTime? @default(now()) @map("updated_at") @db.Date
+  status      Boolean?  @default(true) @map("status")
 
   @@map("vendor")
 }
@@ -118,7 +174,7 @@ model ProductItem {
   description   String    @map("description") @db.VarChar(300)
   productOrigin String    @map("productorigin") @db.VarChar
   outofstock    Boolean   @default(false) @map("outofstock")
-  price         Decimal   @map("price") @db.Decimal(10, 0)
+  price         Decimal   @map("price") @db.Decimal(10, 2) // bị làm trồn làm bị lỗi 
   unit          String    @map("unit") @db.VarChar(10)
   createAt      DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
@@ -128,7 +184,7 @@ model ProductItem {
   @@map("productItem")
 }
 
-model Transaction {
+model Payment {
   transactionId   String    @default(uuid()) @map("transactionid") @db.Uuid
   orderId         String    @map("orderid") @db.Uuid
   eventId         String    @map("eventid") @db.Uuid
@@ -138,7 +194,7 @@ model Transaction {
   status          String    @default("pending") @map("status") @db.VarChar(20)
 
   @@id([transactionId, orderId, eventId])
-  @@map("transaction")
+  @@map("payment")
 }
 
 model Category {

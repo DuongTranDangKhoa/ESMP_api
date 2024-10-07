@@ -30,22 +30,22 @@ async function getEventById(eventId: string, hostDb: HostDbClient) {
   return event
 }
 
-async function createEvent(event: InputEventObject, hostDb: HostDbClient) {
-  await hostDb.event
-    .create({
-      data: {
-        name: event.eventName,
-        logo: event.logo,
-        description: event.description,
-        startDate: event.startDate,
-        endDate: event.endDate,
-        status: "On-going",
-      },
-    })
-    .catch((err) => {
-      throw new DatabaseError(err.message)
-    })
-}
+// async function createEvent(event: InputEventObject, hostDb: HostDbClient) {
+//   await hostDb.event
+//     .create({
+//       data: {
+//         name: event.eventName,
+//         logo: event.logo,
+//         description: event.description,
+//         startDate: event.startDate,
+//         endDate: event.endDate,
+//         status: "On-going",
+//       },
+//     })
+//     .catch((err) => {
+//       throw new DatabaseError(err.message)
+//     })
+// }
 
 async function updateEvent(
   eventId: string,
@@ -83,7 +83,7 @@ async function deleteEvent(eventId: string, hostDb: HostDbClient) {
 }
 
 async function getEventVendorList(eventId: string, hostDb: HostDbClient) {
-  const eventVendorList = await hostDb.eventRegister
+  const eventVendorList = await hostDb.eventPayment
     .findMany({
       where: {
         eventId,
@@ -94,42 +94,42 @@ async function getEventVendorList(eventId: string, hostDb: HostDbClient) {
     })
   return eventVendorList
 }
-async function saveEventVendorList(
-  eventId: string,
-  eventRegisterList: InputEventRegisterObject[],
-  hostDb: HostDbClient,
-) {
-  try {
-    await hostDb.$transaction(async (hostDb) => {
-      await Promise.all(
-        eventRegisterList.map(async (eventRegister: any) => {
-          await hostDb.eventRegister.upsert({
-            create: {
-              eventId,
-              vendorId: eventRegister.vendorId,
-              registerStatus: eventRegister.registerStatus,
-            },
-            update: {
-              vendorId: eventRegister.vendorId,
-              registerStatus: eventRegister.registerStatus,
-            },
-            where: eventRegister.eventId,
-          })
-        }),
-      )
-    })
-  } catch (err: any) {
-    throw new DatabaseError(err.message)
-  }
-}
+// async function saveEventVendorList(
+//   eventId: string,
+//   eventRegisterList: InputEventRegisterObject[],
+//   hostDb: HostDbClient,
+// ) {
+//   try {
+//     await hostDb.$transaction(async (hostDb) => {
+//       await Promise.all(
+//         eventRegisterList.map(async (eventRegister: any) => {
+//           await hostDb.eventRegister.upsert({
+//             create: {
+//               eventId,
+//               vendorId: eventRegister.vendorId,
+//               registerStatus: eventRegister.registerStatus,
+//             },
+//             update: {
+//               vendorId: eventRegister.vendorId,
+//               registerStatus: eventRegister.registerStatus,
+//             },
+//             where: eventRegister.eventId,
+//           })
+//         }),
+//       )
+//     })
+//   } catch (err: any) {
+//     throw new DatabaseError(err.message)
+//   }
+// }
 
 const eventService = {
   getAllEvent,
   getEventById,
-  createEvent,
+  // createEvent,
   updateEvent,
   deleteEvent,
   getEventVendorList,
-  saveEventVendorList,
+  // saveEventVendorList,
 }
 export default eventService

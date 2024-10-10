@@ -2,7 +2,7 @@ import { Payment } from './../../../prisma/clients/postgres/hostdb/index.d';
 import { HostDbClient } from "../../database/host.db";
 
 const getTransaction = async ( hostDb : HostDbClient ) => {
-const transaction = await hostDb.payment.findMany
+const transaction = await hostDb.payment.findMany()
 return transaction
 }
 const getTransactionByOrder = async (  OrderID: string ,hostDb : HostDbClient ) => {
@@ -15,20 +15,33 @@ const transaction = await hostDb.payment.findMany( { where: {eventId: eventId}})
 return transaction 
 }
 const createTransaction = async ( payment : Payment, hostDb : HostDbClient ) => {
-const transaction = await hostDb.payment.create({ data: payment })
+  try {
+    const transaction = await hostDb.payment.create({ data: payment })
+    return {message: 'Successfully created transaction'}
+  }catch ( e ) {
+    return {message: e}
+  }
 }
-const updateTransaction = async ( transactionId: string, payment : Payment, hostDb : HostDbClient ) => {
-  await hostDb.payment.updateMany({
+const updateTransaction = async ( payment : Payment, hostDb : HostDbClient ) => {
+  await hostDb.payment.update({
     where: {
-      transactionId
+      transactionId_orderId_eventId:{
+        transactionId: payment.transactionId,
+        orderId: payment.orderId,
+        eventId: payment.eventId
+      }
     },
     data: payment,
   })
 }
-const deleteTransaction = async ( transactionId: string, hostDb : HostDbClient ) => {
-  await hostDb.payment.deleteMany({
+const deleteTransaction = async ( transactionId: string, OrderID: string, eventId: string, hostDb : HostDbClient ) => {
+  await hostDb.payment.delete({
     where: {
-      transactionId
+      transactionId_orderId_eventId:{
+        transactionId: transactionId,
+        orderId: OrderID,
+        eventId: eventId
+      }
     },
   })
 }

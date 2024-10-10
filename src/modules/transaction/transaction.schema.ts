@@ -1,9 +1,9 @@
 import { t } from "elysia"
-import { Transaction } from "../../../prisma/clients/postgres/hostdb"
+import { Payment } from "../../../prisma/clients/postgres/hostdb"
 
-export type TransactionType = Transaction
+export type TransactionType = Payment
 export class TransactionObject {
-   transactionId?: string
+    transactionId?: string
     orderId: string
     eventId: string
     transactionType?: string

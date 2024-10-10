@@ -13,6 +13,6 @@ COPY prisma prisma
 RUN bun db:generate
 
 COPY . /bun_app
-RUN rm -rf node_modules
+
 EXPOSE 2510
 ENTRYPOINT [ "bun", "start" ]

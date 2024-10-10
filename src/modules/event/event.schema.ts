@@ -1,5 +1,5 @@
 import { error, Static, t } from 'elysia'
-import { Event, EventRegister } from '../../../prisma/clients/postgres/hostdb'
+import { Event } from '../../../prisma/clients/postgres/hostdb'
 import { convertTimeFormat } from '../../utilities/datetime.util'
 import { timeFormat } from '../../common/timeFormat.common'
 import { EventRegisterStatus } from '../../common/constant/common.constant'
@@ -95,4 +95,3 @@ export class InputEventRegisterObject {
   }
 }
 
-export type EventRegisterObject = EventRegister

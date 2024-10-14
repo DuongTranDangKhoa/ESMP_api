@@ -6,7 +6,7 @@ import * as mongoService from '../mongoDb/mongoDb.service'
 import * as hostService from '../host/host.service'
 import * as configService from '../config/config.service'
 import vendorService from '../vendor/vendor.service'
-
+import { RoleType } from '../../common/constant/common.constant'
 /**
  * Create user session
  * @param {MongoDbUserType} userInfo
@@ -72,6 +72,7 @@ export async function authenticateHostUser(
   return {
     accessToken,
     userInfo,
+    
   }
 }
 
@@ -82,7 +83,7 @@ export async function authenticateVendorUser(
   masterDb: MasterDbClient,
   mongoDb: MongoDbClient,
 ): Promise<LoginResponseType> {
-  const host = await hostService.getHostAndVerify(hostCode, masterDb)
+   //const host = await hostService.getHostAndVerify(hostCode, masterDb)
   const hostDb = getHostDbClient(hostCode)
 
   const vendor = await vendorService.authenticateVendorUser(
@@ -95,8 +96,10 @@ export async function authenticateVendorUser(
   const userInfo = {
     username,
     hostInfo: {
-      hostName: host.hostName as string,
-      hostCode: host.hostCode as string,
+      // hostName: host.hostName as string,
+      // hostCode: host.hostCode as string,
+      hostName: "123", 
+      hostCode,
     },
     vendorInfo: {
       vendorName: vendor.vendorName as string,
@@ -113,6 +116,7 @@ export async function authenticateVendorUser(
   return {
     accessToken,
     userInfo,
+    
   }
 }
 

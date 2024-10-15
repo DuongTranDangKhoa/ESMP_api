@@ -11,7 +11,6 @@ RUN bun install
 
 COPY prisma prisma
 RUN bun db:generate
-RUN bun db:generate:mongo
 COPY . /bun_app
 
 EXPOSE 2510

@@ -43,6 +43,7 @@ const updateProductItem = async (
     }
 const deleteProductItem = async (
     productItemId: string, hostDb: HostDbClient) => {
+        console.log("Product item deleted", productItemId)
         await hostDb.productItem.delete({
             where: {
                 productItemId: productItemId,

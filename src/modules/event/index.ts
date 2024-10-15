@@ -40,8 +40,8 @@ export const eventGroup = (app: any) =>
         set: any
         hostDb: HostDbClient
       }) => {
-        const event = new eventSchema.InputEventObject(body)
-        await eventService.createEvent(event, hostDb)
+        // const event = new eventSchema.EventObject(body)
+        await eventService.createEvent(body, hostDb)
         set.status = status('Created')
         return {
           message: 'Create event success',
@@ -103,7 +103,7 @@ export const eventGroup = (app: any) =>
                 set: any
                 hostDb: HostDbClient
               }) => {
-                const updateData = new eventSchema.InputEventObject(body)
+                const updateData = new eventSchema.EventObject(body)
                 await eventService.updateEvent(eventId, updateData, hostDb)
                 set.status = status('OK')
                 return {
@@ -180,7 +180,7 @@ export const eventGroup = (app: any) =>
                 const vendorList = body.map(
                   (item: any) => new eventSchema.InputEventRegisterObject(item),
                 )
-                const eventVendorList = eventService.saveEventVendorList(
+                const eventVendorList = eventService.updateEvent(
                   eventId,
                   vendorList,
                   hostDb,

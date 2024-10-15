@@ -46,6 +46,7 @@ export const userGroup = (app: any) =>
             )
           // authenticate process for vendor user
           case LoginType.VENDOR:
+  
             const { hostCode } = body
             return await userService.authenticateVendorUser(
               hostCode,
@@ -86,3 +87,4 @@ export const userGroup = (app: any) =>
         headers: AuthenticatedUserHeader, // header must contain accessToken
       },
     )
+    

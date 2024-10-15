@@ -3,29 +3,40 @@ import { Event } from '../../../prisma/clients/postgres/hostdb'
 import { convertTimeFormat } from '../../utilities/datetime.util'
 import { timeFormat } from '../../common/timeFormat.common'
 import { EventRegisterStatus } from '../../common/constant/common.constant'
+import { Decimal } from '@prisma/client/runtime/library'
 
-export type EventType = Pick<
-  Event,
-  'eventId' | 'name' | 'logo' | 'startDate' | 'endDate' | 'description' | 'status' 
->
-
-export class InputEventObject {
-  eventName: string
-  logo: string
-  startDate: Date
-  endDate: Date
-  description: string
-  status: string
-  constructor(data: any) {
-    this.eventName = data.eventName
-    this.logo = data.logo
-    this.description = data.description
-    this.startDate = new Date(
-      convertTimeFormat(data.startDate, timeFormat.date),
-    )
-    this.endDate = new Date(convertTimeFormat(data.endDate, timeFormat.date))
-    this.status = data.status
-  }
+export type EventType = Event
+export class EventObject {
+      eventId: string
+      name: string
+      description: string | null
+      logo: string | null
+      startDate: Date | null
+      endDate: Date | null
+      venue: string | null
+      createAt: Date | null
+      updatedAt: Date | null
+      x?: number | null
+      y?: number | null
+      onWeb?: Buffer
+      profit?: Decimal
+      status: string 
+      constructor(data: any) {
+        this.eventId = data.eventId
+        this.name = data.name
+        this.description = data.description
+        this.logo = data.logo
+        this.startDate = data.startDate
+        this.endDate = data.endDate
+        this.venue = data.venue
+        this.createAt = data.createAt
+        this.updatedAt = data.updatedAt
+        this.x = data.x
+        this.y = data.y
+        this.onWeb = data.onWeb
+        this.profit = data.profit
+        this.status = data.status
+      }
 }
 
 export const GetEventDetailsParams = t.Required(

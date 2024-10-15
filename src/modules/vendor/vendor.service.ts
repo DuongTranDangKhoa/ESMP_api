@@ -3,7 +3,7 @@ import { HostDbClient } from '../../database/host.db'
 import { AuthenticationError } from '../../errors/authentication.error'
 import { verifyEncrypted } from '../../utilities/crypting.util'
 import { VendorType, VendorObject } from './vendor.schema'
-import { EventRegisterObject } from '../event/event.schema'
+// import { EventRegisterObject } from '../event/event.schema'
 import { EventRegisterStatus } from '../../common/constant/common.constant'
 
 const authenticateVendorUser = async (
@@ -11,6 +11,7 @@ const authenticateVendorUser = async (
   password: string,
   hostDb: HostDbClient,
 ): Promise<VendorType> => {
+  console.log('username', username)
   const vendor = await hostDb.vendor.findFirst({
     select: {
       vendorId: true,
@@ -23,7 +24,7 @@ const authenticateVendorUser = async (
       username,
     },
   })
-
+   console.log('vendor', vendor)
   // check if vendor is existed
   if (!vendor) {
     throw new AuthenticationError('Invalid username')
@@ -102,8 +103,8 @@ const deleteVendor = async (
 const getVendorRegisteredEvents = async (
   vendorId: string,
   hostDb: HostDbClient,
-): Promise<EventRegisterObject[]> => {
-  const vendorRegisteredEvents = await hostDb.eventRegister.findMany({
+)=> {
+  const vendorRegisteredEvents = await hostDb.eventPayment.findMany({
     where: {
       vendorId,
     },
@@ -111,19 +112,19 @@ const getVendorRegisteredEvents = async (
   return vendorRegisteredEvents
 }
 
-const registerEvent = async (
-  vendorId: string,
-  eventId: string,
-  hostDb: HostDbClient,
-): Promise<void> => {
-  await hostDb.eventRegister.create({
-    data: {
-      vendorId,
-      eventId,
-      registerStatus: EventRegisterStatus.REGISTERED,
-    },
-  })
-}
+// const registerEvent = async (
+//   vendorId: string,
+//   eventId: string,
+//   hostDb: HostDbClient,
+// ): Promise<void> => {
+//   await hostDb.eventPayment.create({
+//     data: {
+//       vendorId: vendorId,
+//       eventId: eventId,
+     
+//     },
+//   })
+// }
 
 const vendorService = {
   authenticateVendorUser,
@@ -133,7 +134,7 @@ const vendorService = {
   deleteVendor,
   createVendor,
   getVendorRegisteredEvents,
-  registerEvent,
+  // registerEvent,
 }
 
 export default vendorService

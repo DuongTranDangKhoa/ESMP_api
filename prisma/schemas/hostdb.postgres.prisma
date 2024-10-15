@@ -6,16 +6,11 @@ generator client {
 
 generator prismabox {
   provider                    = "prismabox"
-  // you can optionally specify the output location. Defaults to ./prismabox
   output                      = "../prismabox/postgres/hostdb"
-  // if you want, you can customize the imported variable name that is used for the schemes. Defaults to "Type" which is what the standard typebox package offers
+  inputModel                  = "true"
   typeboxImportVariableName   = "t"
-  // you also can specify the dependency from which the above import should happen. This is useful if a package re-exports the typebox package and you would like to use that
+  additionalProperties        = "true"
   typeboxImportDependencyName = "elysia"
-  // by default the generated schemes do not allow additional properties. You can allow them by setting this to true
-  additionalProperties        = true
-  // optionally enable the data model generation. See the data model section below for more info
-  inputModel                  = true
 }
 
 datasource db {
@@ -35,7 +30,7 @@ model Event {
   updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
   x           Int?      @map("x")
   y           Int?      @map("y")
-  onWeb       Bytes     @map("onWeb")
+  onWeb       Bytes?    @map("onweb")
   profit      Decimal   @map("price") @db.Decimal(10, 2)
   status      String?   @default("On-going") @map("status") @db.VarChar(50)
 
@@ -76,21 +71,19 @@ model Location {
 }
 
 model LocationType {
-  typeId   String  @unique @default(uuid()) @map("typeid") @db.Uuid
+  typeId   String  @id @unique @default(uuid()) @map("typeid") @db.Uuid
   eventId  String  @map("eventid") @db.Uuid
   typeName String  @map("typename") @db.VarChar(50)
   price    Decimal @map("price") @db.Decimal(10, 2)
   status   String? @map("status") @db.VarChar(50)
 
-  @@id([typeId])
   @@map("locationtype")
 }
 
 model Theme {
-  themeId String   @unique @default(uuid()) @map("themeid") @db.Uuid
+  themeId String   @id @unique @default(uuid()) @map("themeid") @db.Uuid
   status  Boolean? @default(false) @map("status")
 
-  @@id([themeId])
   @@map("theme")
 }
 
@@ -116,6 +109,7 @@ model Order {
   orderId     String    @default(uuid()) @map("orderid") @db.Uuid
   eventId     String    @map("eventid") @db.Uuid
   vendorId    String    @map("vendorid") @db.VarChar(100)
+  name        String    @map("name") @db.VarChar(250)
   totalAmount Int?      @map("totalamount")
   totalPrice  Decimal   @db.Decimal(10, 2)
   createAt    DateTime? @default(now()) @map("create_at") @db.Date
@@ -126,22 +120,22 @@ model Order {
 }
 
 model OrderDetail {
-  orderDetail String    @default(uuid()) @map("orderdetail") @db.Uuid
-  eventId     String    @map("eventid") @db.Uuid
-  vendorId    String    @map("vendorid") @db.VarChar(100)
-  orderId     String    @map("orderid") @db.Uuid
-  quantity    Int?      @map("quantity")
-  unitPrice   Decimal   @map("unitPrice") @db.Decimal(10, 2)
-  totalPrice  Decimal   @map("totalprice") @db.Decimal(12, 4)
-  createAt    DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+  orderDetailId String    @db.Uuid
+  eventId       String    @map("eventid") @db.Uuid
+  vendorId      String    @map("vendorid") @db.VarChar(100)
+  orderId       String    @map("orderid") @db.Uuid
+  quantity      Int?      @map("quantity")
+  unitPrice     Decimal   @map("unitPrice") @db.Decimal(10, 2)
+  totalPrice    Decimal   @map("totalprice") @db.Decimal(12, 4)
+  createAt      DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
 
   @@id([eventId, vendorId, orderId])
   @@map("orderdetail")
 }
 
 model Product {
-  productId   String    @default(uuid()) @map("productid") @db.Uuid
+  productId   String    @id @default(uuid()) @map("productid") @db.Uuid
   categoryId  String    @map("categoryid") @db.Uuid
   productName String    @map("name") @db.VarChar
   description String?   @map("description") @db.VarChar
@@ -151,7 +145,6 @@ model Product {
   updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
   status      Boolean?  @default(false) @map("status")
 
-  @@id([productId])
   @@map("product")
 }
 
@@ -171,16 +164,17 @@ model ProductItem {
   productId     String    @map("productid") @db.Uuid
   vendorid      String    @map("vendorid") @db.Uuid
   name          String    @map("name") @db.VarChar(253)
+  imageUrl      String?   @map("imageurl") @db.VarChar
   description   String    @map("description") @db.VarChar(300)
   productOrigin String    @map("productorigin") @db.VarChar
   outofstock    Boolean   @default(false) @map("outofstock")
-  price         Decimal   @map("price") @db.Decimal(10, 2) // bị làm trồn làm bị lỗi 
+  price         Decimal   @map("price") @db.Decimal(10, 2)
   unit          String    @map("unit") @db.VarChar(10)
   createAt      DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
   status        Boolean   @default(false) @map("status")
 
-  @@id([productId, vendorid])
+  @@id([productItemId])
   @@map("productItem")
 }
 
@@ -198,13 +192,12 @@ model Payment {
 }
 
 model Category {
-  categoryId   String    @default(uuid()) @map("categoryid") @db.Uuid
+  categoryId   String    @id @default(uuid()) @map("categoryid") @db.Uuid
   categoryName String    @map("categoryname") @db.VarChar(100)
   createAt     DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt    DateTime? @default(now()) @map("updated_at") @db.Date
   status       Boolean   @default(false) @map("status")
 
-  @@id([categoryId])
   @@map("category")
 }
 
@@ -218,4 +211,16 @@ model Menu {
 
   @@id([menuId, eventId, vendorId])
   @@map("menu")
+}
+
+model Staff {
+  staffId   String    @id @default(uuid()) @map("staffid") @db.Uuid
+  vendorId  String    @map("vendorId") @db.Uuid
+  username  String    @unique @map("username") @db.VarChar(40)
+  password  String    @db.VarChar(50)
+  name      String    @map("name") @db.VarChar(100)
+  image     String    @map("image") @db.VarChar
+  createAt  DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Date
+  status    Boolean?  @default(true) @map("status")
 }

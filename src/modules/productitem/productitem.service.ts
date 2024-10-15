@@ -1,6 +1,6 @@
 import { NotFoundError } from "elysia";
 import { HostDbClient } from "../../database/host.db";
-import { ProductItemObject } from "./productitem.schema";
+import { ProductItemObject, ProductItemType } from "./productitem.schema";
 import { EventStatus } from "../../common/constant/common.constant";
 
 const getProductItemByVendorId = async (
@@ -11,16 +11,12 @@ const getProductItemByVendorId = async (
 }
 const getProductItemById = async (
 Guid : string,
-vendorid : string,
-productId: string,
+productItemId: string,
 hostDb: HostDbClient,
 ) => {
 const productItem = await hostDb.productItem.findUnique({
 where: {
-    productId_vendorid: {
-        productId,
-        vendorid,
-      },
+    productItemId: productItemId
 },
 })
  if (!productItem) {
@@ -29,9 +25,9 @@ where: {
  return productItem
 }
 const createProductItem = async (
-inputData: ProductItemObject, hostDb: HostDbClient) => {
+inputData: ProductItemType, hostDb: HostDbClient) => {
   const productItem = await hostDb.productItem.create({
-    data : inputData
+    data: inputData,
   })
   return productItem
 }
@@ -39,25 +35,20 @@ const updateProductItem = async (
     inputData: ProductItemObject, hostDb: HostDbClient) => {
         await hostDb.productItem.update({
             where: {
-                productId_vendorid: {
-                    productId: inputData.productId,
-                    vendorid: inputData.vendorid,
-                },
+                productItemId: inputData.productItemId,
             },
             data: inputData,
         })
         return inputData
     }
 const deleteProductItem = async (
-    productId: string, vendorid: string, hostDb: HostDbClient) => {
+    productItemId: string, hostDb: HostDbClient) => {
         await hostDb.productItem.delete({
             where: {
-                productId_vendorid: {
-                    productId,
-                    vendorid,
+                productItemId: productItemId,
                 },
             },
-        })
+        )
     }
 const productService = {
     getProductItemByVendorId,

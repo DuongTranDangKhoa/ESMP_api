@@ -19,8 +19,8 @@ export const LoginParams = t.Object(
 export const LoginBody = t.Object({
   hostCode: t.Optional(
     t.String({
-      minLength: 8,
-      maxLength: 8,
+      minLength: 7,
+      maxLength: 7,
       error: 'Host code must be 8 characters',
     }),
   ),

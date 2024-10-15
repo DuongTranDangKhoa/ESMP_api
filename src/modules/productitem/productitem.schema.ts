@@ -6,6 +6,7 @@ export class ProductItemObject {
   productId:   string   
   vendorid:    string  
   name:        string   
+  imgUrls?:    string
   description: string 
   productOrigin:        string
   outofstock?: boolean    
@@ -18,6 +19,7 @@ export class ProductItemObject {
     this.productId = productId
     this.productItemId = data.guid
     this.vendorid = data.vendorid
+    this.imgUrls = data.imgUrls
     this.name = data.name
     this.description = data.description
     this.productOrigin = data.type

@@ -29,7 +29,8 @@ export const createUserSession = async (
     updatedAt: getTimeNow(),
     expiredAt: sessionExpireTime,
   }
-
+  console.log('sessionInfo', sessionInfo)
+  console.log('userInfo', userInfo)
   // create user session
   await mongoDb.sessionData
     .create({

@@ -17,7 +17,7 @@ export const vendorGroup = (app: any) =>
       return response
     })
     .post('/', async ({ body, hostDb }: any) => {
-      const inputData = new vendorSchema.VendorObject(body)
+     
     })
     // group that require vendorId
     .group('/:vendorId', (app: any) =>
@@ -147,12 +147,13 @@ export const vendorGroup = (app: any) =>
                 hostDb: HostDbClient
               }) => {
                 const eventId = body.eventId
-                await vendorService.registerEvent(vendorId, eventId, hostDb)
+                // await vendorService.registerEvent(vendorId, eventId, hostDb)
                 set.status = status('OK')
                 return {
                   message: 'Register to an event success',
                 }
               },
-            ),
+            )
+            ,
       ),
     )

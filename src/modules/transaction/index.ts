@@ -19,7 +19,7 @@ export const transactionGroup = (app: any) =>
         },
       )
       .get(
-        '/:orderId',
+        'order/:orderId',
         async ({orderId, hostDb}: {orderId: string, hostDb: HostDbClient}) => {
           const transaction = await transactionService.getTransactionByOrder(orderId, hostDb)
           return transaction
@@ -33,18 +33,24 @@ export const transactionGroup = (app: any) =>
         },
         )
         .put(
-          '/:transactionId',
+          '/',
           async ({transactionId, body, hostDb}: {transactionId: string, body: any, hostDb: HostDbClient}) => {
-            const transaction = await transactionService.updateTransaction(transactionId, body, hostDb)
-            return transaction
+            const transaction = await transactionService.updateTransaction(body, hostDb)
+            return 'Updated'
           },
         )
         .delete(
-          '/:transactionId',
-          async ({transactionId, hostDb}: {transactionId: string, hostDb: HostDbClient}) => {
-            const transaction = await transactionService.deleteTransaction(transactionId, hostDb)
-            return transaction
-          }
+           '/:transactionId/:orderId/:eventId',
+  async ({
+    params: { transactionId, orderId, eventId },
+    hostDb,
+  }: {
+    params: { transactionId: string; orderId: string; eventId: string };
+    hostDb: HostDbClient;
+  }) => {
+    const result = await transactionService.deleteTransaction(transactionId, orderId, eventId, hostDb);
+    return 'Deleted';
+  }
         )
         )
       

@@ -1,7 +1,7 @@
 import { NotFoundError } from 'elysia'
 import { HostDbClient } from '../../database/host.db'
 import { Vendor } from '../../../prisma/clients/postgres/hostdb'
-import { InputEventObject, InputEventRegisterObject } from './event.schema'
+import { EventObject, EventType, InputEventRegisterObject } from './event.schema'
 import { EventStatus } from '../../common/constant/common.constant'
 import { DatabaseError } from '../../errors/database.error'
 
@@ -30,26 +30,19 @@ async function getEventById(eventId: string, hostDb: HostDbClient) {
   return event
 }
 
-// async function createEvent(event: InputEventObject, hostDb: HostDbClient) {
-//   await hostDb.event
-//     .create({
-//       data: {
-//         name: event.eventName,
-//         logo: event.logo,
-//         description: event.description,
-//         startDate: event.startDate,
-//         endDate: event.endDate,
-//         status: "On-going",
-//       },
-//     })
-//     .catch((err) => {
-//       throw new DatabaseError(err.message)
-//     })
-// }
+async function createEvent(event: EventType, hostDb: HostDbClient) {
+  await hostDb.event
+    .create({
+      data: event
+    })
+    .catch((err) => {
+      throw new DatabaseError(err.message)
+    })
+}
 
 async function updateEvent(
   eventId: string,
-  updateData: InputEventObject,
+  updateData: EventObject,
   hostDb: HostDbClient,
 ) {
   await hostDb.event
@@ -58,7 +51,7 @@ async function updateEvent(
         eventId,
       },
       data: {
-        name: updateData.eventName,
+        name: updateData.name,
         logo: updateData.logo,
         description: updateData.description,
         startDate: updateData.startDate,
@@ -126,7 +119,7 @@ async function getEventVendorList(eventId: string, hostDb: HostDbClient) {
 const eventService = {
   getAllEvent,
   getEventById,
-  // createEvent,
+  createEvent,
   updateEvent,
   deleteEvent,
   getEventVendorList,

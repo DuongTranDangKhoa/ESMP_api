@@ -12,6 +12,7 @@ datasource db {
 type UserInfo {
   hostInfo   HostInfo
   username   String
+  role       String
   vendorInfo VendorInfo?
 }
 

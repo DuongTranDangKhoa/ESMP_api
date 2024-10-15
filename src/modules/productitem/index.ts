@@ -26,15 +26,15 @@ export const productItemGroup = (app: any) =>
             },
            )
            .put(
-            '/:productId',
+            '/:productItemId',
             async ({  body, hostDb }: {body: any, hostDb: HostDbClient } ) => {
                 const productItem = await productService.updateProductItem(body, hostDb)
                 return productItem
             },
            )
            .delete(
-            '/:productId',
-            async ({ vendorId, productId, hostDb }: { vendorId: string, productId: string, hostDb: HostDbClient } ) => {
+            '/:productItemId',
+            async ({  productId, hostDb }: {  productId: string, hostDb: HostDbClient } ) => {
                 await productService.deleteProductItem(vendorId, productId, hostDb)
                 return { message: 'Delete productItem success' }
             },

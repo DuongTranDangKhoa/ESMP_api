@@ -83,23 +83,24 @@ export async function authenticateVendorUser(
   masterDb: MasterDbClient,
   mongoDb: MongoDbClient,
 ): Promise<LoginResponseType> {
-   //const host = await hostService.getHostAndVerify(hostCode, masterDb)
-  const hostDb = getHostDbClient(hostCode)
-
+  const host = await hostService.getHostAndVerify(hostCode, masterDb)
+  console.log("host", host.hostCode) 
+  const hostDb = getHostDbClient(host.hostCode)
   const vendor = await vendorService.authenticateVendorUser(
     username,
     password,
     hostDb,
   )
-
+  
   // create session for user
   const userInfo = {
     username,
+    role: RoleType.MANAGER,
     hostInfo: {
-      // hostName: host.hostName as string,
-      // hostCode: host.hostCode as string,
-      hostName: "123", 
-      hostCode,
+      hostName: host.hostName as string,
+      hostCode: host.hostCode as string,
+      // hostName: "123", 
+      // hostCode,
     },
     vendorInfo: {
       vendorName: vendor.vendorName as string,

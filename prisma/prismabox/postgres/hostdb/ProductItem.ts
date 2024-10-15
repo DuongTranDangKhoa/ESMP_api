@@ -8,6 +8,7 @@ export const ProductItemPlain = t.Object(
     productId: t.String({ additionalProperties: true }),
     vendorid: t.String({ additionalProperties: true }),
     name: t.String({ additionalProperties: true }),
+    imageUrl: __nullable__(t.String({ additionalProperties: true })),
     description: t.String({ additionalProperties: true }),
     productOrigin: t.String({ additionalProperties: true }),
     outofstock: t.Boolean({ additionalProperties: true }),
@@ -28,6 +29,9 @@ export const ProductItemRelations = t.Object(
 export const ProductItemPlainInputCreate = t.Object(
   {
     name: t.String({ additionalProperties: true }),
+    imageUrl: t.Optional(
+      __nullable__(t.String({ additionalProperties: true })),
+    ),
     description: t.String({ additionalProperties: true }),
     productOrigin: t.String({ additionalProperties: true }),
     outofstock: t.Optional(t.Boolean({ additionalProperties: true })),
@@ -43,6 +47,7 @@ export const ProductItemPlainInputCreate = t.Object(
 export const ProductItemPlainInputUpdate = t.Object(
   {
     name: t.String({ additionalProperties: true }),
+    imageUrl: __nullable__(t.String({ additionalProperties: true })),
     description: t.String({ additionalProperties: true }),
     productOrigin: t.String({ additionalProperties: true }),
     outofstock: t.Optional(t.Boolean({ additionalProperties: true })),
@@ -76,6 +81,7 @@ export const ProductItemWhere = t.Partial(
         productId: t.String(),
         vendorid: t.String(),
         name: t.String(),
+        imageUrl: t.String(),
         description: t.String(),
         productOrigin: t.String(),
         outofstock: t.Boolean(),
@@ -109,6 +115,7 @@ export const ProductItemWhereUnique = t.Recursive(
             productId: t.String(),
             vendorid: t.String(),
             name: t.String(),
+            imageUrl: t.String(),
             description: t.String(),
             productOrigin: t.String(),
             outofstock: t.Boolean(),
@@ -133,6 +140,7 @@ export const ProductItemSelect = t.Partial(
       productId: t.Boolean(),
       vendorid: t.Boolean(),
       name: t.Boolean(),
+      imageUrl: t.Boolean(),
       description: t.Boolean(),
       productOrigin: t.Boolean(),
       outofstock: t.Boolean(),
@@ -160,6 +168,7 @@ export const ProductItemOrderBy = t.Partial(
       productId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       vendorid: t.Union([t.Literal("asc"), t.Literal("desc")]),
       name: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      imageUrl: t.Union([t.Literal("asc"), t.Literal("desc")]),
       description: t.Union([t.Literal("asc"), t.Literal("desc")]),
       productOrigin: t.Union([t.Literal("asc"), t.Literal("desc")]),
       outofstock: t.Union([t.Literal("asc"), t.Literal("desc")]),

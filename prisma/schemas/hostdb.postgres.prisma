@@ -30,7 +30,7 @@ model Event {
   updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
   x           Int?      @map("x")
   y           Int?      @map("y")
-  onWeb       Bytes     @map("onweb")
+  onWeb       Bytes?    @map("onweb")
   profit      Decimal   @map("price") @db.Decimal(10, 2)
   status      String?   @default("On-going") @map("status") @db.VarChar(50)
 
@@ -164,7 +164,7 @@ model ProductItem {
   productId     String    @map("productid") @db.Uuid
   vendorid      String    @map("vendorid") @db.Uuid
   name          String    @map("name") @db.VarChar(253)
-  imageUrl      String    @map("imageurl") @db.VarChar
+  imageUrl      String?   @map("imageurl") @db.VarChar
   description   String    @map("description") @db.VarChar(300)
   productOrigin String    @map("productorigin") @db.VarChar
   outofstock    Boolean   @default(false) @map("outofstock")
@@ -174,7 +174,7 @@ model ProductItem {
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
   status        Boolean   @default(false) @map("status")
 
-  @@id([productId, vendorid])
+  @@id([productItemId])
   @@map("productItem")
 }
 

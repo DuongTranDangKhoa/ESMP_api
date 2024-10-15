@@ -11,6 +11,7 @@ const authenticateVendorUser = async (
   password: string,
   hostDb: HostDbClient,
 ): Promise<VendorType> => {
+  console.log('username', username)
   const vendor = await hostDb.vendor.findFirst({
     select: {
       vendorId: true,
@@ -23,7 +24,7 @@ const authenticateVendorUser = async (
       username,
     },
   })
-
+   console.log('vendor', vendor)
   // check if vendor is existed
   if (!vendor) {
     throw new AuthenticationError('Invalid username')

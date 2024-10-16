@@ -12,9 +12,9 @@ export const productItemGroup = (app: any) =>
            )
             .get(
             '/:vendorId',
-            async ({vendorId, hostDb }: { vendorId: string, hostDb: HostDbClient } ) => {
-               
-                const productItems =  productService.getProductItemByVendorId(vendorId, hostDb)
+            async (req: { params: { vendorId: string }; hostDb: HostDbClient } ) => {  
+              const { vendorId } = req.params;          
+                const productItems =  productService.getProductItemByVendorId(vendorId, req.hostDb)
                 return productItems
             },
            )

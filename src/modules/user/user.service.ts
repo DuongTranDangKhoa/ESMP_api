@@ -104,6 +104,7 @@ export async function authenticateVendorUser(
     },
     vendorInfo: {
       vendorName: vendor.vendorName as string,
+      vendorId: vendor.vendorId as string,
     },
   }
 

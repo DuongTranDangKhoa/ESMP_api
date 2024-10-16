@@ -23,6 +23,7 @@ type HostInfo {
 
 type VendorInfo {
   vendorName String
+  vendorId   String
 }
 
 model SessionData {

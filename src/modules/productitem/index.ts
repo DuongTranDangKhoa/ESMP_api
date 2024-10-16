@@ -22,7 +22,7 @@ export const productItemGroup = (app: any) =>
             '/',
             async ({ body, hostDb }: { body: any, hostDb: HostDbClient } ) => {
                 const productItem = await productService.createProductItem( body, hostDb)
-                return productItem
+                return "Create productItem success"
             },
            )
            .put(

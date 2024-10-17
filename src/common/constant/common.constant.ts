@@ -1,6 +1,6 @@
 export const LoginType = { HOST: 'host', VENDOR: 'vendor' }
 
-export const DEFAULT_SESSION_DURATION = 30 * 60 // 30 minutes
+export const DEFAULT_SESSION_DURATION = 30  // 30 
 export const RoleType = { ADMIN: 'admin', HOST: 'host', MANAGER: 'manager', STAFF: 'staff' }
 export const EventStatus = {
   CREATED: 0,

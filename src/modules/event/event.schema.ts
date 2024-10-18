@@ -1,5 +1,5 @@
 import { error, Static, t } from 'elysia'
-import { Event } from '../../../prisma/clients/postgres/hostdb'
+import { Event, Prisma } from '../../../prisma/clients/postgres/hostdb'
 import { convertTimeFormat } from '../../utilities/datetime.util'
 import { timeFormat } from '../../common/timeFormat.common'
 import { EventRegisterStatus } from '../../common/constant/common.constant'
@@ -19,7 +19,7 @@ export class EventObject {
       x?: number | null
       y?: number | null
       onWeb?: Buffer
-      profit?: Decimal
+      profit: Prisma.Decimal
       status: string 
       constructor(data: any) {
         this.eventId = data.eventId
@@ -55,13 +55,13 @@ export const GetEventDetailsParams = t.Required(
 
 export const InputEventSchema = t.Required(
   t.Object({
-    eventName: t.String({
+    name: t.String({
       minLength: 10,
       maxLength: 100,
       error: 'Event name must be at least 10 and maximum 100 characters',
     }),
     description: t.String({
-      minLength: 100,
+      minLength: 10,
       maxLength: 1000,
       error:
         'Event description must be at least 100 and maximum 1000 characters',
@@ -74,8 +74,14 @@ export const InputEventSchema = t.Required(
       format: 'date',
       error: 'Invalid date',
     }),
-  }),
-)
+    profit: t.Number({ // Thêm trường profit vào schema
+      error: 'Profit must be a number',
+    }),
+     }),
+     {
+    additionalProperties: true, // Cho phép các thuộc tính khác
+  },
+  );
 
 export const InputEventRegisterItemSchema = t.Required(
   t.Object({

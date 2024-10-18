@@ -30,7 +30,7 @@ async function getEventById(eventId: string, hostDb: HostDbClient) {
   return event
 }
 
-async function createEvent(event: EventType, hostDb: HostDbClient) {
+async function createEvent(event: EventObject, hostDb: HostDbClient) {
   await hostDb.event
     .create({
       data: event

@@ -6,38 +6,39 @@ import { EventStatus } from '../../common/constant/common.constant'
 import { DatabaseError } from '../../errors/database.error'
 
 async function getAllEvent(hostDb: HostDbClient) {
-  const eventList = await hostDb.event.findMany().catch((err) => {
+  try {
+    const eventList = await hostDb.event.findMany()
+    console.log(eventList)
+    return eventList
+  } catch (err: any) {
     throw new DatabaseError(err.message)
-  })
-  console.log(eventList)
-  return eventList
+  }
 }
 
 async function getEventById(eventId: string, hostDb: HostDbClient) {
-  const event = await hostDb.event
-    .findUnique({
+  try {
+    const event = await hostDb.event.findUnique({
       where: {
         eventId,
       },
     })
-    .catch((err) => {
-      throw new DatabaseError(err.message)
-    })
-
-  if (!event) {
-    throw new NotFoundError('Event not found')
+    if (!event) {
+      throw new NotFoundError('Event not found')
+    }
+    return event
+  } catch (err: any) {
+    throw new DatabaseError(err.message)
   }
-  return event
 }
 
 async function createEvent(event: EventObject, hostDb: HostDbClient) {
-  await hostDb.event
-    .create({
-      data: event
+  try {
+    await hostDb.event.create({
+      data: event,
     })
-    .catch((err) => {
-      throw new DatabaseError(err.message)
-    })
+  } catch (err: any) {
+    throw new DatabaseError(err.message)
+  }
 }
 
 async function updateEvent(
@@ -45,8 +46,8 @@ async function updateEvent(
   updateData: EventObject,
   hostDb: HostDbClient,
 ) {
-  await hostDb.event
-    .update({
+  try {
+    await hostDb.event.update({
       where: {
         eventId,
       },
@@ -59,34 +60,36 @@ async function updateEvent(
         status: updateData.status,
       },
     })
-    .catch((err) => {
-      throw new DatabaseError(err.message)
-    })
+  } catch (err: any) {
+    throw new DatabaseError(err.message)
+  }
 }
+
 async function deleteEvent(eventId: string, hostDb: HostDbClient) {
-  await hostDb.event
-    .delete({
+  try {
+    await hostDb.event.delete({
       where: {
         eventId,
       },
     })
-    .catch((err) => {
-      throw new DatabaseError(err.message)
-    })
+  } catch (err: any) {
+    throw new DatabaseError(err.message)
+  }
 }
 
 async function getEventVendorList(eventId: string, hostDb: HostDbClient) {
-  const eventVendorList = await hostDb.eventPayment
-    .findMany({
+  try {
+    const eventVendorList = await hostDb.eventPayment.findMany({
       where: {
         eventId,
       },
     })
-    .catch((err) => {
-      throw new DatabaseError(err.message)
-    })
-  return eventVendorList
+    return eventVendorList
+  } catch (err: any) {
+    throw new DatabaseError(err.message)
+  }
 }
+
 // async function saveEventVendorList(
 //   eventId: string,
 //   eventRegisterList: InputEventRegisterObject[],
@@ -125,4 +128,5 @@ const eventService = {
   getEventVendorList,
   // saveEventVendorList,
 }
+
 export default eventService

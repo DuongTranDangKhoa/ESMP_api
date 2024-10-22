@@ -12,6 +12,7 @@ export const OrderPlain = t.Object(
     totalPrice: t.Number({ additionalProperties: true }),
     createAt: __nullable__(t.Date({ additionalProperties: true })),
     updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+    status: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
@@ -27,6 +28,7 @@ export const OrderPlainInputCreate = t.Object(
     totalPrice: t.Number({ additionalProperties: true }),
     createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
+    status: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
@@ -38,6 +40,7 @@ export const OrderPlainInputUpdate = t.Object(
     totalPrice: t.Number({ additionalProperties: true }),
     createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
+    status: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
@@ -67,6 +70,7 @@ export const OrderWhere = t.Partial(
         totalPrice: t.Number(),
         createAt: t.Date(),
         updatedAt: t.Date(),
+        status: t.String(),
       }),
     { $id: "Order" },
   ),
@@ -76,8 +80,8 @@ export const OrderWhere = t.Partial(
 export const OrderWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({})),
-      t.Union([]),
+      t.Partial(t.Object({ orderId: t.String() })),
+      t.Union([t.Object({ orderId: t.String() })]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -96,6 +100,7 @@ export const OrderWhereUnique = t.Recursive(
             totalPrice: t.Number(),
             createAt: t.Date(),
             updatedAt: t.Date(),
+            status: t.String(),
           },
           { additionalProperties: true },
         ),
@@ -116,6 +121,7 @@ export const OrderSelect = t.Partial(
       totalPrice: t.Boolean(),
       createAt: t.Boolean(),
       updatedAt: t.Boolean(),
+      status: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -139,6 +145,7 @@ export const OrderOrderBy = t.Partial(
       totalPrice: t.Union([t.Literal("asc"), t.Literal("desc")]),
       createAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      status: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

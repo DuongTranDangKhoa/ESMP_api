@@ -4,7 +4,7 @@ import { __nullable__ } from "./__nullable__";
 
 export const EventPaymentPlain = t.Object(
   {
-    eventPayment: t.String({ additionalProperties: true }),
+    eventPaymentid: t.String({ additionalProperties: true }),
     eventId: t.String({ additionalProperties: true }),
     vendorId: t.String({ additionalProperties: true }),
     locationId: t.String({ additionalProperties: true }),
@@ -25,7 +25,6 @@ export const EventPaymentRelations = t.Object(
 
 export const EventPaymentPlainInputCreate = t.Object(
   {
-    eventPayment: t.Optional(t.String({ additionalProperties: true })),
     deposit: t.Number({ additionalProperties: true }),
     depositPaymentDate: t.Optional(
       __nullable__(t.Date({ additionalProperties: true })),
@@ -44,7 +43,6 @@ export const EventPaymentPlainInputCreate = t.Object(
 
 export const EventPaymentPlainInputUpdate = t.Object(
   {
-    eventPayment: t.Optional(t.String({ additionalProperties: true })),
     deposit: t.Number({ additionalProperties: true }),
     depositPaymentDate: __nullable__(t.Date({ additionalProperties: true })),
     total: t.Number({ additionalProperties: true }),
@@ -74,7 +72,7 @@ export const EventPaymentWhere = t.Partial(
         AND: t.Union([Self, t.Array(Self)]),
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
-        eventPayment: t.String(),
+        eventPaymentid: t.String(),
         eventId: t.String(),
         vendorId: t.String(),
         locationId: t.String(),
@@ -93,9 +91,11 @@ export const EventPaymentWhere = t.Partial(
 export const EventPaymentWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ eventPayment: t.String(), locationId: t.String() })),
+      t.Partial(
+        t.Object({ eventPaymentid: t.String(), locationId: t.String() }),
+      ),
       t.Union([
-        t.Object({ eventPayment: t.String() }),
+        t.Object({ eventPaymentid: t.String() }),
         t.Object({ locationId: t.String() }),
       ]),
       t.Partial(
@@ -108,7 +108,7 @@ export const EventPaymentWhereUnique = t.Recursive(
       t.Partial(
         t.Object(
           {
-            eventPayment: t.String(),
+            eventPaymentid: t.String(),
             eventId: t.String(),
             vendorId: t.String(),
             locationId: t.String(),
@@ -130,7 +130,7 @@ export const EventPaymentWhereUnique = t.Recursive(
 export const EventPaymentSelect = t.Partial(
   t.Object(
     {
-      eventPayment: t.Boolean(),
+      eventPaymentid: t.Boolean(),
       eventId: t.Boolean(),
       vendorId: t.Boolean(),
       locationId: t.Boolean(),
@@ -155,7 +155,7 @@ export const EventPaymentInclude = t.Partial(
 export const EventPaymentOrderBy = t.Partial(
   t.Object(
     {
-      eventPayment: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      eventPaymentid: t.Union([t.Literal("asc"), t.Literal("desc")]),
       eventId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       vendorId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       locationId: t.Union([t.Literal("asc"), t.Literal("desc")]),

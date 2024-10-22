@@ -8,9 +8,9 @@ generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
   inputModel                  = "true"
+  typeboxImportDependencyName = "elysia"
   typeboxImportVariableName   = "t"
   additionalProperties        = "true"
-  typeboxImportDependencyName = "elysia"
 }
 
 datasource db {
@@ -19,7 +19,7 @@ datasource db {
 }
 
 model Event {
-  eventId     String    @unique(map: "event_pkey") @default(uuid()) @map("eventid") @db.Uuid
+  eventId     String    @id @default(uuid()) @map("eventid") @db.Uuid
   name        String    @map("eventname") @db.VarChar(50)
   description String?
   logo        String?   @map("logo") @db.VarChar
@@ -38,7 +38,7 @@ model Event {
 }
 
 model EventPayment {
-  eventPayment       String    @unique @default(uuid()) @map("eventPaymentId") @db.Uuid
+  eventPaymentid     String    @id @unique @default(uuid()) @map("eventPaymentId") @db.Uuid
   eventId            String    @map("eventid") @db.Uuid
   vendorId           String    @map("vendorid") @db.Uuid
   locationId         String    @unique @map("locationid") @db.Uuid
@@ -49,12 +49,11 @@ model EventPayment {
   createDate         DateTime? @default(now()) @map("create_at") @db.Date
   status             String?   @default("Pending") @map("status") @db.VarChar(50)
 
-  @@id([eventId, vendorId, locationId])
-  @@map("event_register")
+  @@map("eventpayment")
 }
 
 model Location {
-  locationId String  @unique @default(uuid()) @map("locationid") @db.Uuid
+  locationId String  @id @unique @default(uuid()) @map("locationid") @db.Uuid
   eventId    String  @map("eventid") @db.Uuid
   typeId     String  @map("typeid") @db.Uuid
   vendorId   String  @map("vendorid") @db.Uuid
@@ -66,7 +65,6 @@ model Location {
   width      Int?    @map("width")
   status     String? @map("status") @db.VarChar(50)
 
-  @@id([locationId, eventId, typeId])
   @@map("location")
 }
 
@@ -82,13 +80,14 @@ model LocationType {
 
 model Theme {
   themeId String   @id @unique @default(uuid()) @map("themeid") @db.Uuid
+  name    String   @map("name") @db.VarChar(250)
   status  Boolean? @default(false) @map("status")
 
   @@map("theme")
 }
 
 model Vendor {
-  vendorId    String    @unique(map: "vendor_pkey_unique") @default(uuid()) @map("vendorid") @db.Uuid
+  vendorId    String    @id @unique(map: "vendor_pkey_unique") @default(uuid()) @map("vendorid") @db.Uuid
   username    String    @unique @db.VarChar(40)
   password    String    @db.VarChar(100)
   vendorName  String?   @map("vendorname") @db.VarChar(500)
@@ -97,7 +96,6 @@ model Vendor {
   image       String?   @map("image") @db.VarChar
   address     String?   @map("address") @db.VarChar(500)
   urlQr       String?   @map("ulQr") @db.VarChar
-  category    String?   @default("") @db.VarChar(40)
   createDate  DateTime? @default(now()) @map("create_at") @db.Date
   updatedDate DateTime? @default(now()) @map("updated_at") @db.Date
   status      Boolean?  @default(true) @map("status")
@@ -106,7 +104,7 @@ model Vendor {
 }
 
 model Order {
-  orderId     String    @default(uuid()) @map("orderid") @db.Uuid
+  orderId     String    @id @default(uuid()) @map("orderid") @db.Uuid
   eventId     String    @map("eventid") @db.Uuid
   vendorId    String    @map("vendorid") @db.VarChar(100)
   name        String    @map("name") @db.VarChar(250)
@@ -114,23 +112,19 @@ model Order {
   totalPrice  Decimal   @db.Decimal(10, 2)
   createAt    DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
+  status      String    @map("status") @db.VarChar(10)
 
-  @@id([orderId, eventId, vendorId])
   @@map("order")
 }
 
 model OrderDetail {
-  orderDetailId String    @db.Uuid
-  eventId       String    @map("eventid") @db.Uuid
-  vendorId      String    @map("vendorid") @db.VarChar(100)
-  orderId       String    @map("orderid") @db.Uuid
-  quantity      Int?      @map("quantity")
-  unitPrice     Decimal   @map("unitPrice") @db.Decimal(10, 2)
-  totalPrice    Decimal   @map("totalprice") @db.Decimal(12, 4)
-  createAt      DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
+  orderDetailId String  @id @default(uuid()) @map("orderdetailid") @db.Uuid
+  productitemId String  @map("productitemid") @db.Uuid
+  orderId       String  @map("orderid") @db.Uuid
+  quantity      Int?    @map("quantity")
+  unitPrice     Decimal @map("unitPrice") @db.Decimal(10, 2)
+  totalPrice    Decimal @map("totalprice") @db.Decimal(12, 4)
 
-  @@id([eventId, vendorId, orderId])
   @@map("orderdetail")
 }
 
@@ -160,7 +154,7 @@ model Config {
 }
 
 model ProductItem {
-  productItemId String    @unique @default(uuid()) @map("productItemId") @db.Uuid
+  productItemId String    @id @unique @default(uuid()) @map("productItemId") @db.Uuid
   productId     String    @map("productid") @db.Uuid
   vendorid      String    @map("vendorid") @db.Uuid
   name          String    @map("name") @db.VarChar(253)
@@ -174,12 +168,11 @@ model ProductItem {
   updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
   status        Boolean   @default(false) @map("status")
 
-  @@id([productItemId])
   @@map("productItem")
 }
 
 model Payment {
-  transactionId   String    @default(uuid()) @map("transactionid") @db.Uuid
+  paymentId       String    @default(uuid()) @map("paymentId") @db.Uuid
   orderId         String    @map("orderid") @db.Uuid
   eventId         String    @map("eventid") @db.Uuid
   transactionType String?   @map("transactiontype") @db.VarChar
@@ -187,7 +180,7 @@ model Payment {
   price           Decimal   @default(0.0) @map("price") @db.Decimal(10, 2)
   status          String    @default("pending") @map("status") @db.VarChar(20)
 
-  @@id([transactionId, orderId, eventId])
+  @@id([paymentId, orderId])
   @@map("payment")
 }
 

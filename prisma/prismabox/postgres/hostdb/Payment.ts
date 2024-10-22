@@ -4,7 +4,7 @@ import { __nullable__ } from "./__nullable__";
 
 export const PaymentPlain = t.Object(
   {
-    transactionId: t.String({ additionalProperties: true }),
+    paymentId: t.String({ additionalProperties: true }),
     orderId: t.String({ additionalProperties: true }),
     eventId: t.String({ additionalProperties: true }),
     transactionType: __nullable__(t.String({ additionalProperties: true })),
@@ -60,7 +60,7 @@ export const PaymentWhere = t.Partial(
         AND: t.Union([Self, t.Array(Self)]),
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
-        transactionId: t.String(),
+        paymentId: t.String(),
         orderId: t.String(),
         eventId: t.String(),
         transactionType: t.String(),
@@ -88,7 +88,7 @@ export const PaymentWhereUnique = t.Recursive(
       t.Partial(
         t.Object(
           {
-            transactionId: t.String(),
+            paymentId: t.String(),
             orderId: t.String(),
             eventId: t.String(),
             transactionType: t.String(),
@@ -107,7 +107,7 @@ export const PaymentWhereUnique = t.Recursive(
 export const PaymentSelect = t.Partial(
   t.Object(
     {
-      transactionId: t.Boolean(),
+      paymentId: t.Boolean(),
       orderId: t.Boolean(),
       eventId: t.Boolean(),
       transactionType: t.Boolean(),
@@ -129,7 +129,7 @@ export const PaymentInclude = t.Partial(
 export const PaymentOrderBy = t.Partial(
   t.Object(
     {
-      transactionId: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      paymentId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       orderId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       eventId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       transactionType: t.Union([t.Literal("asc"), t.Literal("desc")]),

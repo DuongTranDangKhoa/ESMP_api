@@ -5,6 +5,7 @@ import { __nullable__ } from "./__nullable__";
 export const ThemePlain = t.Object(
   {
     themeId: t.String({ additionalProperties: true }),
+    name: t.String({ additionalProperties: true }),
     status: __nullable__(t.Boolean({ additionalProperties: true })),
   },
   { additionalProperties: true },
@@ -14,6 +15,7 @@ export const ThemeRelations = t.Object({}, { additionalProperties: true });
 
 export const ThemePlainInputCreate = t.Object(
   {
+    name: t.String({ additionalProperties: true }),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
@@ -21,6 +23,7 @@ export const ThemePlainInputCreate = t.Object(
 
 export const ThemePlainInputUpdate = t.Object(
   {
+    name: t.String({ additionalProperties: true }),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
@@ -44,6 +47,7 @@ export const ThemeWhere = t.Partial(
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
         themeId: t.String(),
+        name: t.String(),
         status: t.Boolean(),
       }),
     { $id: "Theme" },
@@ -65,7 +69,7 @@ export const ThemeWhereUnique = t.Recursive(
       ),
       t.Partial(
         t.Object(
-          { themeId: t.String(), status: t.Boolean() },
+          { themeId: t.String(), name: t.String(), status: t.Boolean() },
           { additionalProperties: true },
         ),
         { additionalProperties: true },
@@ -76,7 +80,12 @@ export const ThemeWhereUnique = t.Recursive(
 
 export const ThemeSelect = t.Partial(
   t.Object(
-    { themeId: t.Boolean(), status: t.Boolean(), _count: t.Boolean() },
+    {
+      themeId: t.Boolean(),
+      name: t.Boolean(),
+      status: t.Boolean(),
+      _count: t.Boolean(),
+    },
     { additionalProperties: true },
   ),
   { additionalProperties: true },
@@ -91,6 +100,7 @@ export const ThemeOrderBy = t.Partial(
   t.Object(
     {
       themeId: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      name: t.Union([t.Literal("asc"), t.Literal("desc")]),
       status: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },

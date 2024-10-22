@@ -5,14 +5,11 @@ import { __nullable__ } from "./__nullable__";
 export const OrderDetailPlain = t.Object(
   {
     orderDetailId: t.String({ additionalProperties: true }),
-    eventId: t.String({ additionalProperties: true }),
-    vendorId: t.String({ additionalProperties: true }),
+    productitemId: t.String({ additionalProperties: true }),
     orderId: t.String({ additionalProperties: true }),
     quantity: __nullable__(t.Integer({ additionalProperties: true })),
     unitPrice: t.Number({ additionalProperties: true }),
     totalPrice: t.Number({ additionalProperties: true }),
-    createAt: __nullable__(t.Date({ additionalProperties: true })),
-    updatedAt: __nullable__(t.Date({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -29,8 +26,6 @@ export const OrderDetailPlainInputCreate = t.Object(
     ),
     unitPrice: t.Number({ additionalProperties: true }),
     totalPrice: t.Number({ additionalProperties: true }),
-    createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    updatedAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -40,8 +35,6 @@ export const OrderDetailPlainInputUpdate = t.Object(
     quantity: __nullable__(t.Integer({ additionalProperties: true })),
     unitPrice: t.Number({ additionalProperties: true }),
     totalPrice: t.Number({ additionalProperties: true }),
-    createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    updatedAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -64,14 +57,11 @@ export const OrderDetailWhere = t.Partial(
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
         orderDetailId: t.String(),
-        eventId: t.String(),
-        vendorId: t.String(),
+        productitemId: t.String(),
         orderId: t.String(),
         quantity: t.Integer(),
         unitPrice: t.Number(),
         totalPrice: t.Number(),
-        createAt: t.Date(),
-        updatedAt: t.Date(),
       }),
     { $id: "OrderDetail" },
   ),
@@ -81,8 +71,8 @@ export const OrderDetailWhere = t.Partial(
 export const OrderDetailWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({})),
-      t.Union([]),
+      t.Partial(t.Object({ orderDetailId: t.String() })),
+      t.Union([t.Object({ orderDetailId: t.String() })]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -94,14 +84,11 @@ export const OrderDetailWhereUnique = t.Recursive(
         t.Object(
           {
             orderDetailId: t.String(),
-            eventId: t.String(),
-            vendorId: t.String(),
+            productitemId: t.String(),
             orderId: t.String(),
             quantity: t.Integer(),
             unitPrice: t.Number(),
             totalPrice: t.Number(),
-            createAt: t.Date(),
-            updatedAt: t.Date(),
           },
           { additionalProperties: true },
         ),
@@ -115,14 +102,11 @@ export const OrderDetailSelect = t.Partial(
   t.Object(
     {
       orderDetailId: t.Boolean(),
-      eventId: t.Boolean(),
-      vendorId: t.Boolean(),
+      productitemId: t.Boolean(),
       orderId: t.Boolean(),
       quantity: t.Boolean(),
       unitPrice: t.Boolean(),
       totalPrice: t.Boolean(),
-      createAt: t.Boolean(),
-      updatedAt: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -139,14 +123,11 @@ export const OrderDetailOrderBy = t.Partial(
   t.Object(
     {
       orderDetailId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      eventId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      vendorId: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      productitemId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       orderId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       quantity: t.Union([t.Literal("asc"), t.Literal("desc")]),
       unitPrice: t.Union([t.Literal("asc"), t.Literal("desc")]),
       totalPrice: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      createAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

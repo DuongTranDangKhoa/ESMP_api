@@ -18,7 +18,6 @@ const authenticateVendorUser = async (
       username: true,
       password: true,
       vendorName: true,
-      category: true,
     },
     where: {
       username,

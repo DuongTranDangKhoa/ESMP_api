@@ -2,4 +2,5 @@ import { t } from 'elysia'
 
 export const CommonSuccessResponse = t.Object({
   message: t.String(),
+  id: t.String(),
 })

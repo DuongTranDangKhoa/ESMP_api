@@ -3,12 +3,12 @@ import { HostDbClient } from '../../database/host.db'
 import { ProductObject, ProductType } from './product.schema'
 
 const getProductListByVendorId = async (
-  categoryId: string,
+  vendorid: string,
   hostDb: HostDbClient,
 ) => {
   return await hostDb.product.findMany({
     where: {
-      categoryId,
+      vendorid,
     },
   })
 }
@@ -16,19 +16,31 @@ const getProductList = async (hostDb: HostDbClient) => {
   return await hostDb.product.findMany()
 }
 const createVendorProduct = async (
+  vendorId: string,
   inputData: ProductObject,
   hostDb: HostDbClient,
 ) => {
-  await hostDb.product.create({
-    data: inputData,
-  })
+  console.log('Product created', inputData)
+ const product = await hostDb.product.create({
+    data: {
+      categoryId: inputData.categoryId,
+      productName: inputData.productName,
+      description: inputData.description,
+      quantity: inputData.quantity,
+      count: inputData.count, 
+      status: inputData.status,
+      vendor: {
+        connect: { vendorId } 
+      }
+    }
+  });
+  return product;
 }
 
 const getProductById = async (
   productId: string,
   hostDb: HostDbClient,
 ) => {
-  console.log( productId)
   const product = await hostDb.product.findUnique({
     where: {
         productId,
@@ -42,30 +54,45 @@ const getProductById = async (
 }
 
 const updateProduct = async (
-  productId: string,
+  vendorId: string,
+  productid: string,
   updateData: ProductObject,
   hostDb: HostDbClient,
 ) => {
+  console.log('Product updated', productid)
   await hostDb.product.update({
     where: {
-        productId
-      },
-       data: updateData,
-    },)
-}
-
-
+      productId: productid 
+    },
+    data: {
+      productId: productid,
+      vendorid: vendorId,
+      categoryId: updateData.categoryId,
+      productName: updateData.productName,
+      description: updateData.description,
+      quantity: updateData.quantity,
+      count: updateData.count,
+      status: updateData.status
+    }
+  });
+};
 const deleteProduct = async (
-  productId: string,
+  productid: string,
   hostDb: HostDbClient,
 ) => {
-  await hostDb.product.delete({
+  console.log('Product updated', productid)
+  await hostDb.product.update({
     where: {
-        productId,
-      },
+      productId: productid 
     },
-  )
-}
+    data: {
+      status: false
+    }
+  });
+};
+
+
+
 
 
 const productService = {

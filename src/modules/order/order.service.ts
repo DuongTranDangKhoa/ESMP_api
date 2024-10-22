@@ -1,96 +1,128 @@
+import { Order } from './../../../prisma/clients/postgres/hostdb/index.d';
+import { ProductItem } from './../../../prisma/prismabox/postgres/hostdb/ProductItem';
 import { NotFoundError } from 'elysia'
 import { HostDbClient } from '../../database/host.db'
-import { OrderDetailObject, OrderObject } from './order.schema'
+import { CreateOrder, OrderDetailObject, OrderObject } from './order.schema'
 
 const getOrderListOfVendor = async (vendorId: string, hostDb: HostDbClient) => {
+  console.log('orderListOfVendor', vendorId)
   const orderListOfVendor = await hostDb.order.findMany({
     where: {
       vendorId,
     },
   })
+  console.log('orderListOfVendor', orderListOfVendor)
   return orderListOfVendor
 }
 
-const getOrderListOfEvent = async (eventId: string, hostDb: HostDbClient) => {
+const getOrderListOfEvent = async (eventId: string,vendorId: string, hostDb: HostDbClient) => {
   const orderListOfVendor = await hostDb.order.findMany({
     where: {
       eventId,
+      vendorId
     },
   })
   return orderListOfVendor
 }
 
+// const createOrder = async (
+//   eventId: string,
+//   vendorId: string,
+//   orderData: any,
+//   hostDB: HostDbClient,
+// ) => {
+//   const total = orderData.reduce(
+//     (total: number, orderItem: any) => (total += orderItem.price),
+//   )
+
+//   await hostDB.$transaction(async (hostDB) => {
+//     const order = await hostDB.order.create({
+//       data: {
+//         eventId,
+//         vendorId,
+//         total,
+//         createBy: vendorId,
+//         updatedBy: vendorId,
+//       },
+//     })
+
+//     const orderItems = orderData.map(
+//       (orderItem: any, index: any) =>
+//         new OrderDetailObject(
+//           eventId,
+//           vendorId,
+//           order.orderId,
+//           Number(index + 1),
+//           orderItem,
+//         ),
+//     )
+
+//     await Promise.all(
+//       orderItems.map(async (orderItem: OrderDetailObject) => {
+//         await hostDB.orderDetail.create({ data: orderItem })
+//       }),
+//     )
+//   })
+// }
 const createOrder = async (
-  eventId: string,
-  vendorId: string,
-  orderData: any,
+  inputOrderDetail: CreateOrder,
   hostDB: HostDbClient,
 ) => {
-  const total = orderData.reduce(
-    (total: number, orderItem: any) => (total += orderItem.price),
-  )
 
-  await hostDB.$transaction(async (hostDB) => {
-    const order = await hostDB.order.create({
-      data: {
-        eventId,
-        vendorId,
-        total,
-        createBy: vendorId,
-        updatedBy: vendorId,
-      },
-    })
+  const order = await hostDB.order.create({
+    data: {
+      eventId: inputOrderDetail.eventId,
+      vendorId: inputOrderDetail.vendorId,
+      name: inputOrderDetail.name,
+      totalAmount: inputOrderDetail.totalAmount,
+      totalPrice: inputOrderDetail.totalPrice,
+      status: "Prepared"
+    }
+  });
 
-    const orderItems = orderData.map(
-      (orderItem: any, index: any) =>
-        new OrderDetailObject(
-          eventId,
-          vendorId,
-          order.orderId,
-          Number(index + 1),
-          orderItem,
-        ),
-    )
 
-    await Promise.all(
-      orderItems.map(async (orderItem: OrderDetailObject) => {
-        await hostDB.orderDetail.create({ data: orderItem })
-      }),
-    )
-  })
+  if (!order) {
+    throw new NotFoundError('Order not exists');
+  }
+
+
+  const orderDetailsData = inputOrderDetail.details.map(detail => ({
+    productitemId: detail.productitemId,
+    orderId: order.orderId,  
+    quantity: detail.quantity,
+    unitPrice: detail.unitPrice,
+    totalPrice: detail.quantity * detail.unitPrice
+  }));
+
+  const orderDetail = await hostDB.orderDetail.createMany({
+    data: orderDetailsData
+  });
+
+  // Kiểm tra xem chi tiết đơn hàng đã được tạo chưa
+  if (!orderDetail) {
+    throw new Error('Failed to create order details');
+  }
+
+  // Trả về kết quả tạo đơn hàng và chi tiết đơn hàng
+  return {
+    order,
+    orderDetails: orderDetail
+  };
 }
 
 const getOrderDetails = async (
-  eventId: string,
-  vendorId: string,
   orderId: string,
   hostDb: HostDbClient,
 ) => {
-  const order = hostDb.order.findUnique({
-    where: {
-      orderId_eventId_vendorId: {
-        eventId,
-        vendorId,
-        orderId,
-      },
-    },
-  })
-  if (!order) {
-    throw new NotFoundError('Order not exists')
-  }
-
+  console.log('orderDetails', orderId)
   const orderDetails = hostDb.orderDetail.findMany({
     where: {
-      eventId,
-      vendorId,
-      orderId,
+      orderId
     },
   })
-
-  return {
-    order,
-    orderDetails,
-  }
+  
+  return orderDetails
+  
 }
 
 const orderService = {

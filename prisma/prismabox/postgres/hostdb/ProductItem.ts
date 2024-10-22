@@ -6,12 +6,9 @@ export const ProductItemPlain = t.Object(
   {
     productItemId: t.String({ additionalProperties: true }),
     productId: t.String({ additionalProperties: true }),
-    vendorid: t.String({ additionalProperties: true }),
     name: t.String({ additionalProperties: true }),
-    imageUrl: __nullable__(t.String({ additionalProperties: true })),
     description: t.String({ additionalProperties: true }),
-    productOrigin: t.String({ additionalProperties: true }),
-    outofstock: t.Boolean({ additionalProperties: true }),
+    productOriginBy: t.String({ additionalProperties: true }),
     price: t.Number({ additionalProperties: true }),
     unit: t.String({ additionalProperties: true }),
     createAt: __nullable__(t.Date({ additionalProperties: true })),
@@ -22,19 +19,31 @@ export const ProductItemPlain = t.Object(
 );
 
 export const ProductItemRelations = t.Object(
-  {},
+  {
+    product: t.Object(
+      {
+        productId: t.String({ additionalProperties: true }),
+        vendorid: t.String({ additionalProperties: true }),
+        categoryId: t.String({ additionalProperties: true }),
+        productName: t.String({ additionalProperties: true }),
+        description: __nullable__(t.String({ additionalProperties: true })),
+        quantity: __nullable__(t.Integer({ additionalProperties: true })),
+        createAt: __nullable__(t.Date({ additionalProperties: true })),
+        updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+        status: __nullable__(t.Boolean({ additionalProperties: true })),
+        count: __nullable__(t.Integer({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
+    ),
+  },
   { additionalProperties: true },
 );
 
 export const ProductItemPlainInputCreate = t.Object(
   {
     name: t.String({ additionalProperties: true }),
-    imageUrl: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
     description: t.String({ additionalProperties: true }),
-    productOrigin: t.String({ additionalProperties: true }),
-    outofstock: t.Optional(t.Boolean({ additionalProperties: true })),
+    productOriginBy: t.String({ additionalProperties: true }),
     price: t.Number({ additionalProperties: true }),
     unit: t.String({ additionalProperties: true }),
     createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
@@ -47,10 +56,8 @@ export const ProductItemPlainInputCreate = t.Object(
 export const ProductItemPlainInputUpdate = t.Object(
   {
     name: t.String({ additionalProperties: true }),
-    imageUrl: __nullable__(t.String({ additionalProperties: true })),
     description: t.String({ additionalProperties: true }),
-    productOrigin: t.String({ additionalProperties: true }),
-    outofstock: t.Optional(t.Boolean({ additionalProperties: true })),
+    productOriginBy: t.String({ additionalProperties: true }),
     price: t.Number({ additionalProperties: true }),
     unit: t.String({ additionalProperties: true }),
     createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
@@ -61,12 +68,39 @@ export const ProductItemPlainInputUpdate = t.Object(
 );
 
 export const ProductItemRelationsInputCreate = t.Object(
-  {},
+  {
+    product: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
+  },
   { additionalProperties: true },
 );
 
 export const ProductItemRelationsInputUpdate = t.Partial(
-  t.Object({}, { additionalProperties: true }),
+  t.Object(
+    {
+      product: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
@@ -79,12 +113,9 @@ export const ProductItemWhere = t.Partial(
         OR: t.Array(Self),
         productItemId: t.String(),
         productId: t.String(),
-        vendorid: t.String(),
         name: t.String(),
-        imageUrl: t.String(),
         description: t.String(),
-        productOrigin: t.String(),
-        outofstock: t.Boolean(),
+        productOriginBy: t.String(),
         price: t.Number(),
         unit: t.String(),
         createAt: t.Date(),
@@ -113,12 +144,9 @@ export const ProductItemWhereUnique = t.Recursive(
           {
             productItemId: t.String(),
             productId: t.String(),
-            vendorid: t.String(),
             name: t.String(),
-            imageUrl: t.String(),
             description: t.String(),
-            productOrigin: t.String(),
-            outofstock: t.Boolean(),
+            productOriginBy: t.String(),
             price: t.Number(),
             unit: t.String(),
             createAt: t.Date(),
@@ -138,17 +166,15 @@ export const ProductItemSelect = t.Partial(
     {
       productItemId: t.Boolean(),
       productId: t.Boolean(),
-      vendorid: t.Boolean(),
       name: t.Boolean(),
-      imageUrl: t.Boolean(),
       description: t.Boolean(),
-      productOrigin: t.Boolean(),
-      outofstock: t.Boolean(),
+      productOriginBy: t.Boolean(),
       price: t.Boolean(),
       unit: t.Boolean(),
       createAt: t.Boolean(),
       updatedAt: t.Boolean(),
       status: t.Boolean(),
+      product: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -157,7 +183,10 @@ export const ProductItemSelect = t.Partial(
 );
 
 export const ProductItemInclude = t.Partial(
-  t.Object({ _count: t.Boolean() }, { additionalProperties: true }),
+  t.Object(
+    { product: t.Boolean(), _count: t.Boolean() },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
@@ -166,12 +195,9 @@ export const ProductItemOrderBy = t.Partial(
     {
       productItemId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       productId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      vendorid: t.Union([t.Literal("asc"), t.Literal("desc")]),
       name: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      imageUrl: t.Union([t.Literal("asc"), t.Literal("desc")]),
       description: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      productOrigin: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      outofstock: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      productOriginBy: t.Union([t.Literal("asc"), t.Literal("desc")]),
       price: t.Union([t.Literal("asc"), t.Literal("desc")]),
       unit: t.Union([t.Literal("asc"), t.Literal("desc")]),
       createAt: t.Union([t.Literal("asc"), t.Literal("desc")]),

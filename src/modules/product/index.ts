@@ -13,7 +13,7 @@ export const productGroup = (app: any) =>
       }, 
     )
   // group that require vendorId
-  .group('/', (app: any) =>
+  .group('/:vendorId', (app: any) =>
     app.guard(
       {
         params: vendorSchema.GetVendorParams,
@@ -76,10 +76,20 @@ export const productGroup = (app: any) =>
             }) => {
               const inputData = new productSchema.ProductObject( body)
 
-              await productService.createVendorProduct(inputData, hostDb)
+              const product = await productService.createVendorProduct(vendorId,inputData, hostDb)
 
-              set.status = status('Created')
+              set.status = status('OK')
+              return {
+                   message: 'Create product success',
+                   id: product.productId
+                }
             },
+                {
+                response: {
+                  201: commonSchema.CommonSuccessResponse,
+                },
+              },
+            
           )
           // group that require productId
           .group('/:productId', (app: any) =>
@@ -146,10 +156,12 @@ export const productGroup = (app: any) =>
                       set: any
                       hostDb: HostDbClient
                     }) => {
+
                       const updateData = new productSchema.ProductObject(
                         body
                       )
                       await productService.updateProduct(
+                        vendorId,
                         productId,
                         updateData,
                         hostDb,
@@ -158,13 +170,7 @@ export const productGroup = (app: any) =>
                       return {
                         message: 'Update product success',
                       }
-                    },
-                    {
-                      body: vendorSchema.VendorObject,
-                      response: {
-                        200: commonSchema.CommonSuccessResponse,
-                      },
-                    },
+                    }
                   )
                   /**
                    * DELETE api/product/:vendorId/:productId

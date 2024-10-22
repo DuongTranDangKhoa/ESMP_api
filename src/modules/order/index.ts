@@ -5,153 +5,83 @@ import { GetVendorParams } from '../vendor/vendor.schema'
 import vendorService from '../vendor/vendor.service'
 import * as orderSchema from './order.schema'
 import orderService from './order.service'
+import { GetOrderParams } from './order.schema'
 
 export const orderGroup = (app: any) =>
   app
-    /**
-     * GET api/order/:vendorId
-     * Create Vendor's orders
-     * @response vendor's orders
-     */
     .get(
-      '/order/vendor/:vendorId',
+      '/vendor/:vendorId',
       async ({
         params,
-        set,
         hostDb,
       }: {
-        params: any
-        set: any
-        hostDb: HostDbClient
+        params: any;
+        hostDb: HostDbClient;
       }) => {
-        const vendorId = params.vendorId
-        await vendorService.getVendorById(vendorId, hostDb)
+        const vendorId = params.vendorId;
+        await vendorService.getVendorById(vendorId, hostDb);
         const orderListOfVendor = await orderService.getOrderListOfVendor(
           vendorId,
           hostDb,
-        )
-        set.status = status('OK')
-        return orderListOfVendor
-      },
-      {
-        params: GetVendorParams,
+        );
+        return orderListOfVendor;
       },
     )
-    /**
-     * GET api/order/:eventId
-     * Create Event's orders
-     * @response event's orders
-     */
     .get(
-      '/order/event/:eventId',
+      '/event/:eventId/:vendorId',
       async ({
         params,
         set,
         hostDb,
       }: {
-        params: any
-        set: any
-        hostDb: HostDbClient
+        params: any;
+        set: any;
+        hostDb: HostDbClient;
       }) => {
-        const eventId = params.eventId
-        await eventService.getEventById(eventId, hostDb)
-        const orderListOfVendor = await orderService.getOrderListOfEvent(
+        const eventId = params.eventId;
+        const vendorId = params.vendorId;
+        await eventService.getEventById(eventId, hostDb);
+        const orderListOfEvent = await orderService.getOrderListOfEvent(
           eventId,
+          vendorId,
           hostDb,
-        )
-        set.status = status('OK')
-        return orderListOfVendor
-      },
-      {
-        params: GetVendorParams,
+        );
+        set.status = status('OK');
+        return orderListOfEvent;
       },
     )
-    .guard(
-      {
-        params: orderSchema.OrderOuterPathParams,
+    .post(
+      '/',
+      async ({
+        body,
+        set,
+        hostDb,
+      }: {
+        body: any;
+        set: any;
+        hostDb: HostDbClient;
+      }) => {
+        await orderService.createOrder(body, hostDb);
+        set.status = status('Created');
+        return {
+          message: 'Create order success',
+        };
       },
-      (app: any) =>
-        //guard for checking product exist or not
-        app
-          /**
-           * POST api/order/:eventId/:vendorId
-           * Create Order
-           * @response product's details
-           */
-          .resolve(
-            async ({
-              params,
-              hostDb,
-            }: {
-              params: any
-              hostDb: HostDbClient
-            }) => {
-              const { eventId, vendorId } = params
-              await eventService.getEventById(eventId, hostDb)
-              await vendorService.getVendorById(vendorId, hostDb)
-              return { eventId, vendorId }
-            },
-          )
-          .post(
-            '/',
-            async ({
-              eventId,
-              vendorId,
-              body,
-              set,
-              hostDb,
-            }: {
-              eventId: string
-              vendorId: string
-              body: any
-              set: any
-              hostDb: HostDbClient
-            }) => {
-              const orderData = body
-              await orderService.createOrder(
-                eventId,
-                vendorId,
-                orderData,
-                hostDb,
-              )
-              set.status = status('Created')
-              return {
-                message: 'Create order success',
-              }
-            },
-          )
-          /**
-           * GET api/order/:eventId/:vendorId/:orderId
-           * Get Order's details
-           * @response order's details
-           */
-          .get(
-            '/:orderId',
-            async ({
-              eventId,
-              vendorId,
-              params,
-              set,
-              hostDb,
-            }: {
-              eventId: string
-              vendorId: string
-              params: any
-              set: any
-              hostDb: HostDbClient
-            }) => {
-              const orderId = params.orderId
-              const orderDetails = await orderService.getOrderDetails(
-                eventId,
-                vendorId,
-                orderId,
-                hostDb,
-              )
-              set.status = status('OK')
-              return orderDetails
-            },
-            {
-              params: orderSchema.GetOrderParams,
-            },
-          ),
     )
+    .get(
+      '/orderDetail/:orderId',
+      async ({
+        params,
+        hostDb,
+      }: {
+        params: any;
+        hostDb: HostDbClient;
+      }) => {
+        const { orderId } = params;
+        const orderDetails = await orderService.getOrderDetails(
+          orderId,
+          hostDb
+        );
+        return orderDetails;
+      },
+    );

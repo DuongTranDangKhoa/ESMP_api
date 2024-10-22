@@ -2,14 +2,23 @@ import { NotFoundError, InternalServerError } from "elysia";
 import { HostDbClient } from "../../database/host.db";
 import { ProductItemObject, ProductItemType } from "./productitem.schema";
 import { EventStatus } from "../../common/constant/common.constant";
+import productService from "../product/product.service";
 
-const getProductItemByVendorId = async (
-    vendorId: string, hostDb: HostDbClient,
-) => {
+const getProductItem = async (vendorId: string, hostDb: HostDbClient) => {
     try {
-        return await hostDb.productItem.findMany({
-            where: { vendorid: vendorId },
-        });
+        const products = await productService.getProductListByVendorId(vendorId, hostDb);
+
+        let productItems;
+        for (const product of products) {
+            productItems = await hostDb.productItem.findMany({
+                where: { productId: product.productId }, 
+            });
+            if (productItems && productItems.length > 0) {
+                return {productItems,  vendorId };
+            }
+        }
+        throw new Error('No product items found for any product.');
+
     } catch (error) {
         throw new InternalServerError('Failed to retrieve product items');
     }
@@ -39,9 +48,11 @@ const createProductItem = async (
     inputData: ProductItemType, hostDb: HostDbClient
 ) => {
     try {
+        console.log("Product item created", inputData);
         const productItem = await hostDb.productItem.create({
             data: inputData,
         });
+        
         return productItem;
     } catch (error) {
         throw new InternalServerError('Failed to create product item');
@@ -79,12 +90,12 @@ const deleteProductItem = async (
     }
 }
 
-const productService = {
-    getProductItemByVendorId,
+const productItemService = {
+    getProductItem,
     getProductItemById,
     createProductItem,
     updateProductItem,
     deleteProductItem
 };
 
-export default productService;
+export default productItemService;

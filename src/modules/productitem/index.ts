@@ -1,6 +1,8 @@
 import { HostDbClient } from '../../database/host.db'
 import productService from './productitem.service'
-
+import status from 'statuses'
+import * as productitemshema from "./productitem.schema";
+import * as commonSchema from '../../common/schema.common'
 export const productItemGroup = (app: any) =>
     app
         .guard('/', (app: any) =>
@@ -14,16 +16,27 @@ export const productItemGroup = (app: any) =>
             '/:vendorId',
             async (req: { params: { vendorId: string }; hostDb: HostDbClient } ) => {  
               const { vendorId } = req.params;          
-                const productItems =  productService.getProductItemByVendorId(vendorId, req.hostDb)
+                const productItems =  productService.getProductItem(vendorId, req.hostDb)
                 return productItems
             },
            )
            .post(
             '/',
-            async ({ body, hostDb }: { body: any, hostDb: HostDbClient } ) => {
+            async ({ body,set, hostDb }: { body: any, set : any, hostDb: HostDbClient } ) => {
+                console.log('body', body);
                 const productItem = await productService.createProductItem( body, hostDb)
-                return "Create productItem success"
+                 set.status = status('Created')
+                return {
+                   message: 'Create productItem success',
+                   id: productItem.productItemId
+                }
             },
+                {
+                body: productitemshema.GetProuctPramas,
+                response: {
+                  201: commonSchema.CommonSuccessResponse,
+                },
+              },        
            )
            .put(
             '/',

@@ -3,27 +3,21 @@ import { ProductItem } from "../../../prisma/clients/postgres/hostdb"
 export type ProductItemType = ProductItem
 export class ProductItemObject {
   productItemId?:      string 
-  productId:   string   
-  vendorid:    string  
+  productId:   string     
   name:        string   
-  imgUrls?:    string
   description: string 
-  productOrigin:        string
-  outofstock?: boolean    
+  productOriginBy:        string 
   price:       number
   unit : string
   createAt?: Date 
   updateAt?: Date   
-  status?: boolean 
+  status: boolean 
   constructor(productId: string, data: any) {
     this.productId = productId
     this.productItemId = data.guid
-    this.vendorid = data.vendorid
-    this.imgUrls = data.imgUrls
     this.name = data.name
     this.description = data.description
-    this.productOrigin = data.type
-    this.outofstock = true
+    this.productOriginBy = data.type
     this.unit = data.unit
     this.createAt = new Date(data.createAt)
     this.updateAt = new Date(data.updateAt)  
@@ -34,11 +28,10 @@ export class ProductItemObject {
 export const GetProuctPramas = t.Required(
     t.Object(
       {
-        productId: t.String({ format: 'uuid', error: 'Invalid Product ID' }),
-        vendorId: t.String({ format: 'uuid', error: 'Invalid Vendor ID' }),
-    },
-    {
-        error: 'Product Item not work'
-    },
-    ),
-  )
+        productId: t.String({ format: 'uuid', error: 'Invalid Product ID' }),    
+      }),
+      {
+         additionalProperties: true,
+      }
+    );
+        

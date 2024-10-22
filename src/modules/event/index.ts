@@ -36,15 +36,16 @@ export const eventGroup = (app: any) =>
         set,
         hostDb,
       }: {
-        body: any
-        set: any
+        body: any,
+        set: any,
         hostDb: HostDbClient
       }) => {
         // const event = new eventSchema.EventObject(body)
-        await eventService.createEvent(body, hostDb)
+       const event = await eventService.createEvent(body, hostDb)
         set.status = status('Created')
         return {
           message: 'Create event success',
+          id: event.eventId
         }
       },
       {

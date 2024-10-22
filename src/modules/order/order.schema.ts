@@ -1,7 +1,9 @@
+import { TransactionType } from './../transaction/transaction.schema';
+
 import { t } from 'elysia'
 import { GetEventDetailsParams } from '../event/event.schema'
 import { GetVendorParams } from '../vendor/vendor.schema'
-import { Order, OrderDetail } from '../../../prisma/clients/postgres/hostdb'
+import { Order, OrderDetail, Payment} from '../../../prisma/clients/postgres/hostdb'
 
 export const OrderOuterPathParams = t.Composite([
   GetEventDetailsParams,
@@ -24,37 +26,97 @@ export const GetOrderParams = t.Composite([
 ])
 
 export type OrderType = Order
+export class OrderObject {
+    orderId?: string
+    eventId: string
+    vendorId: string
+    name: string
+    totalAmount?: number
+    totalPrice: number
+    constructor(
+      data: any,
+    ) {
+      this.orderId = data.orderId
+      this.eventId = data.eventId
+      this.vendorId = data.vendorId  
+      this.name = data.name
+      this.totalAmount = data.totalAmount
+      this.totalPrice = data.totalPrice
+    }
+}
 export type OrderDetailsType = OrderDetail
 
-export class OrderObject {}
-export class OrderDetailObject {
-  eventId: string
-  vendorId: string
-  orderId: string
-  rowNo: number
-  amount: number
-  itemName: string
-  itemPrice: number
-  totalPrice: number
-  createBy: string
-  updatedBy: string
 
+export class OrderDetailObject {
+    orderDetailId?: string;
+    productitemId: string;
+    orderId: string;
+    quantity: number ;
+    unitPrice: number;
+    totalPrice: number;
   constructor(
-    eventId: string,
-    vendorId: string,
-    orderId: string,
-    rowNo: number,
-    orderItem: any,
+   data: any
   ) {
-    this.eventId = eventId
-    this.vendorId = vendorId
-    this.orderId = orderId
-    this.rowNo = rowNo
-    this.amount = orderItem.amount
-    this.itemName = orderItem.itemName
-    this.itemPrice = orderItem.itemPrice
-    this.totalPrice = orderItem.itemPrice * orderItem.amount
-    this.createBy = vendorId
-    this.updatedBy = vendorId
+   this.orderDetailId = data.orderDetailId
+   this.productitemId = data.productitemId
+   this.orderId = data.orderId
+   this.quantity = data.quantity
+   this.unitPrice = data.unitPrice
+   this.totalPrice = data.totalPrice
   }
 }
+export class InputDetailObject{
+  productitemId : string;
+  quantity : number;
+  unitPrice: number;
+  constructor(data: any)
+  {
+    this.productitemId = data.productitemId 
+    this.quantity = data.quantity
+    this.unitPrice = data.unitPrice
+  }
+}
+export type PaymentObj = Payment
+
+export class CreateOrder {
+    orderId?: string
+    eventId: string
+    vendorId: string
+    name: string
+    totalAmount?: number
+    totalPrice: number
+    details : InputDetailObject[]
+    transactionType: string
+    constructor(data: any)
+    {
+      this.orderId = data.orderId
+      this.eventId = data.eventId
+      this.vendorId = data.vendorId  
+      this.name = data.name
+      this.totalAmount = data.totalAmount
+      this.totalPrice = data.totalPrice
+      this.details = data.detail
+      this.transactionType = data.transactionType
+    }
+}
+export const OrderSchema = t.Object({
+  eventId: t.String({
+    format: 'uuid', 
+    error: 'Event ID is invalid',
+  }),
+  vendorId: t.String({
+    format: 'uuid', 
+    error: 'Vendor ID is invalid',
+  }),
+  name: t.String(),
+  totalAmount: t.Number(),
+  totalPrice: t.Number(),
+  details: t.Array(
+    t.Object({
+      productitemId: t.String(),
+      quantity: t.Number(),
+      unitPrice: t.Number(),
+    })
+  ),
+  transactionType: t.String(),
+});

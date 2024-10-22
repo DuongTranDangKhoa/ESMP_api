@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  inputModel                  = "true"
-  typeboxImportDependencyName = "elysia"
   typeboxImportVariableName   = "t"
   additionalProperties        = "true"
+  typeboxImportDependencyName = "elysia"
+  inputModel                  = "true"
 }
 
 datasource db {
@@ -99,6 +99,7 @@ model Vendor {
   createDate  DateTime? @default(now()) @map("create_at") @db.Date
   updatedDate DateTime? @default(now()) @map("updated_at") @db.Date
   status      Boolean?  @default(true) @map("status")
+  Product     Product[]
 
   @@map("vendor")
 }
@@ -129,15 +130,18 @@ model OrderDetail {
 }
 
 model Product {
-  productId   String    @id @default(uuid()) @map("productid") @db.Uuid
-  categoryId  String    @map("categoryid") @db.Uuid
-  productName String    @map("name") @db.VarChar
-  description String?   @map("description") @db.VarChar
-  quantity    Int?      @map("quantity")
-  count       Int?      @map("count")
-  createAt    DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Date
-  status      Boolean?  @default(false) @map("status")
+  productId   String        @id @default(uuid()) @map("productid") @db.Uuid
+  vendorid    String        @map("vendorid") @db.Uuid
+  categoryId  String        @map("categoryid") @db.Uuid
+  productName String        @map("name") @db.VarChar
+  description String?       @map("description") @db.VarChar
+  quantity    Int?          @map("quantity")
+  createAt    DateTime?     @default(now()) @map("create_at") @db.Date
+  updatedAt   DateTime?     @default(now()) @map("updated_at") @db.Date
+  status      Boolean?      @default(false) @map("status")
+  count       Int?          @map("count")
+  vendor      Vendor        @relation(fields: [vendorid], references: [vendorId])
+  ProductItem ProductItem[]
 
   @@map("product")
 }
@@ -154,19 +158,17 @@ model Config {
 }
 
 model ProductItem {
-  productItemId String    @id @unique @default(uuid()) @map("productItemId") @db.Uuid
-  productId     String    @map("productid") @db.Uuid
-  vendorid      String    @map("vendorid") @db.Uuid
-  name          String    @map("name") @db.VarChar(253)
-  imageUrl      String?   @map("imageurl") @db.VarChar
-  description   String    @map("description") @db.VarChar(300)
-  productOrigin String    @map("productorigin") @db.VarChar
-  outofstock    Boolean   @default(false) @map("outofstock")
-  price         Decimal   @map("price") @db.Decimal(10, 2)
-  unit          String    @map("unit") @db.VarChar(10)
-  createAt      DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt     DateTime? @default(now()) @map("updated_at") @db.Date
-  status        Boolean   @default(false) @map("status")
+  productItemId   String    @id @unique @default(uuid()) @map("productItemId") @db.Uuid
+  productId       String    @map("productid") @db.Uuid
+  name            String    @map("name") @db.VarChar(253)
+  description     String    @map("description") @db.VarChar(300)
+  productOriginBy String    @map("productorigin") @db.VarChar
+  price           Decimal   @map("price") @db.Decimal(10, 2)
+  unit            String    @map("unit") @db.VarChar(10)
+  createAt        DateTime? @default(now()) @map("create_at") @db.Date
+  updatedAt       DateTime? @default(now()) @map("updated_at") @db.Date
+  status          Boolean   @default(true) @map("status")
+  product         Product   @relation(fields: [productId], references: [productId])
 
   @@map("productItem")
 }

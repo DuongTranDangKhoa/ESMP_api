@@ -6,14 +6,18 @@ const getProductListByVendorId = async (
   vendorid: string,
   hostDb: HostDbClient,
 ) => {
-  return await hostDb.product.findMany({
+  const product = await hostDb.product.findMany({
     where: {
       vendorid,
     },
   })
+   await hostDb.$disconnect();
+  return product
 }
 const getProductList = async (hostDb: HostDbClient) => {
-  return await hostDb.product.findMany()
+  const product = await hostDb.product.findMany()
+   await hostDb.$disconnect();
+  return product
 }
 const createVendorProduct = async (
   vendorId: string,
@@ -34,6 +38,7 @@ const createVendorProduct = async (
       }
     }
   });
+   await hostDb.$disconnect();
   return product;
 }
 
@@ -50,6 +55,7 @@ const getProductById = async (
   if (!product) {
     throw new NotFoundError('Product not existed!')
   }
+   await hostDb.$disconnect();
   return product
 }
 
@@ -75,20 +81,28 @@ const updateProduct = async (
       status: updateData.status
     }
   });
+   await hostDb.$disconnect();
 };
 const deleteProduct = async (
   productid: string,
   hostDb: HostDbClient,
 ) => {
-  console.log('Product updated', productid)
-  await hostDb.product.update({
-    where: {
-      productId: productid 
-    },
-    data: {
-      status: false
-    }
-  });
+  try {
+    console.log('Product updated', productid);
+    await hostDb.product.update({
+      where: {
+        productId: productid,
+      },
+      data: {
+        status: false, 
+      },
+    });
+  } catch (error) {
+    console.error('Error updating product status:', error);
+    throw error; 
+  } finally {
+    await hostDb.$disconnect();
+  }
 };
 
 

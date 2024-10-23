@@ -12,5 +12,6 @@ export async function getSessionExpireTime(db: MasterDbClient | HostDbClient) {
   const config = await db.config.findFirst()
   const sessionExpireTime =
     getTimeNow() + (config?.sessionDuration || DEFAULT_SESSION_DURATION) * 60 //minutes to second
+    db.$disconnect();
   return sessionExpireTime
 }

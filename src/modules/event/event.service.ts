@@ -8,7 +8,7 @@ import { DatabaseError } from '../../errors/database.error'
 async function getAllEvent(hostDb: HostDbClient) {
   try {
     const eventList = await hostDb.event.findMany()
-    console.log(eventList)
+    await hostDb.$disconnect();
     return eventList
   } catch (err: any) {
     throw new DatabaseError(err.message)
@@ -25,6 +25,7 @@ async function getEventById(eventId: string, hostDb: HostDbClient) {
     if (!event) {
       throw new NotFoundError('Event not found')
     }
+    await hostDb.$disconnect();
     return event
   } catch (err: any) {
     throw new DatabaseError(err.message)
@@ -33,12 +34,15 @@ async function getEventById(eventId: string, hostDb: HostDbClient) {
 
 async function createEvent(event: EventObject, hostDb: HostDbClient) {
   try {
-    return await hostDb.event.create({
+    const eventO = await hostDb.event.create({
       data: event,
     })
+    await hostDb.$disconnect();
+    return eventO
   } catch (err: any) {
     throw new DatabaseError(err.message)
   }
+  
 }
 
 async function updateEvent(
@@ -60,6 +64,7 @@ async function updateEvent(
         status: updateData.status,
       },
     })
+    await hostDb.$disconnect();
   } catch (err: any) {
     throw new DatabaseError(err.message)
   }
@@ -72,6 +77,7 @@ async function deleteEvent(eventId: string, hostDb: HostDbClient) {
         eventId,
       },
     })
+    await hostDb.$disconnect();
   } catch (err: any) {
     throw new DatabaseError(err.message)
   }
@@ -84,6 +90,7 @@ async function getEventVendorList(eventId: string, hostDb: HostDbClient) {
         eventId,
       },
     })
+    await hostDb.$disconnect();
     return eventVendorList
   } catch (err: any) {
     throw new DatabaseError(err.message)

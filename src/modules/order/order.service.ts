@@ -11,7 +11,7 @@ const getOrderListOfVendor = async (vendorId: string, hostDb: HostDbClient) => {
       vendorId,
     },
   })
-  console.log('orderListOfVendor', orderListOfVendor)
+  await hostDb.$disconnect();
   return orderListOfVendor
 }
 
@@ -22,6 +22,7 @@ const getOrderListOfEvent = async (eventId: string,vendorId: string, hostDb: Hos
       vendorId
     },
   })
+   await hostDb.$disconnect();
   return orderListOfVendor
 }
 
@@ -98,12 +99,12 @@ const createOrder = async (
     data: orderDetailsData
   });
 
-  // Kiểm tra xem chi tiết đơn hàng đã được tạo chưa
+
   if (!orderDetail) {
     throw new Error('Failed to create order details');
   }
+    await hostDB.$disconnect();
 
-  // Trả về kết quả tạo đơn hàng và chi tiết đơn hàng
   return {
     order,
     orderDetails: orderDetail
@@ -120,7 +121,7 @@ const getOrderDetails = async (
       orderId
     },
   })
-  
+   await hostDb.$disconnect();
   return orderDetails
   
 }

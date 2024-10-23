@@ -14,6 +14,7 @@ const getProductItem = async (vendorId: string, hostDb: HostDbClient) => {
                 where: { productId: product.productId }, 
             });
             if (productItems && productItems.length > 0) {
+                 await hostDb.$disconnect();
                 return {productItems,  vendorId };
             }
         }
@@ -21,6 +22,8 @@ const getProductItem = async (vendorId: string, hostDb: HostDbClient) => {
 
     } catch (error) {
         throw new InternalServerError('Failed to retrieve product items');
+    } finally {
+         await hostDb.$disconnect();
     }
 }
 
@@ -38,6 +41,7 @@ const getProductItemById = async (
         if (!productItem) {
             throw new NotFoundError('Product item not found');
         }
+         await hostDb.$disconnect();
         return productItem;
     } catch (error) {
         throw new InternalServerError('Failed to retrieve product item');
@@ -52,7 +56,7 @@ const createProductItem = async (
         const productItem = await hostDb.productItem.create({
             data: inputData,
         });
-        
+         await hostDb.$disconnect();
         return productItem;
     } catch (error) {
         throw new InternalServerError('Failed to create product item');
@@ -69,6 +73,7 @@ const updateProductItem = async (
             },
             data: inputData,
         });
+         await hostDb.$disconnect();
         return inputData;
     } catch (error) {
         throw new InternalServerError('Failed to update product item');
@@ -85,6 +90,7 @@ const deleteProductItem = async (
                 productItemId: productItemId,
             },
         });
+         await hostDb.$disconnect();
     } catch (error) {
         throw new InternalServerError('Failed to delete product item');
     }

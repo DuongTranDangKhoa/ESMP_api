@@ -33,13 +33,14 @@ const authenticateVendorUser = async (
   if (!isPasswordMatch) {
     throw new AuthenticationError('Invalid password')
   }
-
+   await hostDb.$disconnect();
   return vendor
 }
 
 const getVendorList = async (hostDb: HostDbClient): Promise<VendorObject[]> => {
   const vendors = await hostDb.vendor.findMany()
   const vendorArr = vendors.map((vendor) => new VendorObject(vendor))
+   await hostDb.$disconnect();
   return vendorArr
 }
 
@@ -55,6 +56,7 @@ const getVendorById = async (
   if (!vendor) {
     throw new NotFoundError('Vendor not found')
   }
+   await hostDb.$disconnect();
   return new VendorObject(vendor)
 }
 
@@ -73,6 +75,7 @@ const createVendor = async (
       // updatedBy: 'host',
     },
   })
+   await hostDb.$disconnect();
 }
 
 const updateVendor = async (
@@ -86,6 +89,7 @@ const updateVendor = async (
     },
     data: vendor,
   })
+   await hostDb.$disconnect();
 }
 
 const deleteVendor = async (
@@ -97,6 +101,7 @@ const deleteVendor = async (
       vendorId,
     },
   })
+   await hostDb.$disconnect();
 }
 
 const getVendorRegisteredEvents = async (
@@ -108,6 +113,7 @@ const getVendorRegisteredEvents = async (
       vendorId,
     },
   })
+   await hostDb.$disconnect();
   return vendorRegisteredEvents
 }
 

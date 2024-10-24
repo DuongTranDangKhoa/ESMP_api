@@ -8,24 +8,33 @@ const getProductItem = async (vendorId: string, hostDb: HostDbClient) => {
     try {
         const products = await productService.getProductListByVendorId(vendorId, hostDb);
 
-        let productItems;
+        if (!products || products.length === 0) {
+            throw new Error('No products found for the vendor.');
+        }
+
+        let allProductItems: any[] = []; 
+
         for (const product of products) {
-            productItems = await hostDb.productItem.findMany({
+            const productItems = await hostDb.productItem.findMany({
                 where: { productId: product.productId }, 
             });
+
             if (productItems && productItems.length > 0) {
-                 await hostDb.$disconnect();
-                return {productItems,  vendorId };
+                allProductItems = allProductItems.concat(productItems); 
             }
         }
-        throw new Error('No product items found for any product.');
+        await hostDb.$disconnect();
+        if (allProductItems.length > 0) {
+            return { productItems: allProductItems, vendorId };
+        } else {
+            throw new Error('No product items found for any product.');
+        }
 
     } catch (error) {
-        throw new InternalServerError('Failed to retrieve product items');
-    } finally {
-         await hostDb.$disconnect();
+         throw new InternalServerError('Failed to retrieve product items');
     }
-}
+};
+
 
 const getProductItemById = async (
     Guid: string,

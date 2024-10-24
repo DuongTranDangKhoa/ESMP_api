@@ -89,12 +89,9 @@ const deleteProduct = async (
 ) => {
   try {
     console.log('Product updated', productid);
-    await hostDb.product.update({
+    await hostDb.product.delete({
       where: {
         productId: productid,
-      },
-      data: {
-        status: false, 
       },
     });
   } catch (error) {

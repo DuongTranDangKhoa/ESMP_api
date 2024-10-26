@@ -16,6 +16,9 @@ app.guard('/', (app: any) =>
             const vendorId = params.vendorId;
             const eventId = params.eventId;
             const menuItems = await menuService.getMenuListByVendorId(vendorId,eventId, hostDb);
+            if (menuItems.menu === null) {
+                return { message: 'Menu not found' };           
+            }
             return menuItems;
         })
         .post('/:vendorId/:eventId', async ({ params,body, set, hostDb }: {params: any , body: any,  set: any , hostDb: HostDbClient}) => {
@@ -27,14 +30,15 @@ app.guard('/', (app: any) =>
           message: 'Create order success',
         };
         })
-        .put('/:menuId', async ({ body, store }: any) => {
-            const hostDb: HostDbClient = store.hostDb; // Assuming hostDb is available in the store
-            const updatedMenuItem = await menuService.updateMenu(body, hostDb);
-            return updatedMenuItem;
+        .put('/:menuId', async ({ params, body, hostDb}: {params: any,body: any, hostDb: HostDbClient}) => {
+            const menuId = params.menuId;
+            const updatedMenuItem = await menuService.updateMenu(menuId, body, hostDb);
+            return {
+                message: 'Update menuItem success',
+            };
         })
-        .delete('/:menuId', async ({ params, store }: any) => {
-            const { vendorId, menuId } = params;
-            const hostDb: HostDbClient = store.hostDb; // Assuming hostDb is available in the store
+        .delete('/:menuId', async ({ params, hostDb }: {params: any, hostDb: HostDbClient} ) => {
+            const { menuId } = params;
             await menuService.deleteMenu(menuId, hostDb);
             return { message: 'Delete menuItem success' };
         })

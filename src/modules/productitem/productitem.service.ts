@@ -143,9 +143,11 @@ const deleteProductItem = async (
 ) => {
     try {
         console.log("Product item deleted", productItemId);
-        await hostDb.productItem.delete({
+        await hostDb.productItem.update({
             where: {
                 productItemId: productItemId,
+            },data: {
+                status: false, // Sử dụng dấu hai chấm (:) thay vì dấu chấm phẩy (;)
             },
         });
          await hostDb.$disconnect();

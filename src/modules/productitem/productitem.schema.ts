@@ -11,7 +11,7 @@ export class ProductItemObject {
   details:  ProductInProductItemObject[]
   createAt?: Date 
   updateAt?: Date   
-  status: boolean 
+  status?: boolean 
   constructor( data: any) {
     this.productItemId = data.productItemId
     this.vendorId = data.vendorId
@@ -21,7 +21,7 @@ export class ProductItemObject {
     this.createAt = new Date(data.createAt)
     this.updateAt = new Date(data.updateAt)  
     this.price = data.price || 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-    this.status = true  
+    this.status = data.status  
   }
 }
 export class ProductInProductItemObject {

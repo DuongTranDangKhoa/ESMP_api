@@ -80,11 +80,44 @@ const createMenu = async (vendorId: string, eventId: string, inputData: ProductI
     }
 };
 
-const updateMenu = async (inputData: MenuObject ,hostDb: HostDbClient) =>{
-    await hostDb.menu.updateMany({where: {menuId: inputData.menuId}, data: inputData})
+const updateMenu = async (menuid: string, inputData: ProductItemInMenuObject, hostDb: HostDbClient) =>{
+     try {
+        const
+            menu = await hostDb.menu.update({
+    where: { menuId: menuid },
+    data: {
+        menuName: inputData.menuName,
+    },
+});
+        
+
+        const productItemData = inputData.productItem.map((item: { id: string }) => {
+            return hostDb.productItemInMenu.updateMany({
+                where: { menuId: menuid},
+                data: {
+                    menuId: menuid, 
+                    productItemId: item.id,
+                    status: true,
+                },
+               
+            });
+        });
+
+   
+        await Promise.all(productItemData);
+
+    } catch (error) {
+        console.error("Error creating menu:", error);
+        throw new Error('Failed to update menu');
+    } finally {
+        await hostDb.$disconnect();
+    }
 }
 const deleteMenu = async (menuId: string ,hostDb: HostDbClient) => { 
+  
+    await hostDb.productItemInMenu.deleteMany({where: {menuId}})
     await hostDb.menu.deleteMany({where: {menuId}})
+    await hostDb.$disconnect();
 }
 const menuService = {
     getMenuList,

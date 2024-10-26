@@ -21,10 +21,11 @@ export const productItemGroup = (app: any) =>
             },
            )
            .post(
-            '/',
-            async ({ body,set, hostDb }: { body: any, set : any, hostDb: HostDbClient } ) => {
+            '/:vendorId',
+            async ({ params, body,set, hostDb }: { params: any,body: any, set : any, hostDb: HostDbClient } ) => {
                 console.log('body', body);
-                const productItem = await productService.createProductItem( body, hostDb)
+                const vendorId = params.vendorId
+                const productItem = await productService.createProductItem( vendorId ,body, hostDb)
                  set.status = status('Created')
                 return {
                    message: 'Create productItem success',
@@ -32,7 +33,6 @@ export const productItemGroup = (app: any) =>
                 }
             },
                 {
-                body: productitemshema.GetProuctPramas,
                 response: {
                   201: commonSchema.CommonSuccessResponse,
                 },

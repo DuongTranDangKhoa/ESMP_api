@@ -1,5 +1,5 @@
 import { Order } from './../../../prisma/clients/postgres/hostdb/index.d';
-import { ProductItem } from './../../../prisma/prismabox/postgres/hostdb/ProductItem';
+
 import { NotFoundError } from 'elysia'
 import { HostDbClient } from '../../database/host.db'
 import { CreateOrder, OrderDetailObject, OrderObject } from './order.schema'

@@ -1,39 +1,61 @@
 import { NotFoundError, InternalServerError } from "elysia";
 import { HostDbClient } from "../../database/host.db";
-import { ProductItemObject, ProductItemType } from "./productitem.schema";
+import { ProductInProductItemObject, ProductItemObject, ProductItemType } from "./productitem.schema";
 import { EventStatus } from "../../common/constant/common.constant";
 import productService from "../product/product.service";
 
 const getProductItem = async (vendorId: string, hostDb: HostDbClient) => {
     try {
-        const products = await productService.getProductListByVendorId(vendorId, hostDb);
+        const productItems = await hostDb.productItem.findMany({
+            where: {
+                vendorId: vendorId,
+            },
+        });
 
-        if (!products || products.length === 0) {
-            throw new Error('No products found for the vendor.');
+        if (!productItems || productItems.length === 0) {
+            throw new Error('Product items not found');
         }
 
-        let allProductItems: any[] = []; 
+        const productItemDetails: ProductItemObject[] = [];
 
-        for (const product of products) {
-            const productItems = await hostDb.productItem.findMany({
-                where: { productId: product.productId }, 
+        for (const productItem of productItems) {
+            // Fetch details for each product item
+            const productInProductItems = await hostDb.productInProductItem.findMany({
+                where: {
+                    productItemId: productItem.productItemId,
+                },
             });
+            
+            // Map each detail to ProductInProductItemObject
+            const details = productInProductItems.map(detail => new ProductInProductItemObject({
+                productId: detail.productId,
+                quantity: detail.quantity,
+                unit: detail.unit
+            }));
+            console.log("productInProductItems", details);
+            // Add the product item with details to the result list
+            productItemDetails.push(new ProductItemObject({
+                productItemId: productItem.productItemId,
+                vendorId: vendorId,
+                name: productItem.name,
+                description: productItem.description,
+                price: productItem.price,  // Ensure price is a number
+                details: details,  // Attach the details array
+                createAt: productItem.createAt ,
+                updateAt: productItem.updatedAt,
+                status: productItem.status,
+            }));
+        }
 
-            if (productItems && productItems.length > 0) {
-                allProductItems = allProductItems.concat(productItems); 
-            }
-        }
         await hostDb.$disconnect();
-        if (allProductItems.length > 0) {
-            return { productItems: allProductItems, vendorId };
-        } else {
-            throw new Error('No product items found for any product.');
-        }
+        return productItemDetails;
 
     } catch (error) {
-         throw new InternalServerError('Failed to retrieve product items');
+        console.error("Error retrieving product items:", error);
+        throw new Error('Failed to retrieve product items');
     }
 };
+
 
 
 const getProductItemById = async (
@@ -58,19 +80,46 @@ const getProductItemById = async (
 }
 
 const createProductItem = async (
-    inputData: ProductItemType, hostDb: HostDbClient
+    vendorId: string ,inputData: ProductItemObject, hostDb: HostDbClient
 ) => {
     try {
-        console.log("Product item created", inputData);
+        console.log("Creating product item", inputData);
         const productItem = await hostDb.productItem.create({
-            data: inputData,
+            data: {
+                vendorId: vendorId,
+                description: inputData.description,
+                status: true,
+                name: inputData.name,
+                price: inputData.price
+            },
         });
-         await hostDb.$disconnect();
+
+     
+        const productInProductItem = inputData.details.map(detail => ({
+    productId: detail.productId,
+    productItemId: productItem.productItemId,
+    quantity: detail.quantity,
+    unit: detail.unit 
+}));
+        for (const detail of productInProductItem) {
+            console.log("Creating product in product item", detail);    
+            await hostDb.productInProductItem.createMany({
+            data: {
+                productId: detail.productId,
+                productItemId: productItem.productItemId,
+                quantity: detail.quantity,
+                unit: detail.unit
+            }
+        });
+        }
+        await hostDb.$disconnect();
         return productItem;
     } catch (error) {
-        throw new InternalServerError('Failed to create product item');
+        console.error("Error creating product item:", error);
+        throw new Error('Failed to create product item');
     }
-}
+};
+
 
 const updateProductItem = async (
     inputData: ProductItemObject, hostDb: HostDbClient

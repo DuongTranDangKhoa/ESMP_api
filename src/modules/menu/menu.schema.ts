@@ -16,3 +16,23 @@ export class MenuObject {
     this.menuName = menu.menuName
   }
 }
+export class ProductItemInMenuObject {
+    menuName: string;
+    productItem: { id: string }[]
+    constructor(
+    productItem: any
+  ) {
+    this.menuName = productItem.name
+    this.productItem = productItem.productItem
+  }
+}
+export class ViewMenu {
+   menuName: string;
+   productItem: string[]
+constructor(
+    productItem: any
+  ) {
+    this.menuName = productItem.name
+    this.productItem = productItem.productItem
+  }
+}

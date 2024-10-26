@@ -3,7 +3,7 @@ import { HostDbClient } from '../../database/host.db';
 import menuService from './menu.service'; // Corrected to menuService
 
 
-export const MenuGroup = (app: any) =>
+export const menuGroup = (app: any) =>
 app.guard('/', (app: any) =>
     app
         .resolve(
@@ -12,16 +12,20 @@ app.guard('/', (app: any) =>
                 return { a: context };
             }
         )
-        .get('/:vendorId', async ({ params, store }: any) => {
-            const { vendorId } = params;
-            const hostDb: HostDbClient = store.hostDb; // Assuming hostDb is available in the store
-            const menuItems = await menuService.getMenuListByVendorId(vendorId, hostDb);
+        .get('/:vendorId/:eventId', async ({ params, hostDb}: {params: any, hostDb: HostDbClient} ) => {
+            const vendorId = params.vendorId;
+            const eventId = params.eventId;
+            const menuItems = await menuService.getMenuListByVendorId(vendorId,eventId, hostDb);
             return menuItems;
         })
-        .post('/', async ({ body, store }: any) => {
-            const hostDb: HostDbClient = store.hostDb; // Assuming hostDb is available in the store
-            const menuItem = await menuService.createMenu(body, hostDb);
-            return menuItem;
+        .post('/:vendorId/:eventId', async ({ params,body, set, hostDb }: {params: any , body: any,  set: any , hostDb: HostDbClient}) => {
+            const vendorId = params.vendorId;
+            const eventId = params.eventId;
+            await menuService.createMenu( vendorId, eventId, body, hostDb);
+            set.status = ('Created');
+        return {
+          message: 'Create order success',
+        };
         })
         .put('/:menuId', async ({ body, store }: any) => {
             const hostDb: HostDbClient = store.hostDb; // Assuming hostDb is available in the store

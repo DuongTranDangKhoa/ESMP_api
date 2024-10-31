@@ -85,7 +85,7 @@ async function deleteEvent(eventId: string, hostDb: HostDbClient) {
 
 async function getEventVendorList(eventId: string, hostDb: HostDbClient) {
   try {
-    const eventVendorList = await hostDb.eventPayment.findMany({
+    const eventVendorList = await hostDb.event.findMany({
       where: {
         eventId,
       },

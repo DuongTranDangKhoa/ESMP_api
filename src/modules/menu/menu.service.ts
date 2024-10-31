@@ -1,5 +1,5 @@
 import { HostDbClient } from "../../database/host.db";
-import { MenuObject, ProductItemInMenuObject } from "./menu.schema";
+import { MenuObject, ProductItemInMenuObject, ProductItemInMenuUpdateObject } from "./menu.schema";
 
 const getMenuList = async (hostDb: HostDbClient) => {
     return await hostDb.menu.findMany()
@@ -80,7 +80,7 @@ const createMenu = async (vendorId: string, eventId: string, inputData: ProductI
     }
 };
 
-const updateMenu = async (menuid: string, inputData: ProductItemInMenuObject, hostDb: HostDbClient) =>{
+const updateMenu = async (menuid: string, inputData: ProductItemInMenuUpdateObject, hostDb: HostDbClient) =>{
      try {
         const
             menu = await hostDb.menu.update({
@@ -91,13 +91,11 @@ const updateMenu = async (menuid: string, inputData: ProductItemInMenuObject, ho
 });
         
 
-        const productItemData = inputData.productItem.map((item: { id: string }) => {
+        const productItemData = inputData.productItem.map((item: { id: string, status: boolean }) => {
             return hostDb.productItemInMenu.updateMany({
-                where: { menuId: menuid},
+                where: { menuId: menuid, productItemId: item.id },
                 data: {
-                    menuId: menuid, 
-                    productItemId: item.id,
-                    status: true,
+                    status: item.status,
                 },
                
             });

@@ -36,3 +36,13 @@ constructor(
     this.productItem = productItem.productItem
   }
 }
+export class ProductItemInMenuUpdateObject {
+    menuName: string;
+    productItem  : { id: string, status: boolean }[]
+    constructor(
+    productItem: any
+  ) {
+    this.menuName = productItem.name
+    this.productItem = productItem.productItem
+  }
+}

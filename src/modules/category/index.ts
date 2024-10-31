@@ -13,15 +13,18 @@ export const categoryGroup = (app: any) =>
                 }
             )
             .get('/:categoryId', async ({ categoryId, hostDb }: { categoryId: string, hostDb: HostDbClient }) => {
-                await categoryService.getCategoryById(categoryId, hostDb)
+              return  await categoryService.getCategoryById(categoryId, hostDb)
             })
             .post('/', async ({ body, hostDb }: { body: any, hostDb: HostDbClient }) => {
                 await categoryService.createCategory(body, hostDb)         
+                return 'Create successfully Category'
             })
-            .put('/:categoryId', async ({ categoryId, body, hostDb }: { categoryId: string, body: any, hostDb: HostDbClient }) => {
+            .put('/:categoryId', async ({ params, body, hostDb }: { params: any, body: any, hostDb: HostDbClient }) => {
+                const categoryId = params.categoryId
                 await categoryService.updateCategory(categoryId, body, hostDb)
-            })
+                return 'Update successfully Category'})
             .delete('/:categoryId', async ({ categoryId, hostDb }: { categoryId: string, hostDb: HostDbClient }) => {
                 await categoryService.deleteCategory(categoryId, hostDb)
+           
             })
         )

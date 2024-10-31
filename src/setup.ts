@@ -16,6 +16,7 @@ import { AuthenticatedUserHeader } from './modules/user/user.schema'
 import { productItemGroup } from './modules/productitem'
 import { categoryGroup } from './modules/category'
 import { menuGroup } from './modules/menu'
+import { mailGroup } from './modules/sendmail'
 
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -38,6 +39,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/transaction', (app) => app.use(transactionGroup)) // transaction route
         .group('/category', (app) => app.use(categoryGroup)) // category route
         .group('/menu', (app) => app.use(menuGroup)) // menu route
+        .group('/mail',(app) => app.use(mailGroup)) // mail route)
         // .group('/transaction', (app) => app.use(transactionGroup)) // transaction route
         .group('/debug/host', debuggingGroup), // authenticated debug route
   )

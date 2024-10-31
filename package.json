@@ -20,12 +20,14 @@
     "db:migrate:mongo:prod": "bunx prisma migrate deploy --schema=./prisma/schemas/mongodb.prisma"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.679.0",
     "@elysiajs/cors": "^1.0.2",
     "@elysiajs/swagger": "^1.1.1",
     "@prisma/client": "5.12",
     "@types/statuses": "^2.0.5",
     "aws-sdk": "^2.1691.0",
     "elysia": "latest",
+    "fpt_event_manager_api": "file:",
     "jose": "^5.3.0",
     "mailersend": "^2.2.0",
     "moment": "^2.30.1",

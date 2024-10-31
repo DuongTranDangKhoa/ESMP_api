@@ -26,12 +26,19 @@ type VendorInfo {
   vendorId   String
 }
 
+// model SessionData {
+//   id          String   @id @default(auto()) @map("_id") @db.ObjectId
+//   accessToken String   @unique
+//   createdAt   Int
+//   expiredAt   Int
+//   sessionId   String
+//   updatedAt   Int
+//   userInfo    UserInfo
+// }
 model SessionData {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  accessToken String   @unique
+  accessToken String @id @default(auto()) @map("_id") @db.ObjectId
   createdAt   Int
   expiredAt   Int
-  sessionId   String
   updatedAt   Int
-  userInfo    UserInfo
+  sessionInfo Json
 }

@@ -17,8 +17,11 @@ const getMenuListByVendorId = async ( vendorId: string , eventId: string ,hostDb
         }
         const vendorinEventid =  menuEvent[0].vendorinEventId
         const menu = await hostDb.menu.findUnique({where: {menuId: vendorinEventid}})
-        const details = await hostDb.productItemInMenu.findMany({where: {menuId: vendorinEventid, status: true }})
-        const productItemIds = details.map((item) => item.productItemId)
+        const details = await hostDb.productItemInMenu.findMany({where: {menuId: vendorinEventid }})
+        const productItemIds = details.map((item) => ({
+    productItemId: item.productItemId,
+    status: item.status
+}));
          await hostDb.$disconnect();
         return {menu, productItemIds}    
 }

@@ -27,7 +27,7 @@ app.guard('/', (app: any) =>
             await menuService.createMenu( vendorId, eventId, body, hostDb);
             set.status = ('Created');
         return {
-          message: 'Create order success',
+          message: 'Create menuItem success',
         };
         })
         .put('/:menuId', async ({ params, body, hostDb}: {params: any,body: any, hostDb: HostDbClient}) => {

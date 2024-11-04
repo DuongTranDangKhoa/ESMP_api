@@ -20,20 +20,26 @@ datasource db {
 
 model Event {
   eventId       String          @id @default(uuid()) @map("eventid") @db.Uuid
+  hostId        String?         @map("hostid") @db.Uuid
+  themeId       String?         @map("themeid") @db.Uuid
   name          String          @map("eventname") @db.VarChar(50)
   description   String?
-  logo          String?         @map("logo") @db.VarChar
+  thumbnail     String?         @map("thumbnail") @db.VarChar
+  stageValue    String?         @map("stagevalue") @db.VarChar
   startDate     DateTime?       @map("startdate") @db.Date
   endDate       DateTime?       @map("enddate") @db.Date
   venue         String?         @map("location") @db.VarChar(500)
   createAt      DateTime?       @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime?       @default(now()) @map("updated_at") @db.Date
+  height        Int?            @map("height")
+  width         Int?            @map("width")
   x             Int?            @map("x")
   y             Int?            @map("y")
-  onWeb         Bytes?          @map("onweb")
+  onWeb         Boolean?        @map("onweb")
   profit        Decimal         @map("price") @db.Decimal(10, 2)
   status        String?         @default("On-going") @map("status") @db.VarChar(50)
   VendorInEvent VendorInEvent[]
+  LocationType  LocationType[]
 
   @@map("event")
 }
@@ -83,27 +89,28 @@ model VendorInEvent {
 
 model Location {
   locationId   String         @id @unique @default(uuid()) @map("locationid") @db.Uuid
-  eventId      String         @map("eventid") @db.Uuid
   typeId       String         @map("typeid") @db.Uuid
-  vendorId     String         @map("vendorid") @db.Uuid
-  shape        String         @map("shape") @db.VarChar(50)
-  direction    String         @map("direction") @db.VarChar(50)
+  shape        String         @default("shape") @map("shape") @db.VarChar(50)
+  rotation     Int?           @map("rotation")
   x            Int?           @map("x")
   y            Int?           @map("y")
-  length       Int?           @map("length")
+  heigth       Int?           @map("heigth")
   width        Int?           @map("width")
   status       String?        @map("status") @db.VarChar(50)
   EventPayment EventPayment[]
+  LocationType LocationType?  @relation(fields: [typeId], references: [typeId])
 
   @@map("location")
 }
 
 model LocationType {
-  typeId   String  @id @unique @default(uuid()) @map("typeid") @db.Uuid
-  eventId  String  @map("eventid") @db.Uuid
-  typeName String  @map("typename") @db.VarChar(50)
-  price    Decimal @map("price") @db.Decimal(10, 2)
-  status   String? @map("status") @db.VarChar(50)
+  typeId   String     @id @unique @default(uuid()) @map("typeid") @db.Uuid
+  eventId  String     @map("eventid") @db.Uuid
+  typeName String?    @map("typename") @db.VarChar(50)
+  price    Decimal    @map("price") @db.Decimal(10, 2)
+  status   String?    @map("status") @db.VarChar(50)
+  location Location[]
+  Event    Event?     @relation(fields: [eventId], references: [eventId])
 
   @@map("locationtype")
 }
@@ -134,6 +141,19 @@ model Vendor {
   VendorInEvent VendorInEvent[]
 
   @@map("vendor")
+}
+
+model Account {
+  userId    String    @id @default(uuid()) @map("userid") @db.Uuid
+  username  String    @unique @db.VarChar(40)
+  password  String    @db.VarChar(100)
+  role      String    @db.VarChar(10)
+  name      String    @db.VarChar(100)
+  createAt  DateTime? @map("create_at") @db.Date
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Date
+  status    String    @db.VarChar(10)
+
+  @@map("account")
 }
 
 model Order {

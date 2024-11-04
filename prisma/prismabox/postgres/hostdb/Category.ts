@@ -13,7 +13,28 @@ export const CategoryPlain = t.Object(
   { additionalProperties: true },
 );
 
-export const CategoryRelations = t.Object({}, { additionalProperties: true });
+export const CategoryRelations = t.Object(
+  {
+    products: t.Array(
+      t.Object(
+        {
+          productId: t.String({ additionalProperties: true }),
+          vendorid: t.String({ additionalProperties: true }),
+          categoryId: t.String({ additionalProperties: true }),
+          productName: t.String({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          quantity: __nullable__(t.Integer({ additionalProperties: true })),
+          createAt: __nullable__(t.Date({ additionalProperties: true })),
+          updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+          status: __nullable__(t.Boolean({ additionalProperties: true })),
+          count: __nullable__(t.Integer({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+  },
+  { additionalProperties: true },
+);
 
 export const CategoryPlainInputCreate = t.Object(
   {
@@ -36,12 +57,56 @@ export const CategoryPlainInputUpdate = t.Object(
 );
 
 export const CategoryRelationsInputCreate = t.Object(
-  {},
+  {
+    products: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+  },
   { additionalProperties: true },
 );
 
 export const CategoryRelationsInputUpdate = t.Partial(
-  t.Object({}, { additionalProperties: true }),
+  t.Object(
+    {
+      products: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+    },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
@@ -100,6 +165,7 @@ export const CategorySelect = t.Partial(
       createAt: t.Boolean(),
       updatedAt: t.Boolean(),
       status: t.Boolean(),
+      products: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -108,7 +174,10 @@ export const CategorySelect = t.Partial(
 );
 
 export const CategoryInclude = t.Partial(
-  t.Object({ _count: t.Boolean() }, { additionalProperties: true }),
+  t.Object(
+    { products: t.Boolean(), _count: t.Boolean() },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 

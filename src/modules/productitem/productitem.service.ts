@@ -33,14 +33,13 @@ const getProductItem = async (vendorId: string, hostDb: HostDbClient) => {
                 unit: detail.unit
             }));
             console.log("productInProductItems", details);
-            // Add the product item with details to the result list
             productItemDetails.push(new ProductItemObject({
                 productItemId: productItem.productItemId,
                 vendorId: vendorId,
                 name: productItem.name,
                 description: productItem.description,
-                price: productItem.price,  // Ensure price is a number
-                details: details,  // Attach the details array
+                price: productItem.price,  
+                details: details,  
                 createAt: productItem.createAt ,
                 updateAt: productItem.updatedAt,
                 status: productItem.status,

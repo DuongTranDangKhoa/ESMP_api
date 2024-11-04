@@ -17,7 +17,7 @@ async function getAllEvent(hostDb: HostDbClient) {
 
 async function getEventById(eventId: string, hostDb: HostDbClient) {
   try {
-    const event = await hostDb.event.findUnique({
+    const event = await hostDb.event.findFirst({
       where: {
         eventId,
       },
@@ -57,7 +57,7 @@ async function updateEvent(
       },
       data: {
         name: updateData.name,
-        logo: updateData.logo,
+        thumbnail: updateData.logo,
         description: updateData.description,
         startDate: updateData.startDate,
         endDate: updateData.endDate,

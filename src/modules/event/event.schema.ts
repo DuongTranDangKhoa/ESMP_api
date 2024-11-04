@@ -7,7 +7,9 @@ import { Decimal } from '@prisma/client/runtime/library'
 
 export type EventType = Event
 export class EventObject {
-      eventId: string
+      eventId?: string
+      hostId: string
+      themeId: string
       name: string
       description: string | null
       logo: string | null
@@ -18,11 +20,16 @@ export class EventObject {
       updatedAt: Date | null
       x?: number | null
       y?: number | null
-      onWeb?: Buffer
+      width?: number | null
+      height?: number | null
+      rotation?: number | null
+      onWeb?: boolean
       profit: Prisma.Decimal
       status: string 
       constructor(data: any) {
         this.eventId = data.eventId
+        this.hostId = data.hostId
+        this.themeId = data.themeId
         this.name = data.name
         this.description = data.description
         this.logo = data.logo
@@ -33,6 +40,9 @@ export class EventObject {
         this.updatedAt = data.updatedAt
         this.x = data.x
         this.y = data.y
+        this.width = data.width
+        this.height = data.height
+        this.rotation = data.rotation
         this.onWeb = data.onWeb
         this.profit = data.profit
         this.status = data.status

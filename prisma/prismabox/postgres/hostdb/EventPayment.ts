@@ -22,14 +22,12 @@ export const EventPaymentRelations = t.Object(
     location: t.Object(
       {
         locationId: t.String({ additionalProperties: true }),
-        eventId: t.String({ additionalProperties: true }),
         typeId: t.String({ additionalProperties: true }),
-        vendorId: t.String({ additionalProperties: true }),
         shape: t.String({ additionalProperties: true }),
-        direction: t.String({ additionalProperties: true }),
+        rotation: __nullable__(t.Integer({ additionalProperties: true })),
         x: __nullable__(t.Integer({ additionalProperties: true })),
         y: __nullable__(t.Integer({ additionalProperties: true })),
-        length: __nullable__(t.Integer({ additionalProperties: true })),
+        heigth: __nullable__(t.Integer({ additionalProperties: true })),
         width: __nullable__(t.Integer({ additionalProperties: true })),
         status: __nullable__(t.String({ additionalProperties: true })),
       },

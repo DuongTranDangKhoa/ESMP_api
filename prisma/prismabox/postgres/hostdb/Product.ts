@@ -37,6 +37,16 @@ export const ProductRelations = t.Object(
       },
       { additionalProperties: true },
     ),
+    category: t.Object(
+      {
+        categoryId: t.String({ additionalProperties: true }),
+        categoryName: t.String({ additionalProperties: true }),
+        createAt: __nullable__(t.Date({ additionalProperties: true })),
+        updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+        status: t.Boolean({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
+    ),
     ProductInProductItem: t.Array(
       t.Object(
         {
@@ -96,6 +106,17 @@ export const ProductRelationsInputCreate = t.Object(
       },
       { additionalProperties: true },
     ),
+    category: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
     ProductInProductItem: t.Optional(
       t.Object(
         {
@@ -119,6 +140,17 @@ export const ProductRelationsInputUpdate = t.Partial(
   t.Object(
     {
       vendor: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+      category: t.Object(
         {
           connect: t.Object(
             {
@@ -230,6 +262,7 @@ export const ProductSelect = t.Partial(
       status: t.Boolean(),
       count: t.Boolean(),
       vendor: t.Boolean(),
+      category: t.Boolean(),
       ProductInProductItem: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -242,6 +275,7 @@ export const ProductInclude = t.Partial(
   t.Object(
     {
       vendor: t.Boolean(),
+      category: t.Boolean(),
       ProductInProductItem: t.Boolean(),
       _count: t.Boolean(),
     },

@@ -6,7 +6,7 @@ export const LocationTypePlain = t.Object(
   {
     typeId: t.String({ additionalProperties: true }),
     eventId: t.String({ additionalProperties: true }),
-    typeName: t.String({ additionalProperties: true }),
+    typeName: __nullable__(t.String({ additionalProperties: true })),
     price: t.Number({ additionalProperties: true }),
     status: __nullable__(t.String({ additionalProperties: true })),
   },
@@ -14,13 +14,58 @@ export const LocationTypePlain = t.Object(
 );
 
 export const LocationTypeRelations = t.Object(
-  {},
+  {
+    location: t.Array(
+      t.Object(
+        {
+          locationId: t.String({ additionalProperties: true }),
+          typeId: t.String({ additionalProperties: true }),
+          shape: t.String({ additionalProperties: true }),
+          rotation: __nullable__(t.Integer({ additionalProperties: true })),
+          x: __nullable__(t.Integer({ additionalProperties: true })),
+          y: __nullable__(t.Integer({ additionalProperties: true })),
+          heigth: __nullable__(t.Integer({ additionalProperties: true })),
+          width: __nullable__(t.Integer({ additionalProperties: true })),
+          status: __nullable__(t.String({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    Event: __nullable__(
+      t.Object(
+        {
+          eventId: t.String({ additionalProperties: true }),
+          hostId: __nullable__(t.String({ additionalProperties: true })),
+          themeId: __nullable__(t.String({ additionalProperties: true })),
+          name: t.String({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          thumbnail: __nullable__(t.String({ additionalProperties: true })),
+          stageValue: __nullable__(t.String({ additionalProperties: true })),
+          startDate: __nullable__(t.Date({ additionalProperties: true })),
+          endDate: __nullable__(t.Date({ additionalProperties: true })),
+          venue: __nullable__(t.String({ additionalProperties: true })),
+          createAt: __nullable__(t.Date({ additionalProperties: true })),
+          updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+          height: __nullable__(t.Integer({ additionalProperties: true })),
+          width: __nullable__(t.Integer({ additionalProperties: true })),
+          x: __nullable__(t.Integer({ additionalProperties: true })),
+          y: __nullable__(t.Integer({ additionalProperties: true })),
+          onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
+          profit: t.Number({ additionalProperties: true }),
+          status: __nullable__(t.String({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+  },
   { additionalProperties: true },
 );
 
 export const LocationTypePlainInputCreate = t.Object(
   {
-    typeName: t.String({ additionalProperties: true }),
+    typeName: t.Optional(
+      __nullable__(t.String({ additionalProperties: true })),
+    ),
     price: t.Number({ additionalProperties: true }),
     status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
   },
@@ -29,7 +74,7 @@ export const LocationTypePlainInputCreate = t.Object(
 
 export const LocationTypePlainInputUpdate = t.Object(
   {
-    typeName: t.String({ additionalProperties: true }),
+    typeName: __nullable__(t.String({ additionalProperties: true })),
     price: t.Number({ additionalProperties: true }),
     status: __nullable__(t.String({ additionalProperties: true })),
   },
@@ -37,12 +82,84 @@ export const LocationTypePlainInputUpdate = t.Object(
 );
 
 export const LocationTypeRelationsInputCreate = t.Object(
-  {},
+  {
+    location: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    Event: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+  },
   { additionalProperties: true },
 );
 
 export const LocationTypeRelationsInputUpdate = t.Partial(
-  t.Object({}, { additionalProperties: true }),
+  t.Object(
+    {
+      location: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      Event: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+    },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
@@ -101,6 +218,8 @@ export const LocationTypeSelect = t.Partial(
       typeName: t.Boolean(),
       price: t.Boolean(),
       status: t.Boolean(),
+      location: t.Boolean(),
+      Event: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -109,7 +228,10 @@ export const LocationTypeSelect = t.Partial(
 );
 
 export const LocationTypeInclude = t.Partial(
-  t.Object({ _count: t.Boolean() }, { additionalProperties: true }),
+  t.Object(
+    { location: t.Boolean(), Event: t.Boolean(), _count: t.Boolean() },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 

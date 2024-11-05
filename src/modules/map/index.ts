@@ -32,6 +32,18 @@ app.group('/:hostId/:eventId', (app: any) =>
                     hostDb: HostDbClient
                 }) => {
                     return await mapService.getMap(hostId, eventId, hostDb)
+                })
+            .post('/',
+                async ({
+                    hostId,
+                    body,
+                    hostDb,
+                }: {
+                    hostId: string
+                    body: any
+                    hostDb: HostDbClient
+                }) => {
+                    return await mapService.createMap(hostId, body, hostDb)
                 }
+            )
         )
-    );

@@ -9,18 +9,36 @@ export class LocationObject{
     y?: number 
     rotation?: number
     height: number | null
-    width: number | null
+    width: number 
     status?: string 
-    constructor(data: any){
-        this.locationId = data.locationId
-        this.status = data.status
-        this.x = data.x
-        this.y = data.y
-        this.typeId = data.typeId
-        this.shape = data.shape
-        this.rotation = data.rotation
-        this.height = data.height
-        this.width = data.width
+    constructor(
+        locationId: string,
+        typeId: string,
+        height: number,
+        width: number,
+        x?: number,
+        y?: number,
+        rotation?: number,
+        shape?: string,
+        status?: string
+    ) {
+        this.locationId = locationId;
+        this.typeId = typeId;
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
+        this.height = height;
+        this.width = width;
+        this.shape = shape;
+        this.status = status;
+    }
+}
+export class LocationGetObject {
+   name : string
+   location: LocationTypeType
+   constructor(locationType: LocationTypeType, name: string){
+         this.location = locationType
+         this.name = name
     }
 }
 export class LocationTypeObject{
@@ -57,8 +75,8 @@ export type EventMapObject = EventObject
 export class MapObject {
     eventId: string
     typeId: string
-    booths: LocationObject[]
-    shapes:  LocationObject[]
+    booths: LocationGetObject[]
+    shapes:  LocationGetObject[]
     mainTemplate: MainTemplateObject
     status: string
     textElements: string[]

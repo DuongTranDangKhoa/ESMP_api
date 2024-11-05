@@ -4,36 +4,32 @@ import mapService from "./map.service";
 
 export const mapGroup = (app: any) =>
 app.group('/:hostId/:eventId', (app: any) => 
-            app.guard({
-                params: {
-                    hostId: { type: 'string' },
-                    eventId: { type: 'string' }
-                }
-            }, (app: any) => 
-                app.resolve(
-                    async ({
-                        params,
-                    }: {
-                        params: any
-                    }) => {
-                        console.log('Params:', params);
-                        const hostId = params.hostId
-                        const eventId = params.eventId
-                        return { hostId, eventId }
-                    },
-                ))
+           app
             .get('/',
                 async ({
-                hostId,
-                eventId,
+                params,
                 hostDb,}:{
-                    hostId: string
-                    eventId: string
+                   params: any
                     hostDb: HostDbClient
                 }) => {
+                    const {hostId, eventId} = params;
                     return await mapService.getMap(hostId, eventId, hostDb)
                 })
-            .post('/',
+               .post('/',
+                async ({
+                params,
+                body,
+                hostDb,}:{
+                    params: any
+                    body: any
+                    hostDb: HostDbClient
+                }) => {
+                    const {hostId, eventId} = params;
+                    return await mapService.createLocationType(hostId, eventId, body, hostDb)
+                }) 
+                         
+        )
+            .post('submit/:hostId',
                 async ({
                     hostId,
                     body,
@@ -46,4 +42,4 @@ app.group('/:hostId/:eventId', (app: any) =>
                     return await mapService.createMap(hostId, body, hostDb)
                 }
             )
-        )
+            

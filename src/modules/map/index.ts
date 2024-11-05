@@ -14,6 +14,33 @@ app.group('/:hostId/:eventId', (app: any) =>
                 }) => {
                     const {hostId, eventId} = params;
                     return await mapService.getMap(hostId, eventId, hostDb)
+                }) 
+                .post('/',
+                async ({
+                    hostId,
+                    body,
+                    hostDb,
+                }: {
+                    hostId: string
+                    body: any
+                    hostDb: HostDbClient
+                }) => {
+                    return await mapService.createMap(hostId, body, hostDb)
+                }
+            )                                   
+        )
+            
+      .group('locationTyple/:hostId/:eventId', (app: any) => 
+           app
+            .get('/',
+                async ({
+                params,
+                hostDb,}:{
+                   params: any
+                    hostDb: HostDbClient
+                }) => {
+                    const {hostId, eventId} = params;
+                    return await mapService.getLocationType(hostId, eventId, hostDb)
                 })
                .post('/',
                 async ({
@@ -28,18 +55,5 @@ app.group('/:hostId/:eventId', (app: any) =>
                     return await mapService.createLocationType(hostId, eventId, body, hostDb)
                 }) 
                          
-        )
-            .post('submit/:hostId',
-                async ({
-                    hostId,
-                    body,
-                    hostDb,
-                }: {
-                    hostId: string
-                    body: any
-                    hostDb: HostDbClient
-                }) => {
-                    return await mapService.createMap(hostId, body, hostDb)
-                }
-            )
+        )   
             

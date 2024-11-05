@@ -25,7 +25,10 @@ const getLocationType = async (hostId: string, eventId: string, hostDb: HostDbCl
     try {
       const locationType = await hostDb.locationType.findMany({
         where: {
-          eventId: eventId
+          eventId: eventId,
+          NOT: {
+      status: 'blocked',
+    },
         }
       });
         await hostDb.$disconnect();
@@ -154,7 +157,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
                     eventId: inputData.eventId,
                     typeName: shape.name,
                     price: '0',
-                    status: 'active'
+                    status: 'blocked'
                 }
             } );
             await hostDb.location.createMany({

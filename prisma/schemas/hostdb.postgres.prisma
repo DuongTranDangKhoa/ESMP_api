@@ -7,9 +7,9 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
+  typeboxImportDependencyName = "elysia"
   additionalProperties        = "true"
   typeboxImportVariableName   = "t"
-  typeboxImportDependencyName = "elysia"
   inputModel                  = "true"
 }
 
@@ -20,26 +20,26 @@ datasource db {
 
 model Event {
   eventId       String          @id @default(uuid()) @map("eventid") @db.Uuid
-  hostId        String?         @map("hostid") @db.Uuid
-  themeId       String?         @map("themeid") @db.Uuid
   name          String          @map("eventname") @db.VarChar(50)
   description   String?
-  thumbnail     String?         @map("thumbnail") @db.VarChar
-  stageValue    String?         @map("stagevalue") @db.VarChar
   startDate     DateTime?       @map("startdate") @db.Date
   endDate       DateTime?       @map("enddate") @db.Date
   venue         String?         @map("location") @db.VarChar(500)
   createAt      DateTime?       @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime?       @default(now()) @map("updated_at") @db.Date
-  height        Int?            @map("height")
-  width         Int?            @map("width")
   x             Int?            @map("x")
   y             Int?            @map("y")
-  onWeb         Boolean?        @map("onweb")
   profit        Decimal         @map("price") @db.Decimal(10, 2)
   status        String?         @default("On-going") @map("status") @db.VarChar(50)
-  VendorInEvent VendorInEvent[]
+  height        Int?            @map("height")
+  hostId        String?         @map("hostid") @db.Uuid
+  stageValue    String?         @map("stagevalue") @db.VarChar
+  themeId       String?         @map("themeid") @db.Uuid
+  thumbnail     String?         @map("thumbnail") @db.VarChar
+  width         Int?            @map("width")
+  onWeb         Boolean?        @map("onweb")
   LocationType  LocationType[]
+  VendorInEvent VendorInEvent[]
 
   @@map("event")
 }
@@ -60,21 +60,8 @@ model EventPayment {
   @@map("eventpayment")
 }
 
-// model VendorInEvent {
-//   vendorinEventId String         @unique @db.Uuid
-//   eventId         String         @db.Uuid
-//   vendorId        String         @db.Uuid
-//   status          Boolean?       @default(true)
-//   EventPayment    EventPayment[]
-//   Menu            Menu?
-//   event           Event          @relation(fields: [eventId], references: [eventId])
-//   vendor          Vendor         @relation(fields: [vendorId], references: [vendorId])
-
-//   @@id([vendorinEventId, eventId, vendorId])
-//   @@map("vendorinevent")
-// }
 model VendorInEvent {
-  vendorinEventId String         @unique @db.Uuid
+  vendorinEventId String         @id @unique @db.Uuid
   eventId         String         @db.Uuid
   vendorId        String         @db.Uuid
   status          Boolean?       @default(true)
@@ -83,7 +70,6 @@ model VendorInEvent {
   event           Event          @relation(fields: [eventId], references: [eventId])
   vendor          Vendor         @relation(fields: [vendorId], references: [vendorId])
 
-  @@id([vendorinEventId])
   @@map("vendorinevent")
 }
 
@@ -91,14 +77,14 @@ model Location {
   locationId   String         @id @unique @default(uuid()) @map("locationid") @db.Uuid
   typeId       String         @map("typeid") @db.Uuid
   shape        String         @default("shape") @map("shape") @db.VarChar(50)
-  rotation     Int?           @map("rotation")
   x            Int?           @map("x")
   y            Int?           @map("y")
-  heigth       Int?           @map("heigth")
   width        Int?           @map("width")
   status       String?        @map("status") @db.VarChar(50)
+  heigth       Int?           @map("heigth")
+  rotation     Int?           @map("rotation")
   EventPayment EventPayment[]
-  LocationType LocationType?  @relation(fields: [typeId], references: [typeId])
+  LocationType LocationType   @relation(fields: [typeId], references: [typeId])
 
   @@map("location")
 }
@@ -110,7 +96,7 @@ model LocationType {
   price    Decimal    @map("price") @db.Decimal(10, 2)
   status   String?    @map("status") @db.VarChar(50)
   location Location[]
-  Event    Event?     @relation(fields: [eventId], references: [eventId])
+  Event    Event      @relation(fields: [eventId], references: [eventId])
 
   @@map("locationtype")
 }
@@ -195,8 +181,8 @@ model Product {
   updatedAt            DateTime?              @default(now()) @map("updated_at") @db.Date
   status               Boolean?               @default(false) @map("status")
   count                Int?                   @map("count")
-  vendor               Vendor                 @relation(fields: [vendorid], references: [vendorId])
   category             Category               @relation(fields: [categoryId], references: [categoryId])
+  vendor               Vendor                 @relation(fields: [vendorid], references: [vendorId])
   ProductInProductItem ProductInProductItem[]
 
   @@map("product")
@@ -289,15 +275,9 @@ model Menu {
 }
 
 model Staff {
-  staffId   String    @id @default(uuid()) @map("staffid") @db.Uuid
-  vendorId  String    @map("vendorId") @db.Uuid
-  username  String    @unique @map("username") @db.VarChar(40)
-  password  String    @db.VarChar(50)
-  name      String    @map("name") @db.VarChar(100)
-  image     String    @map("image") @db.VarChar
-  createAt  DateTime? @default(now()) @map("create_at") @db.Date
-  updatedAt DateTime? @default(now()) @map("updated_at") @db.Date
-  status    Boolean?  @default(true) @map("status")
+  staffId  String @id @default(uuid()) @map("staffid") @db.Uuid
+  vendorId String @map("vendorId") @db.Uuid
+  username String @unique @map("username") @db.VarChar(40)
 }
 
 model SessionData {

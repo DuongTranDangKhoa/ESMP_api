@@ -112,22 +112,22 @@ export const vendorGroup = (app: any) =>
              * get Vendor's registered event list
              * @response vendor's registered event list
              */
-            .get(
-              '/event',
-              async ({
-                vendorId,
-                hostDb,
-              }: {
-                vendorId: string
-                hostDb: HostDbClient
-              }) => {
-                const eventVendorList = vendorService.getVendorRegisteredEvents(
-                  vendorId,
-                  hostDb,
-                )
-                return eventVendorList
-              },
-            )
+            // .get(
+            //   '/event',
+            //   async ({
+            //     vendorId,
+            //     hostDb,
+            //   }: {
+            //     vendorId: string
+            //     hostDb: HostDbClient
+            //   }) => {
+            //     const eventVendorList = vendorService.getVendorRegisteredEvents(
+            //       vendorId,
+            //       hostDb,
+            //     )
+            //     return eventVendorList
+            //   },
+            // )
             /**
              * PUT api/vendor/vendorId/:eventId
              * Save Event's vendor list

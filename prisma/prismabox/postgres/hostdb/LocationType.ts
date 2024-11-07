@@ -21,41 +21,39 @@ export const LocationTypeRelations = t.Object(
           locationId: t.String({ additionalProperties: true }),
           typeId: t.String({ additionalProperties: true }),
           shape: t.String({ additionalProperties: true }),
-          rotation: __nullable__(t.Integer({ additionalProperties: true })),
           x: __nullable__(t.Integer({ additionalProperties: true })),
           y: __nullable__(t.Integer({ additionalProperties: true })),
-          heigth: __nullable__(t.Integer({ additionalProperties: true })),
           width: __nullable__(t.Integer({ additionalProperties: true })),
           status: __nullable__(t.String({ additionalProperties: true })),
+          heigth: __nullable__(t.Integer({ additionalProperties: true })),
+          rotation: __nullable__(t.Integer({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),
     ),
-    Event: __nullable__(
-      t.Object(
-        {
-          eventId: t.String({ additionalProperties: true }),
-          hostId: __nullable__(t.String({ additionalProperties: true })),
-          themeId: __nullable__(t.String({ additionalProperties: true })),
-          name: t.String({ additionalProperties: true }),
-          description: __nullable__(t.String({ additionalProperties: true })),
-          thumbnail: __nullable__(t.String({ additionalProperties: true })),
-          stageValue: __nullable__(t.String({ additionalProperties: true })),
-          startDate: __nullable__(t.Date({ additionalProperties: true })),
-          endDate: __nullable__(t.Date({ additionalProperties: true })),
-          venue: __nullable__(t.String({ additionalProperties: true })),
-          createAt: __nullable__(t.Date({ additionalProperties: true })),
-          updatedAt: __nullable__(t.Date({ additionalProperties: true })),
-          height: __nullable__(t.Integer({ additionalProperties: true })),
-          width: __nullable__(t.Integer({ additionalProperties: true })),
-          x: __nullable__(t.Integer({ additionalProperties: true })),
-          y: __nullable__(t.Integer({ additionalProperties: true })),
-          onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
-          profit: t.Number({ additionalProperties: true }),
-          status: __nullable__(t.String({ additionalProperties: true })),
-        },
-        { additionalProperties: true },
-      ),
+    Event: t.Object(
+      {
+        eventId: t.String({ additionalProperties: true }),
+        name: t.String({ additionalProperties: true }),
+        description: __nullable__(t.String({ additionalProperties: true })),
+        startDate: __nullable__(t.Date({ additionalProperties: true })),
+        endDate: __nullable__(t.Date({ additionalProperties: true })),
+        venue: __nullable__(t.String({ additionalProperties: true })),
+        createAt: __nullable__(t.Date({ additionalProperties: true })),
+        updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+        x: __nullable__(t.Integer({ additionalProperties: true })),
+        y: __nullable__(t.Integer({ additionalProperties: true })),
+        profit: t.Number({ additionalProperties: true }),
+        status: __nullable__(t.String({ additionalProperties: true })),
+        height: __nullable__(t.Integer({ additionalProperties: true })),
+        hostId: __nullable__(t.String({ additionalProperties: true })),
+        stageValue: __nullable__(t.String({ additionalProperties: true })),
+        themeId: __nullable__(t.String({ additionalProperties: true })),
+        width: __nullable__(t.Integer({ additionalProperties: true })),
+        thumbnail: __nullable__(t.String({ additionalProperties: true })),
+        onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
     ),
   },
   { additionalProperties: true },
@@ -98,18 +96,16 @@ export const LocationTypeRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    Event: t.Optional(
-      t.Object(
-        {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
+    Event: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
     ),
   },
   { additionalProperties: true },
@@ -142,19 +138,15 @@ export const LocationTypeRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      Event: t.Partial(
-        t.Object(
-          {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
+      Event: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
         { additionalProperties: true },
       ),
     },

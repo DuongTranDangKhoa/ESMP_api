@@ -19,7 +19,7 @@ export const MenuRelations = t.Object(
         vendorinEventId: t.String({ additionalProperties: true }),
         eventId: t.String({ additionalProperties: true }),
         vendorId: t.String({ additionalProperties: true }),
-        status: __nullable__(t.Boolean({ additionalProperties: true })),
+        status: __nullable__(t.String({ additionalProperties: true })),
       },
       { additionalProperties: true },
     ),

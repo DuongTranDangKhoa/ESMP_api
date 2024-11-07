@@ -57,11 +57,16 @@ async function updateEvent(
       },
       data: {
         name: updateData.name,
-        thumbnail: updateData.logo,
         description: updateData.description,
         startDate: updateData.startDate,
         endDate: updateData.endDate,
         status: updateData.status,
+        profit: updateData.profit,
+        venue: updateData.venue,
+        x: updateData.x,
+        y: updateData.y,
+        width: updateData.width,
+        height: updateData.height,
       },
     })
     await hostDb.$disconnect();

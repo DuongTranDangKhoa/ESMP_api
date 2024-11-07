@@ -96,7 +96,7 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
             mainTemplate: mainTemplate,
             status: event.status ?? 'Unknown',
             textElements: textElements, 
-            imageElements: [event.thumbnail ?? '', event.stageValue ?? ''] 
+            imageElements: [ event.stageValue ?? ''] 
         };
          await hostDb.$disconnect();
         return map;
@@ -222,6 +222,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
         throw new Error('Failed to create map');
     }
 }
+
 const mapService = {
     getMap,
     getLocationType,

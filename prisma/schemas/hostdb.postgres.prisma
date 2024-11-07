@@ -8,8 +8,8 @@ generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
   typeboxImportDependencyName = "elysia"
-  additionalProperties        = "true"
   typeboxImportVariableName   = "t"
+  additionalProperties        = "true"
   inputModel                  = "true"
 }
 
@@ -35,8 +35,8 @@ model Event {
   hostId        String?         @map("hostid") @db.Uuid
   stageValue    String?         @map("stagevalue") @db.VarChar
   themeId       String?         @map("themeid") @db.Uuid
-  thumbnail     String?         @map("thumbnail") @db.VarChar
   width         Int?            @map("width")
+  thumbnail     String?         @map("thumbnail") @db.VarChar
   onWeb         Boolean?        @map("onweb")
   LocationType  LocationType[]
   VendorInEvent VendorInEvent[]
@@ -61,10 +61,10 @@ model EventPayment {
 }
 
 model VendorInEvent {
-  vendorinEventId String         @id @unique @db.Uuid
+  vendorinEventId String         @id @unique @default(uuid()) @db.Uuid
   eventId         String         @db.Uuid
   vendorId        String         @db.Uuid
-  status          Boolean?       @default(true)
+  status          String?        @default("approved") @map("status") @db.VarChar(50)
   EventPayment    EventPayment[]
   Menu            Menu?
   event           Event          @relation(fields: [eventId], references: [eventId])
@@ -130,14 +130,16 @@ model Vendor {
 }
 
 model Account {
-  userId    String    @id @default(uuid()) @map("userid") @db.Uuid
-  username  String    @unique @db.VarChar(40)
-  password  String    @db.VarChar(100)
-  role      String    @db.VarChar(10)
-  name      String    @db.VarChar(100)
-  createAt  DateTime? @map("create_at") @db.Date
-  updatedAt DateTime? @default(now()) @map("updated_at") @db.Date
-  status    String    @db.VarChar(10)
+  id           String         @id @db.Uuid
+  username     String         @db.VarChar(50)
+  password     String         @db.VarChar(50)
+  role         String?        @db.VarChar(10)
+  name         String?        @db.VarChar(100)
+  createdat    DateTime?      @default(now()) @db.Timestamp(6)
+  updatedat    DateTime?      @default(now()) @db.Timestamp(6)
+  status       Boolean?
+  host         host?
+  notification notification[]
 
   @@map("account")
 }
@@ -286,4 +288,47 @@ model SessionData {
   expiredAt   Int
   updatedAt   Int
   sessionInfo Json
+}
+
+model host {
+  userid           String        @id @db.Uuid
+  expiretime       DateTime?     @db.Timestamp(6)
+  bankingaccount   String?       @db.VarChar(20)
+  phone            String?       @db.VarChar(15)
+  email            String?       @db.VarChar(100)
+  eventstoragetime DateTime?     @db.Timestamp(6)
+  account          Account       @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  transaction      transaction[]
+}
+
+model notification {
+  id      String  @id @db.Uuid
+  userid  String  @db.Uuid
+  source  String?
+  account Account @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model has been renamed to 'Renamedpackage' during introspection, because the original name 'package' is reserved.
+model Renamedpackage {
+  id               String        @id @db.Uuid
+  name             String?       @db.VarChar(100)
+  description      String?
+  eventstoragetime Int?
+  createdat        DateTime?     @default(now()) @db.Timestamp(6)
+  updatedat        DateTime?     @default(now()) @db.Timestamp(6)
+  status           Boolean?
+  price            Decimal?      @db.Decimal(10, 2)
+  transaction      transaction[]
+
+  @@map("package")
+}
+
+model transaction {
+  id             String         @id @db.Uuid
+  hostid         String         @db.Uuid
+  packageid      String         @db.Uuid
+  createdat      DateTime?      @default(now()) @db.Timestamp(6)
+  status         String?        @db.VarChar(10)
+  host           host           @relation(fields: [hostid], references: [userid], onDelete: Cascade, onUpdate: NoAction)
+  Renamedpackage Renamedpackage @relation(fields: [packageid], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }

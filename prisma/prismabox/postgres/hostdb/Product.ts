@@ -20,6 +20,16 @@ export const ProductPlain = t.Object(
 
 export const ProductRelations = t.Object(
   {
+    category: t.Object(
+      {
+        categoryId: t.String({ additionalProperties: true }),
+        categoryName: t.String({ additionalProperties: true }),
+        createAt: __nullable__(t.Date({ additionalProperties: true })),
+        updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+        status: t.Boolean({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
+    ),
     vendor: t.Object(
       {
         vendorId: t.String({ additionalProperties: true }),
@@ -34,16 +44,6 @@ export const ProductRelations = t.Object(
         createDate: __nullable__(t.Date({ additionalProperties: true })),
         updatedDate: __nullable__(t.Date({ additionalProperties: true })),
         status: __nullable__(t.Boolean({ additionalProperties: true })),
-      },
-      { additionalProperties: true },
-    ),
-    category: t.Object(
-      {
-        categoryId: t.String({ additionalProperties: true }),
-        categoryName: t.String({ additionalProperties: true }),
-        createAt: __nullable__(t.Date({ additionalProperties: true })),
-        updatedAt: __nullable__(t.Date({ additionalProperties: true })),
-        status: t.Boolean({ additionalProperties: true }),
       },
       { additionalProperties: true },
     ),
@@ -95,7 +95,7 @@ export const ProductPlainInputUpdate = t.Object(
 
 export const ProductRelationsInputCreate = t.Object(
   {
-    vendor: t.Object(
+    category: t.Object(
       {
         connect: t.Object(
           {
@@ -106,7 +106,7 @@ export const ProductRelationsInputCreate = t.Object(
       },
       { additionalProperties: true },
     ),
-    category: t.Object(
+    vendor: t.Object(
       {
         connect: t.Object(
           {
@@ -139,7 +139,7 @@ export const ProductRelationsInputCreate = t.Object(
 export const ProductRelationsInputUpdate = t.Partial(
   t.Object(
     {
-      vendor: t.Object(
+      category: t.Object(
         {
           connect: t.Object(
             {
@@ -150,7 +150,7 @@ export const ProductRelationsInputUpdate = t.Partial(
         },
         { additionalProperties: true },
       ),
-      category: t.Object(
+      vendor: t.Object(
         {
           connect: t.Object(
             {
@@ -261,8 +261,8 @@ export const ProductSelect = t.Partial(
       updatedAt: t.Boolean(),
       status: t.Boolean(),
       count: t.Boolean(),
-      vendor: t.Boolean(),
       category: t.Boolean(),
+      vendor: t.Boolean(),
       ProductInProductItem: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -274,8 +274,8 @@ export const ProductSelect = t.Partial(
 export const ProductInclude = t.Partial(
   t.Object(
     {
-      vendor: t.Boolean(),
       category: t.Boolean(),
+      vendor: t.Boolean(),
       ProductInProductItem: t.Boolean(),
       _count: t.Boolean(),
     },

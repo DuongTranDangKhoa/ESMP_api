@@ -104,18 +104,18 @@ const deleteVendor = async (
    await hostDb.$disconnect();
 }
 
-const getVendorRegisteredEvents = async (
-  vendorId: string,
-  hostDb: HostDbClient,
-)=> {
-  const vendorRegisteredEvents = await hostDb.eventPayment.findMany({
-    where: {
-      vendorId,
-    },
-  })
-   await hostDb.$disconnect();
-  return vendorRegisteredEvents
-}
+// const getVendorRegisteredEvents = async (
+//   vendorId: string,
+//   hostDb: HostDbClient,
+// )=> {
+//   const vendorRegisteredEvents = await hostDb.eventPayment.findMany({
+//     where: {
+//       vendorId,
+//     },
+//   })
+//    await hostDb.$disconnect();
+//   return vendorRegisteredEvents
+// }
 
 // const registerEvent = async (
 //   vendorId: string,
@@ -138,7 +138,7 @@ const vendorService = {
   updateVendor,
   deleteVendor,
   createVendor,
-  getVendorRegisteredEvents,
+  // getVendorRegisteredEvents,
   // registerEvent,
 }
 

@@ -7,12 +7,12 @@ export const LocationPlain = t.Object(
     locationId: t.String({ additionalProperties: true }),
     typeId: t.String({ additionalProperties: true }),
     shape: t.String({ additionalProperties: true }),
-    rotation: __nullable__(t.Integer({ additionalProperties: true })),
     x: __nullable__(t.Integer({ additionalProperties: true })),
     y: __nullable__(t.Integer({ additionalProperties: true })),
-    heigth: __nullable__(t.Integer({ additionalProperties: true })),
     width: __nullable__(t.Integer({ additionalProperties: true })),
     status: __nullable__(t.String({ additionalProperties: true })),
+    heigth: __nullable__(t.Integer({ additionalProperties: true })),
+    rotation: __nullable__(t.Integer({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -39,17 +39,15 @@ export const LocationRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
-    LocationType: __nullable__(
-      t.Object(
-        {
-          typeId: t.String({ additionalProperties: true }),
-          eventId: t.String({ additionalProperties: true }),
-          typeName: __nullable__(t.String({ additionalProperties: true })),
-          price: t.Number({ additionalProperties: true }),
-          status: __nullable__(t.String({ additionalProperties: true })),
-        },
-        { additionalProperties: true },
-      ),
+    LocationType: t.Object(
+      {
+        typeId: t.String({ additionalProperties: true }),
+        eventId: t.String({ additionalProperties: true }),
+        typeName: __nullable__(t.String({ additionalProperties: true })),
+        price: t.Number({ additionalProperties: true }),
+        status: __nullable__(t.String({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
     ),
   },
   { additionalProperties: true },
@@ -58,14 +56,14 @@ export const LocationRelations = t.Object(
 export const LocationPlainInputCreate = t.Object(
   {
     shape: t.Optional(t.String({ additionalProperties: true })),
+    x: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
+    y: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
+    width: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
+    status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
+    heigth: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
     rotation: t.Optional(
       __nullable__(t.Integer({ additionalProperties: true })),
     ),
-    x: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
-    y: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
-    heigth: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
-    width: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
-    status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -73,12 +71,12 @@ export const LocationPlainInputCreate = t.Object(
 export const LocationPlainInputUpdate = t.Object(
   {
     shape: t.Optional(t.String({ additionalProperties: true })),
-    rotation: __nullable__(t.Integer({ additionalProperties: true })),
     x: __nullable__(t.Integer({ additionalProperties: true })),
     y: __nullable__(t.Integer({ additionalProperties: true })),
-    heigth: __nullable__(t.Integer({ additionalProperties: true })),
     width: __nullable__(t.Integer({ additionalProperties: true })),
     status: __nullable__(t.String({ additionalProperties: true })),
+    heigth: __nullable__(t.Integer({ additionalProperties: true })),
+    rotation: __nullable__(t.Integer({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -100,18 +98,16 @@ export const LocationRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    LocationType: t.Optional(
-      t.Object(
-        {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
+    LocationType: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
     ),
   },
   { additionalProperties: true },
@@ -144,19 +140,15 @@ export const LocationRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      LocationType: t.Partial(
-        t.Object(
-          {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
+      LocationType: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
         { additionalProperties: true },
       ),
     },
@@ -175,12 +167,12 @@ export const LocationWhere = t.Partial(
         locationId: t.String(),
         typeId: t.String(),
         shape: t.String(),
-        rotation: t.Integer(),
         x: t.Integer(),
         y: t.Integer(),
-        heigth: t.Integer(),
         width: t.Integer(),
         status: t.String(),
+        heigth: t.Integer(),
+        rotation: t.Integer(),
       }),
     { $id: "Location" },
   ),
@@ -205,12 +197,12 @@ export const LocationWhereUnique = t.Recursive(
             locationId: t.String(),
             typeId: t.String(),
             shape: t.String(),
-            rotation: t.Integer(),
             x: t.Integer(),
             y: t.Integer(),
-            heigth: t.Integer(),
             width: t.Integer(),
             status: t.String(),
+            heigth: t.Integer(),
+            rotation: t.Integer(),
           },
           { additionalProperties: true },
         ),
@@ -226,12 +218,12 @@ export const LocationSelect = t.Partial(
       locationId: t.Boolean(),
       typeId: t.Boolean(),
       shape: t.Boolean(),
-      rotation: t.Boolean(),
       x: t.Boolean(),
       y: t.Boolean(),
-      heigth: t.Boolean(),
       width: t.Boolean(),
       status: t.Boolean(),
+      heigth: t.Boolean(),
+      rotation: t.Boolean(),
       EventPayment: t.Boolean(),
       LocationType: t.Boolean(),
       _count: t.Boolean(),
@@ -259,12 +251,12 @@ export const LocationOrderBy = t.Partial(
       locationId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       typeId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       shape: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      rotation: t.Union([t.Literal("asc"), t.Literal("desc")]),
       x: t.Union([t.Literal("asc"), t.Literal("desc")]),
       y: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      heigth: t.Union([t.Literal("asc"), t.Literal("desc")]),
       width: t.Union([t.Literal("asc"), t.Literal("desc")]),
       status: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      heigth: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      rotation: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

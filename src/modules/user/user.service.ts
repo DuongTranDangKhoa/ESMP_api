@@ -58,7 +58,9 @@ export async function authenticateHostUser(
     username,
     hostInfo: {
       hostName: host.hostName as string,
+      hostId: host.hostId as string,
       hostCode: host.hostCode as string,
+      
     },
   }
 
@@ -98,13 +100,15 @@ export async function authenticateVendorUser(
     role: RoleType.MANAGER,
     hostInfo: {
       hostName: host.hostName as string,
+      hostId: host.hostId as string,
       hostCode: host.hostCode as string,
       // hostName: "123", 
       // hostCode,
     },
     vendorInfo: {
-      vendorName: vendor.vendorName as string,
-      vendorId: vendor.vendorId as string,
+      vendorName: vendor.account.name as string,
+      vendorId: vendor.vendor.vendorId as string,
+      urlQr: vendor.vendor.urlQr as string
     },
   }
 

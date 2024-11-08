@@ -9,20 +9,19 @@ export type EventType = Event
 export class EventObject {
       eventId?: string
       hostId: string
-      themeId: string
+      themeId?: string
       name: string
       description: string | null
-      logo: string | null
       startDate: Date | null
       endDate: Date | null
-      venue: string | null
-      createAt: Date | null
-      updatedAt: Date | null
+      venue?: string | null
+      createAt?: Date | null
+      updatedAt?: Date | null
       x?: number | null
       y?: number | null
       width?: number | null
       height?: number | null
-      rotation?: number | null
+      stageValue?: string | null
       onWeb?: boolean
       profit: Prisma.Decimal
       status: string 
@@ -32,7 +31,6 @@ export class EventObject {
         this.themeId = data.themeId
         this.name = data.name
         this.description = data.description
-        this.logo = data.logo
         this.startDate = data.startDate
         this.endDate = data.endDate
         this.venue = data.venue
@@ -42,7 +40,7 @@ export class EventObject {
         this.y = data.y
         this.width = data.width
         this.height = data.height
-        this.rotation = data.rotation
+        this.stageValue = data.stageValue
         this.onWeb = data.onWeb
         this.profit = data.profit
         this.status = data.status

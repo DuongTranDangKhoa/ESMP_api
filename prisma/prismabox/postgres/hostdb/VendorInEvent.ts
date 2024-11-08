@@ -7,7 +7,7 @@ export const VendorInEventPlain = t.Object(
     vendorinEventId: t.String({ additionalProperties: true }),
     eventId: t.String({ additionalProperties: true }),
     vendorId: t.String({ additionalProperties: true }),
-    status: __nullable__(t.Boolean({ additionalProperties: true })),
+    status: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -48,24 +48,24 @@ export const VendorInEventRelations = t.Object(
     event: t.Object(
       {
         eventId: t.String({ additionalProperties: true }),
-        hostId: __nullable__(t.String({ additionalProperties: true })),
-        themeId: __nullable__(t.String({ additionalProperties: true })),
         name: t.String({ additionalProperties: true }),
         description: __nullable__(t.String({ additionalProperties: true })),
-        thumbnail: __nullable__(t.String({ additionalProperties: true })),
-        stageValue: __nullable__(t.String({ additionalProperties: true })),
         startDate: __nullable__(t.Date({ additionalProperties: true })),
         endDate: __nullable__(t.Date({ additionalProperties: true })),
         venue: __nullable__(t.String({ additionalProperties: true })),
         createAt: __nullable__(t.Date({ additionalProperties: true })),
         updatedAt: __nullable__(t.Date({ additionalProperties: true })),
-        height: __nullable__(t.Integer({ additionalProperties: true })),
-        width: __nullable__(t.Integer({ additionalProperties: true })),
         x: __nullable__(t.Integer({ additionalProperties: true })),
         y: __nullable__(t.Integer({ additionalProperties: true })),
-        onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
         profit: t.Number({ additionalProperties: true }),
         status: __nullable__(t.String({ additionalProperties: true })),
+        height: __nullable__(t.Integer({ additionalProperties: true })),
+        hostId: __nullable__(t.String({ additionalProperties: true })),
+        stageValue: __nullable__(t.String({ additionalProperties: true })),
+        themeId: __nullable__(t.String({ additionalProperties: true })),
+        width: __nullable__(t.Integer({ additionalProperties: true })),
+        thumbnail: __nullable__(t.String({ additionalProperties: true })),
+        onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
       },
       { additionalProperties: true },
     ),
@@ -92,14 +92,14 @@ export const VendorInEventRelations = t.Object(
 
 export const VendorInEventPlainInputCreate = t.Object(
   {
-    status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
+    status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
 
 export const VendorInEventPlainInputUpdate = t.Object(
   {
-    status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
+    status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -240,7 +240,7 @@ export const VendorInEventWhere = t.Partial(
         vendorinEventId: t.String(),
         eventId: t.String(),
         vendorId: t.String(),
-        status: t.Boolean(),
+        status: t.String(),
       }),
     { $id: "VendorInEvent" },
   ),
@@ -265,7 +265,7 @@ export const VendorInEventWhereUnique = t.Recursive(
             vendorinEventId: t.String(),
             eventId: t.String(),
             vendorId: t.String(),
-            status: t.Boolean(),
+            status: t.String(),
           },
           { additionalProperties: true },
         ),

@@ -18,6 +18,7 @@ import { categoryGroup } from './modules/category'
 import { menuGroup } from './modules/menu'
 import { mailGroup } from './modules/sendmail'
 import { mapGroup } from './modules/map'
+import { vendorineventGroup } from './modules/vendorinevent'
 
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -40,6 +41,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/transaction', (app) => app.use(transactionGroup)) // transaction route
         .group('/category', (app) => app.use(categoryGroup)) // category route
         .group('/menu', (app) => app.use(menuGroup)) // menu route
+        .group('/vendorinevent', (app) => app.use(vendorineventGroup)) // vendor route
         .group('/mail',(app) => app.use(mailGroup)) // mail route)
         .group('/map', (app) => app.use(mapGroup)) // map route
         // .group('/transaction', (app) => app.use(transactionGroup)) // transaction route

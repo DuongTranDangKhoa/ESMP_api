@@ -16,7 +16,7 @@ app.guard('/', (app: any) =>
             const vendorId = params.vendorId;
             const eventId = params.eventId;
             const menuItems = await menuService.getMenuListByVendorId(vendorId,eventId, hostDb);
-            if (menuItems.menu === null) {
+            if (menuItems === null) {
                 return { message: 'Menu not found' };           
             }
             return menuItems;

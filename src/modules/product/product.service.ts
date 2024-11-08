@@ -33,9 +33,7 @@ const createVendorProduct = async (
       quantity: inputData.quantity,
       count: inputData.count, 
       status: inputData.status,
-      vendor: {
-        connect: { vendorId } 
-      }
+      vendorid: vendorId,
     }
   });
    await hostDb.$disconnect();

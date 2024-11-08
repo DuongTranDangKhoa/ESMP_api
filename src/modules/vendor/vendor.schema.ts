@@ -1,11 +1,19 @@
 import { error, t } from 'elysia'
-import { Vendor } from '../../../prisma/clients/postgres/hostdb'
+import { Account, Vendor } from '../../../prisma/clients/postgres/hostdb'
 
 export type VendorType = Pick<
-  Vendor,
-  'vendorId' | 'username' | 'password' | 'vendorName' 
+  Vendor, |
+  'vendorId' |  'urlQr' | 'hostid'
 >
-
+export type AccountType = Pick< Account,| 'name' >
+export class VendorAccountType {
+  account: AccountType
+  vendor: VendorType
+  constructor(account: Account, vendor: Vendor) {
+    this.account = account
+    this.vendor = vendor
+  }
+} 
 export class VendorObject {
   vendorId: string
   username: string

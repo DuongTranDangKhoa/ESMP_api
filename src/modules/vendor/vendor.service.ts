@@ -1,8 +1,9 @@
+import { RoleType } from './../../common/constant/common.constant';
 import { NotFoundError } from 'elysia'
 import { HostDbClient } from '../../database/host.db'
 import { AuthenticationError } from '../../errors/authentication.error'
 import { verifyEncrypted } from '../../utilities/crypting.util'
-import { VendorType, VendorObject } from './vendor.schema'
+import { VendorType, VendorObject, VendorAccountType } from './vendor.schema'
 // import { EventRegisterObject } from '../event/event.schema'
 import { EventRegisterStatus } from '../../common/constant/common.constant'
 
@@ -10,17 +11,16 @@ const authenticateVendorUser = async (
   username: string,
   password: string,
   hostDb: HostDbClient,
-): Promise<VendorType> => {
+): Promise<VendorAccountType> => {
   console.log('username', username)
+  const user = await hostDb.account.findFirst(
+    { where: { username   } })
+    if(!user){
+      throw new AuthenticationError('Invalid username or you are not vendor')
+    }
   const vendor = await hostDb.vendor.findFirst({
-    select: {
-      vendorId: true,
-      username: true,
-      password: true,
-      vendorName: true,
-    },
     where: {
-      username,
+      userid: user.id
     },
   })
    console.log('vendor', vendor)
@@ -29,12 +29,13 @@ const authenticateVendorUser = async (
     throw new AuthenticationError('Invalid username')
   }
   // verify password
-  const isPasswordMatch = verifyEncrypted(password, vendor.password)
+  const isPasswordMatch = verifyEncrypted(password, user.password)
   if (!isPasswordMatch) {
     throw new AuthenticationError('Invalid password')
   }
    await hostDb.$disconnect();
-  return vendor
+  
+  return new VendorAccountType(user, vendor)
 }
 
 const getVendorList = async (hostDb: HostDbClient): Promise<VendorObject[]> => {

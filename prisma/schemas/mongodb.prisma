@@ -18,12 +18,14 @@ type UserInfo {
 
 type HostInfo {
   hostCode String
+  hostId   String
   hostName String
 }
 
 type VendorInfo {
   vendorName String
   vendorId   String
+  urlQr      String
 }
 
 model SessionData {

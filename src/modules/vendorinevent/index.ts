@@ -15,14 +15,14 @@ export const vendorineventGroup = (app: any) =>
         .post('/:vendorId/:eventId', async ({ params, set, hostDb }: {params: any ,  set: any , hostDb: HostDbClient}) => {
             const vendorId = params.vendorId;
             const eventId = params.eventId;
-            await vendorineventservice.createVendorInEvent( vendorId, eventId, hostDb);
+            await vendorineventservice.createVendorInEvent( eventId, vendorId,  hostDb);
             set.status = ('Created');
             return { message: 'Create vendorInEvent success' };
 
         })
         .put('/:vendorInEventId', async ({ params, body, hostDb}: {params: any,body: any, hostDb: HostDbClient}) => {
             const vendorInEventId = params.vendorInEventId;
-            const updatedVendorInEvent = await vendorineventservice.updateVendorInEvent( body, hostDb);
+            const updatedVendorInEvent = await vendorineventservice.updateVendorInEvent( vendorInEventId,body, hostDb);
             return {
                 message: 'Update vendorInEvent success',
             };

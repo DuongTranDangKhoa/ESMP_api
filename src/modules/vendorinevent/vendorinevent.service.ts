@@ -23,6 +23,7 @@ const createVendorInEvent = async (eventId: string, vendorId: string, hostDb: Ho
             data: {
             eventId,
             vendorId,
+            status: 'accept',
             },
         });
         await hostDb.$disconnect();
@@ -32,12 +33,11 @@ const createVendorInEvent = async (eventId: string, vendorId: string, hostDb: Ho
         throw new Error('Failed to retrieve Vendor In Event');
     }
 }
-const updateVendorInEvent = async (body: VendorInEvent , hostDb: HostDbClient) => {
+const updateVendorInEvent = async (vendorInEventId: string, body: VendorInEvent , hostDb: HostDbClient) => {
     try {
-        const vendorInEvent = await hostDb.vendorInEvent.updateMany({
+        const vendorInEvent = await hostDb.vendorInEvent.update({
             where: {
-               eventId: body.eventId,
-               vendorId: body.vendorId,
+              vendorinEventId: vendorInEventId
             },
             data: {
                 status: body.status,

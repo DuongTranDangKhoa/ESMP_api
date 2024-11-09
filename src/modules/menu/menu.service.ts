@@ -1,30 +1,37 @@
 import { HostDbClient } from "../../database/host.db";
+import vendorineventservice from "../vendorinevent/vendorinevent.service";
 import { MenuObject, ProductItemInMenuObject, ProductItemInMenuUpdateObject } from "./menu.schema";
 
 const getMenuList = async (hostDb: HostDbClient) => {
     return await hostDb.menu.findMany()
 }
-const getMenuListByVendorId = async ( vendorId: string , eventId: string ,hostDb: HostDbClient) => {
-    const menuEvent = await hostDb.vendorInEvent.findMany({
-            where: {           
-                    vendorId: vendorId,
-                    eventId: eventId,
-            },
-        });
+const getMenuListByVendorId = async (vendorId: string, eventId: string, hostDb: HostDbClient) => {
+    const vendorinevent = await vendorineventservice.getVendorInEvent(eventId, vendorId, hostDb);
+    
+    if (!vendorinevent) {
+        throw new Error('Vendor in event not found');
+    }
+    
+    const menuEvent = await hostDb.menu.findUnique({
+        where: {           
+            menuId: vendorinevent.vendorinEventId,
+        },
+    });
        
-        if (!menuEvent) {
-            throw new Error('Vendor in event not found');
-        }
-        const vendorinEventid =  menuEvent[0].vendorinEventId
-        const menu = await hostDb.menu.findUnique({where: {menuId: vendorinEventid}})
-        const details = await hostDb.productItemInMenu.findMany({where: {menuId: vendorinEventid }})
-        const productItemIds = details.map((item) => ({
-    productItemId: item.productItemId,
-    status: item.status
-}));
-         await hostDb.$disconnect();
-        return {menu, productItemIds}    
-}
+    if (!menuEvent) {
+        throw new Error('Vendor in event not found');
+    }
+    
+    const details = await hostDb.productItemInMenu.findMany({ where: { menuId: menuEvent.menuId } });
+    
+    const productItemIds = details.map((item) => ({
+        productItemId: item.productItemId,
+        status: item.status
+    }));
+
+    await hostDb.$disconnect();
+    return { menuEvent, productItemIds };
+};
 // const getMenuListByEventId = async ( eventId: string, hostDb: HostDbClient) => {
 //     return await hostDb.menu.findMany({where: {eventId} })
 // }

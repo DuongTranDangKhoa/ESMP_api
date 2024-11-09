@@ -48,7 +48,7 @@ const getVendorList = async (hostDb: HostDbClient): Promise<VendorObject[]> => {
 const getVendorById = async (
   vendorId: string,
   hostDb: HostDbClient,
-): Promise<VendorObject> => {
+) => {
   const vendor = await hostDb.vendor.findUnique({
     where: {
       vendorId,
@@ -84,11 +84,31 @@ const updateVendor = async (
   vendor: VendorObject,
   hostDb: HostDbClient,
 ): Promise<void> => {
+  if(!vendor.name){
+    const vendorAccount = await hostDb.vendor.findFirst({ where: { vendorId } });
+    if(!vendorAccount){
+      throw new NotFoundError('Vendor not found')
+    }
+    await hostDb.account.update({
+    where: {
+      id: vendorAccount.userid,
+    },
+    data: {
+      name: vendor.name
+    },
+  })
+  }
   await hostDb.vendor.update({
     where: {
       vendorId,
     },
-    data: vendor,
+    data: {
+      phone: vendor.phone,
+      address: vendor.address,
+      email: vendor.email,
+      urlQr: vendor.urlQr,
+      status: vendor.status,
+    },
   })
    await hostDb.$disconnect();
 }

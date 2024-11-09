@@ -16,14 +16,20 @@ export class VendorAccountType {
 } 
 export class VendorObject {
   vendorId: string
-  username: string
-  vendorName: string
-
-  constructor(vendor: Vendor | VendorType) {
-    this.vendorId = vendor.vendorId
-    this.username = vendor.username
-    this.vendorName = vendor.vendorName ?? ''
-
+  name?: string 
+  phone?: string
+  email?: string
+  address?: string
+  urlQr?: string
+  status?: boolean
+  constructor(data: any) {
+    this.vendorId = data.vendorId
+    this.name = data.name
+    this.phone = data.phone
+    this.email = data.email
+    this.address = data.address
+    this.urlQr = data.urlQr
+    this.status = data.status
   }
 }
 

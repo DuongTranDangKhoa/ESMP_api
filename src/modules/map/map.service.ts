@@ -266,11 +266,26 @@ const updateMap = async (updateDataArray: LocationObject[], hostDb: HostDbClient
     throw new Error("Failed to update map");
   }
 };
+const deleteMap = async (locationId: string, hostDb: HostDbClient) => {
+    try {
+        await hostDb.location.delete({
+        where: {
+            locationId,
+        },
+        });
+        await hostDb.$disconnect();
+        return "Successfully deleted location";
+    } catch (error) {
+        console.error("Error deleting location:", error);
+        throw new Error("Failed to delete location because location have bought after");
+    }
+}
 const mapService = {
     getMap,
     getLocationType,
     createMap,
     updateMap,
+    deleteMap,
     createLocationType
 }
 export default mapService

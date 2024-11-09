@@ -68,4 +68,17 @@ app.group('/:hostId/:eventId', (app: any) =>
             },
 
         ) 
+        .delete('/:locationId',
+            async ({
+                params,
+                hostDb,
+            }: {
+                params: any
+                hostDb: HostDbClient
+            }) => {
+                const {locationId} = params;
+                return await mapService.deleteMap(locationId, hostDb)
+            },
+
+        )
             

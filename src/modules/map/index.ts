@@ -55,5 +55,17 @@ app.group('/:hostId/:eventId', (app: any) =>
                     return await mapService.createLocationType(hostId, eventId, body, hostDb)
                 }) 
                          
-        )   
+        )  
+        .put('/',
+            async ({
+                body,
+                hostDb,
+            }: {
+                body: any
+                hostDb: HostDbClient
+            }) => {
+                return await mapService.updateMap(body, hostDb)
+            },
+
+        ) 
             

@@ -1,7 +1,7 @@
 import { Location } from './../../../prisma/prismabox/postgres/hostdb/Location';
 import { HostDbClient } from "../../database/host.db";
 import eventService from "../event/event.service";
-import { BoothObject, LocationGetObject, LocationTypeObject, LocationTypeType, MainTemplateObject, MapCreateObject, MapObject, ShapeObject } from "./map.schema"
+import { BoothObject, LocationGetObject, LocationObject, LocationTypeObject, LocationTypeType, MainTemplateObject, MapCreateObject, MapObject, ShapeObject } from "./map.schema"
 
 const createLocationType = async (hostId: string, eventId: string, inputData: LocationTypeObject, hostDb: HostDbClient) => {
     try {
@@ -38,6 +38,21 @@ const getLocationType = async (hostId: string, eventId: string, hostDb: HostDbCl
         throw new Error('Failed to create map');
     } 
 }
+const getLocationTypeofMap = async (hostId: string, eventId: string, hostDb: HostDbClient) => {
+  
+    try {
+      const locationType = await hostDb.locationType.findMany({
+        where: {
+          eventId: eventId,   
+        }
+      });
+        await hostDb.$disconnect();
+        return locationType;
+    } catch (error) {
+        console.error("Error creating map:", error);
+        throw new Error('Failed to create map');
+    } 
+}
 const getLocationTypeByID = async (hostId: string, locationTypeid: string, hostDb: HostDbClient) => { 
     try {
         const location = await hostDb.locationType.findFirst({
@@ -57,7 +72,7 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
         console.log('Input Data:', eventId);
         const event = await eventService.getEventById(eventId, hostDb);
         const mainTemplate = new MainTemplateObject(event);
-        const locationTypes = await getLocationType(hostId, eventId, hostDb);
+        const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);
 
         const locations: LocationGetObject[] = [];
         const shapes: LocationGetObject[] = [];
@@ -108,6 +123,7 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
 const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
     try {
     const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
+    if(mainTemplate != null){
     const updateEvent = await hostDb.event.update({
         where: {
             eventId: inputData.eventId,
@@ -118,6 +134,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
             height: mainTemplate.height,
         }
     });
+   }
     const location: BoothObject[] = inputData.booths;
     const shapes: ShapeObject[] = inputData.shapes;
     const textElements: ShapeObject[] = inputData.textElements;
@@ -222,11 +239,38 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
         throw new Error('Failed to create map');
     }
 }
+const updateMap = async (updateDataArray: LocationObject[], hostDb: HostDbClient) => {
+  try {
+    for (const updateData of updateDataArray) {
+      console.log("Updating locationId:", updateData.locationId);
 
+      await hostDb.location.updateMany({
+        where: {
+          locationId: updateData.locationId,
+        },
+        data: {
+          typeId: updateData.typeId,
+          x: updateData.x,
+          y: updateData.y,
+          rotation: updateData.rotation,
+          heigth: updateData.height, // Corrected spelling
+          width: updateData.width,
+        },
+      });
+    }
+    
+    await hostDb.$disconnect();
+    return "Successfully updated all locations";
+  } catch (error) {
+    console.error("Error updating map:", error);
+    throw new Error("Failed to update map");
+  }
+};
 const mapService = {
     getMap,
     getLocationType,
     createMap,
+    updateMap,
     createLocationType
 }
 export default mapService

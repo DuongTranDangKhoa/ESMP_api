@@ -123,3 +123,29 @@ export class MapCreateObject {
       this.mainTemplate = data.mainTemplate
     }
 }
+export class LocationObject {
+    locationId: string
+    typeId: string
+    x: number 
+    y: number 
+    rotation: number
+    height: number 
+    width: number 
+    constructor( 
+        locationId: string,
+        typeId: string,
+        height: number,
+        width: number,
+        x: number,
+        y: number,
+        rotation: number,
+    ) {
+        this.locationId = locationId;
+        this.typeId = typeId;
+        this.x = x;
+        this.y = y;
+        this.rotation = rotation;
+        this.height = height;
+        this.width = width;
+    }
+}

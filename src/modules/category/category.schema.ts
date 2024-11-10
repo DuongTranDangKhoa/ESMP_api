@@ -6,10 +6,12 @@ export class CategoryObject {
     name: string
     description: string
     status?: boolean
+    hostId?: string
     constructor(data: any) {
         this.categoryId = data.categoryId
         this.name = data.name
         this.description = data.description
         this.status = data.status
+        this.hostId = data.hostId
     }
 }

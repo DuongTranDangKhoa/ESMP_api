@@ -2,60 +2,154 @@ import { t } from "elysia";
 
 import { __nullable__ } from "./__nullable__";
 
-export const StaffPlain = t.Object(
+export const staffPlain = t.Object(
   {
-    staffId: t.String({ additionalProperties: true }),
+    staffid: t.String({ additionalProperties: true }),
     vendorId: t.String({ additionalProperties: true }),
-    username: t.String({ additionalProperties: true }),
+    userid: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
 
-export const StaffRelations = t.Object({}, { additionalProperties: true });
-
-export const StaffPlainInputCreate = t.Object(
-  { username: t.String({ additionalProperties: true }) },
+export const staffRelations = t.Object(
+  {
+    account: t.Object(
+      {
+        id: t.String({ additionalProperties: true }),
+        username: t.String({ additionalProperties: true }),
+        password: t.String({ additionalProperties: true }),
+        role: __nullable__(t.String({ additionalProperties: true })),
+        name: __nullable__(t.String({ additionalProperties: true })),
+        createdat: __nullable__(t.Date({ additionalProperties: true })),
+        updatedat: __nullable__(t.Date({ additionalProperties: true })),
+        status: __nullable__(t.Boolean({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
+    ),
+    vendor: t.Object(
+      {
+        vendorId: t.String({ additionalProperties: true }),
+        userid: t.String({ additionalProperties: true }),
+        hostid: t.String({ additionalProperties: true }),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
+        address: __nullable__(t.String({ additionalProperties: true })),
+        urlQr: __nullable__(t.String({ additionalProperties: true })),
+        status: __nullable__(t.Boolean({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
+    ),
+  },
   { additionalProperties: true },
 );
 
-export const StaffPlainInputUpdate = t.Object(
-  { username: t.String({ additionalProperties: true }) },
-  { additionalProperties: true },
-);
-
-export const StaffRelationsInputCreate = t.Object(
+export const staffPlainInputCreate = t.Object(
   {},
   { additionalProperties: true },
 );
 
-export const StaffRelationsInputUpdate = t.Partial(
-  t.Object({}, { additionalProperties: true }),
+export const staffPlainInputUpdate = t.Object(
+  {},
   { additionalProperties: true },
 );
 
-export const StaffWhere = t.Partial(
+export const staffRelationsInputCreate = t.Object(
+  {
+    account: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
+    vendor: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
+  },
+  { additionalProperties: true },
+);
+
+export const staffRelationsInputUpdate = t.Partial(
+  t.Object(
+    {
+      account: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+      vendor: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    },
+    { additionalProperties: true },
+  ),
+  { additionalProperties: true },
+);
+
+export const staffWhere = t.Partial(
   t.Recursive(
     (Self) =>
       t.Object({
         AND: t.Union([Self, t.Array(Self)]),
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
-        staffId: t.String(),
+        staffid: t.String(),
         vendorId: t.String(),
-        username: t.String(),
+        userid: t.String(),
       }),
-    { $id: "Staff" },
+    { $id: "staff" },
   ),
   { additionalProperties: true },
 );
 
-export const StaffWhereUnique = t.Recursive(
+export const staffWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ staffId: t.String(), username: t.String() })),
+      t.Partial(
+        t.Object({
+          staffid: t.String(),
+          userid: t.String(),
+          userid_vendorId: t.Object({
+            userid: t.String(),
+            vendorId: t.String(),
+          }),
+        }),
+      ),
       t.Union([
-        t.Object({ staffId: t.String() }),
-        t.Object({ username: t.String() }),
+        t.Object({ staffid: t.String() }),
+        t.Object({ userid: t.String() }),
+        t.Object({
+          userid_vendorId: t.Object({
+            userid: t.String(),
+            vendorId: t.String(),
+          }),
+        }),
       ]),
       t.Partial(
         t.Object({
@@ -66,21 +160,23 @@ export const StaffWhereUnique = t.Recursive(
       ),
       t.Partial(
         t.Object(
-          { staffId: t.String(), vendorId: t.String(), username: t.String() },
+          { staffid: t.String(), vendorId: t.String(), userid: t.String() },
           { additionalProperties: true },
         ),
         { additionalProperties: true },
       ),
     ]),
-  { $id: "Staff" },
+  { $id: "staff" },
 );
 
-export const StaffSelect = t.Partial(
+export const staffSelect = t.Partial(
   t.Object(
     {
-      staffId: t.Boolean(),
+      staffid: t.Boolean(),
       vendorId: t.Boolean(),
-      username: t.Boolean(),
+      userid: t.Boolean(),
+      account: t.Boolean(),
+      vendor: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -88,33 +184,36 @@ export const StaffSelect = t.Partial(
   { additionalProperties: true },
 );
 
-export const StaffInclude = t.Partial(
-  t.Object({ _count: t.Boolean() }, { additionalProperties: true }),
+export const staffInclude = t.Partial(
+  t.Object(
+    { account: t.Boolean(), vendor: t.Boolean(), _count: t.Boolean() },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
-export const StaffOrderBy = t.Partial(
+export const staffOrderBy = t.Partial(
   t.Object(
     {
-      staffId: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      staffid: t.Union([t.Literal("asc"), t.Literal("desc")]),
       vendorId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      username: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      userid: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),
   { additionalProperties: true },
 );
 
-export const Staff = t.Composite([StaffPlain, StaffRelations], {
+export const staff = t.Composite([staffPlain, staffRelations], {
   additionalProperties: true,
 });
 
-export const StaffInputCreate = t.Composite(
-  [StaffPlainInputCreate, StaffRelationsInputCreate],
+export const staffInputCreate = t.Composite(
+  [staffPlainInputCreate, staffRelationsInputCreate],
   { additionalProperties: true },
 );
 
-export const StaffInputUpdate = t.Composite(
-  [StaffPlainInputUpdate, StaffRelationsInputUpdate],
+export const staffInputUpdate = t.Composite(
+  [staffPlainInputUpdate, staffRelationsInputUpdate],
   { additionalProperties: true },
 );

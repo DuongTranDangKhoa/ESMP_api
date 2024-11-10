@@ -20,8 +20,8 @@ export const EventPlain = t.Object(
     hostId: __nullable__(t.String({ additionalProperties: true })),
     stageValue: __nullable__(t.String({ additionalProperties: true })),
     themeId: __nullable__(t.String({ additionalProperties: true })),
-    width: __nullable__(t.Integer({ additionalProperties: true })),
     thumbnail: __nullable__(t.String({ additionalProperties: true })),
+    width: __nullable__(t.Integer({ additionalProperties: true })),
     onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
   },
   { additionalProperties: true },
@@ -29,6 +29,17 @@ export const EventPlain = t.Object(
 
 export const EventRelations = t.Object(
   {
+    theme: __nullable__(
+      t.Object(
+        {
+          themeId: t.String({ additionalProperties: true }),
+          name: t.String({ additionalProperties: true }),
+          status: __nullable__(t.Boolean({ additionalProperties: true })),
+          hostid: __nullable__(t.String({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     LocationType: t.Array(
       t.Object(
         {
@@ -75,10 +86,10 @@ export const EventPlainInputCreate = t.Object(
     stageValue: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
-    width: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
     thumbnail: t.Optional(
       __nullable__(t.String({ additionalProperties: true })),
     ),
+    width: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
     onWeb: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
@@ -99,8 +110,8 @@ export const EventPlainInputUpdate = t.Object(
     status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
     height: __nullable__(t.Integer({ additionalProperties: true })),
     stageValue: __nullable__(t.String({ additionalProperties: true })),
-    width: __nullable__(t.Integer({ additionalProperties: true })),
     thumbnail: __nullable__(t.String({ additionalProperties: true })),
+    width: __nullable__(t.Integer({ additionalProperties: true })),
     onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
   },
   { additionalProperties: true },
@@ -108,6 +119,19 @@ export const EventPlainInputUpdate = t.Object(
 
 export const EventRelationsInputCreate = t.Object(
   {
+    theme: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     LocationType: t.Optional(
       t.Object(
         {
@@ -145,6 +169,21 @@ export const EventRelationsInputCreate = t.Object(
 export const EventRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      theme: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       LocationType: t.Partial(
         t.Object(
           {
@@ -222,8 +261,8 @@ export const EventWhere = t.Partial(
         hostId: t.String(),
         stageValue: t.String(),
         themeId: t.String(),
-        width: t.Integer(),
         thumbnail: t.String(),
+        width: t.Integer(),
         onWeb: t.Boolean(),
       }),
     { $id: "Event" },
@@ -262,8 +301,8 @@ export const EventWhereUnique = t.Recursive(
             hostId: t.String(),
             stageValue: t.String(),
             themeId: t.String(),
-            width: t.Integer(),
             thumbnail: t.String(),
+            width: t.Integer(),
             onWeb: t.Boolean(),
           },
           { additionalProperties: true },
@@ -293,9 +332,10 @@ export const EventSelect = t.Partial(
       hostId: t.Boolean(),
       stageValue: t.Boolean(),
       themeId: t.Boolean(),
-      width: t.Boolean(),
       thumbnail: t.Boolean(),
+      width: t.Boolean(),
       onWeb: t.Boolean(),
+      theme: t.Boolean(),
       LocationType: t.Boolean(),
       VendorInEvent: t.Boolean(),
       _count: t.Boolean(),
@@ -308,6 +348,7 @@ export const EventSelect = t.Partial(
 export const EventInclude = t.Partial(
   t.Object(
     {
+      theme: t.Boolean(),
       LocationType: t.Boolean(),
       VendorInEvent: t.Boolean(),
       _count: t.Boolean(),
@@ -336,8 +377,8 @@ export const EventOrderBy = t.Partial(
       hostId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       stageValue: t.Union([t.Literal("asc"), t.Literal("desc")]),
       themeId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      width: t.Union([t.Literal("asc"), t.Literal("desc")]),
       thumbnail: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      width: t.Union([t.Literal("asc"), t.Literal("desc")]),
       onWeb: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },

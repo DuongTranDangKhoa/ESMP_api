@@ -1,15 +1,17 @@
+
 import { HostDbClient } from '../../database/host.db';
 import { Category } from './../../../prisma/clients/postgres/hostdb/index.d';
-const getCategory = async ( hostDb: HostDbClient) => {
-return await hostDb.category.findMany()
+const getCategory = async ( hostId: string,hostDb: HostDbClient) => {
+return await hostDb.category.findMany({where: { hostid: hostId }});
 }
 
 const getCategoryById = async (categoryId: string, hostDb: HostDbClient) => {
-return await hostDb.category.findMany({ where: { categoryId: categoryId } })
+return await hostDb.category.findFirst({ where: { categoryId: categoryId } })
 }
 const createCategory = async (category: Category, hostDb: HostDbClient) => {
     await hostDb.category.create({ data: {
-        categoryName: category.categoryName
+        categoryName: category.categoryName,
+        hostid: category.hostid,
     } })
 }
 

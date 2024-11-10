@@ -10,12 +10,26 @@ export const hostPlain = t.Object(
     phone: __nullable__(t.String({ additionalProperties: true })),
     email: __nullable__(t.String({ additionalProperties: true })),
     eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
+    hostid: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
 
 export const hostRelations = t.Object(
   {
+    category: t.Array(
+      t.Object(
+        {
+          categoryId: t.String({ additionalProperties: true }),
+          categoryName: t.String({ additionalProperties: true }),
+          createAt: __nullable__(t.Date({ additionalProperties: true })),
+          updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+          status: t.Boolean({ additionalProperties: true }),
+          hostid: __nullable__(t.String({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     account: t.Object(
       {
         id: t.String({ additionalProperties: true }),
@@ -29,14 +43,28 @@ export const hostRelations = t.Object(
       },
       { additionalProperties: true },
     ),
-    transaction: t.Array(
+    theme: __nullable__(
       t.Object(
         {
-          id: t.String({ additionalProperties: true }),
+          themeId: t.String({ additionalProperties: true }),
+          name: t.String({ additionalProperties: true }),
+          status: __nullable__(t.Boolean({ additionalProperties: true })),
+          hostid: __nullable__(t.String({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vendor: t.Array(
+      t.Object(
+        {
+          vendorId: t.String({ additionalProperties: true }),
+          userid: t.String({ additionalProperties: true }),
           hostid: t.String({ additionalProperties: true }),
-          packageid: t.String({ additionalProperties: true }),
-          createdat: __nullable__(t.Date({ additionalProperties: true })),
-          status: __nullable__(t.String({ additionalProperties: true })),
+          phone: __nullable__(t.String({ additionalProperties: true })),
+          email: __nullable__(t.String({ additionalProperties: true })),
+          address: __nullable__(t.String({ additionalProperties: true })),
+          urlQr: __nullable__(t.String({ additionalProperties: true })),
+          status: __nullable__(t.Boolean({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),
@@ -75,6 +103,21 @@ export const hostPlainInputUpdate = t.Object(
 
 export const hostRelationsInputCreate = t.Object(
   {
+    category: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     account: t.Object(
       {
         connect: t.Object(
@@ -86,7 +129,20 @@ export const hostRelationsInputCreate = t.Object(
       },
       { additionalProperties: true },
     ),
-    transaction: t.Optional(
+    theme: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vendor: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -108,6 +164,30 @@ export const hostRelationsInputCreate = t.Object(
 export const hostRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      category: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       account: t.Object(
         {
           connect: t.Object(
@@ -119,7 +199,22 @@ export const hostRelationsInputUpdate = t.Partial(
         },
         { additionalProperties: true },
       ),
-      transaction: t.Partial(
+      theme: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      vendor: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -162,6 +257,7 @@ export const hostWhere = t.Partial(
         phone: t.String(),
         email: t.String(),
         eventstoragetime: t.Date(),
+        hostid: t.String(),
       }),
     { $id: "host" },
   ),
@@ -171,8 +267,11 @@ export const hostWhere = t.Partial(
 export const hostWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ userid: t.String() })),
-      t.Union([t.Object({ userid: t.String() })]),
+      t.Partial(t.Object({ userid: t.String(), hostid: t.String() })),
+      t.Union([
+        t.Object({ userid: t.String() }),
+        t.Object({ hostid: t.String() }),
+      ]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -189,6 +288,7 @@ export const hostWhereUnique = t.Recursive(
             phone: t.String(),
             email: t.String(),
             eventstoragetime: t.Date(),
+            hostid: t.String(),
           },
           { additionalProperties: true },
         ),
@@ -207,8 +307,11 @@ export const hostSelect = t.Partial(
       phone: t.Boolean(),
       email: t.Boolean(),
       eventstoragetime: t.Boolean(),
+      hostid: t.Boolean(),
+      category: t.Boolean(),
       account: t.Boolean(),
-      transaction: t.Boolean(),
+      theme: t.Boolean(),
+      vendor: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -218,7 +321,13 @@ export const hostSelect = t.Partial(
 
 export const hostInclude = t.Partial(
   t.Object(
-    { account: t.Boolean(), transaction: t.Boolean(), _count: t.Boolean() },
+    {
+      category: t.Boolean(),
+      account: t.Boolean(),
+      theme: t.Boolean(),
+      vendor: t.Boolean(),
+      _count: t.Boolean(),
+    },
     { additionalProperties: true },
   ),
   { additionalProperties: true },
@@ -233,6 +342,7 @@ export const hostOrderBy = t.Partial(
       phone: t.Union([t.Literal("asc"), t.Literal("desc")]),
       email: t.Union([t.Literal("asc"), t.Literal("desc")]),
       eventstoragetime: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      hostid: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

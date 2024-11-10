@@ -34,16 +34,12 @@ export const ProductItemRelations = t.Object(
     vendor: t.Object(
       {
         vendorId: t.String({ additionalProperties: true }),
-        username: t.String({ additionalProperties: true }),
-        password: t.String({ additionalProperties: true }),
-        vendorName: __nullable__(t.String({ additionalProperties: true })),
+        userid: t.String({ additionalProperties: true }),
+        hostid: t.String({ additionalProperties: true }),
         phone: __nullable__(t.String({ additionalProperties: true })),
         email: __nullable__(t.String({ additionalProperties: true })),
-        image: __nullable__(t.String({ additionalProperties: true })),
         address: __nullable__(t.String({ additionalProperties: true })),
         urlQr: __nullable__(t.String({ additionalProperties: true })),
-        createDate: __nullable__(t.Date({ additionalProperties: true })),
-        updatedDate: __nullable__(t.Date({ additionalProperties: true })),
         status: __nullable__(t.Boolean({ additionalProperties: true })),
       },
       { additionalProperties: true },

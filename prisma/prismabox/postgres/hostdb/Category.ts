@@ -9,12 +9,31 @@ export const CategoryPlain = t.Object(
     createAt: __nullable__(t.Date({ additionalProperties: true })),
     updatedAt: __nullable__(t.Date({ additionalProperties: true })),
     status: t.Boolean({ additionalProperties: true }),
+    hostid: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
 
 export const CategoryRelations = t.Object(
   {
+    host: __nullable__(
+      t.Object(
+        {
+          userid: t.String({ additionalProperties: true }),
+          expiretime: __nullable__(t.Date({ additionalProperties: true })),
+          bankingaccount: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+          phone: __nullable__(t.String({ additionalProperties: true })),
+          email: __nullable__(t.String({ additionalProperties: true })),
+          eventstoragetime: __nullable__(
+            t.Date({ additionalProperties: true }),
+          ),
+          hostid: t.String({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     products: t.Array(
       t.Object(
         {
@@ -58,6 +77,19 @@ export const CategoryPlainInputUpdate = t.Object(
 
 export const CategoryRelationsInputCreate = t.Object(
   {
+    host: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     products: t.Optional(
       t.Object(
         {
@@ -80,6 +112,21 @@ export const CategoryRelationsInputCreate = t.Object(
 export const CategoryRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      host: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       products: t.Partial(
         t.Object(
           {
@@ -122,6 +169,7 @@ export const CategoryWhere = t.Partial(
         createAt: t.Date(),
         updatedAt: t.Date(),
         status: t.Boolean(),
+        hostid: t.String(),
       }),
     { $id: "Category" },
   ),
@@ -148,6 +196,7 @@ export const CategoryWhereUnique = t.Recursive(
             createAt: t.Date(),
             updatedAt: t.Date(),
             status: t.Boolean(),
+            hostid: t.String(),
           },
           { additionalProperties: true },
         ),
@@ -165,6 +214,8 @@ export const CategorySelect = t.Partial(
       createAt: t.Boolean(),
       updatedAt: t.Boolean(),
       status: t.Boolean(),
+      hostid: t.Boolean(),
+      host: t.Boolean(),
       products: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -175,7 +226,7 @@ export const CategorySelect = t.Partial(
 
 export const CategoryInclude = t.Partial(
   t.Object(
-    { products: t.Boolean(), _count: t.Boolean() },
+    { host: t.Boolean(), products: t.Boolean(), _count: t.Boolean() },
     { additionalProperties: true },
   ),
   { additionalProperties: true },
@@ -189,6 +240,7 @@ export const CategoryOrderBy = t.Partial(
       createAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       updatedAt: t.Union([t.Literal("asc"), t.Literal("desc")]),
       status: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      hostid: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

@@ -31,6 +31,7 @@ export const AccountRelations = t.Object(
           eventstoragetime: __nullable__(
             t.Date({ additionalProperties: true }),
           ),
+          hostid: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -41,6 +42,31 @@ export const AccountRelations = t.Object(
           id: t.String({ additionalProperties: true }),
           userid: t.String({ additionalProperties: true }),
           source: __nullable__(t.String({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    staff: __nullable__(
+      t.Object(
+        {
+          staffid: t.String({ additionalProperties: true }),
+          vendorId: t.String({ additionalProperties: true }),
+          userid: t.String({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vendor: __nullable__(
+      t.Object(
+        {
+          vendorId: t.String({ additionalProperties: true }),
+          userid: t.String({ additionalProperties: true }),
+          hostid: t.String({ additionalProperties: true }),
+          phone: __nullable__(t.String({ additionalProperties: true })),
+          email: __nullable__(t.String({ additionalProperties: true })),
+          address: __nullable__(t.String({ additionalProperties: true })),
+          urlQr: __nullable__(t.String({ additionalProperties: true })),
+          status: __nullable__(t.Boolean({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),
@@ -105,6 +131,32 @@ export const AccountRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
+    staff: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    vendor: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
   },
   { additionalProperties: true },
 );
@@ -146,6 +198,36 @@ export const AccountRelationsInputUpdate = t.Partial(
                 { additionalProperties: true },
               ),
             ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      staff: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      vendor: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
           },
           { additionalProperties: true },
         ),
@@ -223,6 +305,8 @@ export const AccountSelect = t.Partial(
       status: t.Boolean(),
       host: t.Boolean(),
       notification: t.Boolean(),
+      staff: t.Boolean(),
+      vendor: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -232,7 +316,13 @@ export const AccountSelect = t.Partial(
 
 export const AccountInclude = t.Partial(
   t.Object(
-    { host: t.Boolean(), notification: t.Boolean(), _count: t.Boolean() },
+    {
+      host: t.Boolean(),
+      notification: t.Boolean(),
+      staff: t.Boolean(),
+      vendor: t.Boolean(),
+      _count: t.Boolean(),
+    },
     { additionalProperties: true },
   ),
   { additionalProperties: true },

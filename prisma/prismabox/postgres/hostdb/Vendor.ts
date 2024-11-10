@@ -5,16 +5,12 @@ import { __nullable__ } from "./__nullable__";
 export const VendorPlain = t.Object(
   {
     vendorId: t.String({ additionalProperties: true }),
-    username: t.String({ additionalProperties: true }),
-    password: t.String({ additionalProperties: true }),
-    vendorName: __nullable__(t.String({ additionalProperties: true })),
+    userid: t.String({ additionalProperties: true }),
+    hostid: t.String({ additionalProperties: true }),
     phone: __nullable__(t.String({ additionalProperties: true })),
     email: __nullable__(t.String({ additionalProperties: true })),
-    image: __nullable__(t.String({ additionalProperties: true })),
     address: __nullable__(t.String({ additionalProperties: true })),
     urlQr: __nullable__(t.String({ additionalProperties: true })),
-    createDate: __nullable__(t.Date({ additionalProperties: true })),
-    updatedDate: __nullable__(t.Date({ additionalProperties: true })),
     status: __nullable__(t.Boolean({ additionalProperties: true })),
   },
   { additionalProperties: true },
@@ -22,7 +18,7 @@ export const VendorPlain = t.Object(
 
 export const VendorRelations = t.Object(
   {
-    Product: t.Array(
+    product: t.Array(
       t.Object(
         {
           productId: t.String({ additionalProperties: true }),
@@ -39,7 +35,7 @@ export const VendorRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
-    ProductItem: t.Array(
+    productItem: t.Array(
       t.Object(
         {
           productItemId: t.String({ additionalProperties: true }),
@@ -54,7 +50,42 @@ export const VendorRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
-    VendorInEvent: t.Array(
+    staff: t.Array(
+      t.Object(
+        {
+          staffid: t.String({ additionalProperties: true }),
+          vendorId: t.String({ additionalProperties: true }),
+          userid: t.String({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    account: t.Object(
+      {
+        id: t.String({ additionalProperties: true }),
+        username: t.String({ additionalProperties: true }),
+        password: t.String({ additionalProperties: true }),
+        role: __nullable__(t.String({ additionalProperties: true })),
+        name: __nullable__(t.String({ additionalProperties: true })),
+        createdat: __nullable__(t.Date({ additionalProperties: true })),
+        updatedat: __nullable__(t.Date({ additionalProperties: true })),
+        status: __nullable__(t.Boolean({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
+    ),
+    host: t.Object(
+      {
+        userid: t.String({ additionalProperties: true }),
+        expiretime: __nullable__(t.Date({ additionalProperties: true })),
+        bankingaccount: __nullable__(t.String({ additionalProperties: true })),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
+        eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
+        hostid: t.String({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
+    ),
+    vendorinevent: t.Array(
       t.Object(
         {
           vendorinEventId: t.String({ additionalProperties: true }),
@@ -71,22 +102,10 @@ export const VendorRelations = t.Object(
 
 export const VendorPlainInputCreate = t.Object(
   {
-    username: t.String({ additionalProperties: true }),
-    password: t.String({ additionalProperties: true }),
-    vendorName: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
     phone: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
     email: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
-    image: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
     address: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
     urlQr: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
-    createDate: t.Optional(
-      __nullable__(t.Date({ additionalProperties: true })),
-    ),
-    updatedDate: t.Optional(
-      __nullable__(t.Date({ additionalProperties: true })),
-    ),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
@@ -94,20 +113,10 @@ export const VendorPlainInputCreate = t.Object(
 
 export const VendorPlainInputUpdate = t.Object(
   {
-    username: t.String({ additionalProperties: true }),
-    password: t.String({ additionalProperties: true }),
-    vendorName: __nullable__(t.String({ additionalProperties: true })),
     phone: __nullable__(t.String({ additionalProperties: true })),
     email: __nullable__(t.String({ additionalProperties: true })),
-    image: __nullable__(t.String({ additionalProperties: true })),
     address: __nullable__(t.String({ additionalProperties: true })),
     urlQr: __nullable__(t.String({ additionalProperties: true })),
-    createDate: t.Optional(
-      __nullable__(t.Date({ additionalProperties: true })),
-    ),
-    updatedDate: t.Optional(
-      __nullable__(t.Date({ additionalProperties: true })),
-    ),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
@@ -115,7 +124,7 @@ export const VendorPlainInputUpdate = t.Object(
 
 export const VendorRelationsInputCreate = t.Object(
   {
-    Product: t.Optional(
+    product: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -130,7 +139,7 @@ export const VendorRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    ProductItem: t.Optional(
+    productItem: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -145,7 +154,44 @@ export const VendorRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    VendorInEvent: t.Optional(
+    staff: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    account: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
+    host: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
+    vendorinevent: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -167,7 +213,7 @@ export const VendorRelationsInputCreate = t.Object(
 export const VendorRelationsInputUpdate = t.Partial(
   t.Object(
     {
-      Product: t.Partial(
+      product: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -191,7 +237,7 @@ export const VendorRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      ProductItem: t.Partial(
+      productItem: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -215,7 +261,53 @@ export const VendorRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      VendorInEvent: t.Partial(
+      staff: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      account: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+      host: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+      vendorinevent: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -253,16 +345,12 @@ export const VendorWhere = t.Partial(
         NOT: t.Union([Self, t.Array(Self)]),
         OR: t.Array(Self),
         vendorId: t.String(),
-        username: t.String(),
-        password: t.String(),
-        vendorName: t.String(),
+        userid: t.String(),
+        hostid: t.String(),
         phone: t.String(),
         email: t.String(),
-        image: t.String(),
         address: t.String(),
         urlQr: t.String(),
-        createDate: t.Date(),
-        updatedDate: t.Date(),
         status: t.Boolean(),
       }),
     { $id: "Vendor" },
@@ -273,10 +361,10 @@ export const VendorWhere = t.Partial(
 export const VendorWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ vendorId: t.String(), username: t.String() })),
+      t.Partial(t.Object({ vendorId: t.String(), userid: t.String() })),
       t.Union([
         t.Object({ vendorId: t.String() }),
-        t.Object({ username: t.String() }),
+        t.Object({ userid: t.String() }),
       ]),
       t.Partial(
         t.Object({
@@ -289,16 +377,12 @@ export const VendorWhereUnique = t.Recursive(
         t.Object(
           {
             vendorId: t.String(),
-            username: t.String(),
-            password: t.String(),
-            vendorName: t.String(),
+            userid: t.String(),
+            hostid: t.String(),
             phone: t.String(),
             email: t.String(),
-            image: t.String(),
             address: t.String(),
             urlQr: t.String(),
-            createDate: t.Date(),
-            updatedDate: t.Date(),
             status: t.Boolean(),
           },
           { additionalProperties: true },
@@ -313,20 +397,19 @@ export const VendorSelect = t.Partial(
   t.Object(
     {
       vendorId: t.Boolean(),
-      username: t.Boolean(),
-      password: t.Boolean(),
-      vendorName: t.Boolean(),
+      userid: t.Boolean(),
+      hostid: t.Boolean(),
       phone: t.Boolean(),
       email: t.Boolean(),
-      image: t.Boolean(),
       address: t.Boolean(),
       urlQr: t.Boolean(),
-      createDate: t.Boolean(),
-      updatedDate: t.Boolean(),
       status: t.Boolean(),
-      Product: t.Boolean(),
-      ProductItem: t.Boolean(),
-      VendorInEvent: t.Boolean(),
+      product: t.Boolean(),
+      productItem: t.Boolean(),
+      staff: t.Boolean(),
+      account: t.Boolean(),
+      host: t.Boolean(),
+      vendorinevent: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -337,9 +420,12 @@ export const VendorSelect = t.Partial(
 export const VendorInclude = t.Partial(
   t.Object(
     {
-      Product: t.Boolean(),
-      ProductItem: t.Boolean(),
-      VendorInEvent: t.Boolean(),
+      product: t.Boolean(),
+      productItem: t.Boolean(),
+      staff: t.Boolean(),
+      account: t.Boolean(),
+      host: t.Boolean(),
+      vendorinevent: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -351,16 +437,12 @@ export const VendorOrderBy = t.Partial(
   t.Object(
     {
       vendorId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      username: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      password: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      vendorName: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      userid: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      hostid: t.Union([t.Literal("asc"), t.Literal("desc")]),
       phone: t.Union([t.Literal("asc"), t.Literal("desc")]),
       email: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      image: t.Union([t.Literal("asc"), t.Literal("desc")]),
       address: t.Union([t.Literal("asc"), t.Literal("desc")]),
       urlQr: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      createDate: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      updatedDate: t.Union([t.Literal("asc"), t.Literal("desc")]),
       status: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },

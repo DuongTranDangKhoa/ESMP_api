@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
+  additionalProperties        = "true"
+  typeboxImportDependencyName = "elysia"
   typeboxImportVariableName   = "t"
   inputModel                  = "true"
-  typeboxImportDependencyName = "elysia"
-  additionalProperties        = "true"
 }
 
 datasource db {
@@ -38,6 +38,7 @@ model Event {
   thumbnail     String?         @map("thumbnail") @db.VarChar
   width         Int?            @map("width")
   onWeb         Boolean?        @map("onweb")
+  theme         Theme?          @relation(fields: [themeId], references: [themeId], onDelete: Restrict, map: "event_theme_fk")
   LocationType  LocationType[]
   VendorInEvent VendorInEvent[]
 
@@ -105,6 +106,9 @@ model Theme {
   themeId String   @id @unique @default(uuid()) @map("themeid") @db.Uuid
   name    String   @map("name") @db.VarChar(250)
   status  Boolean? @default(false) @map("status")
+  hostid  String?  @unique(map: "theme_unique") @db.Uuid
+  event   Event[]
+  host    host?    @relation(fields: [hostid], references: [hostid], onDelete: Restrict, map: "theme_host_fk")
 
   @@map("theme")
 }
@@ -120,6 +124,7 @@ model Vendor {
   status        Boolean?        @default(true) @map("status")
   product       Product[]
   productItem   ProductItem[]
+  staff         staff[]
   account       Account         @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_vendor_account")
   host          host            @relation(fields: [hostid], references: [hostid], onDelete: NoAction, onUpdate: NoAction, map: "vendor_host_fkey")
   vendorinevent VendorInEvent[]
@@ -138,6 +143,7 @@ model Account {
   status       Boolean?
   host         host?
   notification notification[]
+  staff        staff?
   vendor       Vendor?
 
   @@map("account")
@@ -248,6 +254,8 @@ model Category {
   createAt     DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt    DateTime? @default(now()) @map("updated_at") @db.Date
   status       Boolean   @default(true) @map("status")
+  hostid       String?   @db.Uuid
+  host         host?     @relation(fields: [hostid], references: [hostid], onDelete: NoAction, onUpdate: NoAction, map: "category_host_fk")
   products     Product[]
 
   @@map("category")
@@ -275,12 +283,6 @@ model Menu {
   @@map("menu")
 }
 
-model Staff {
-  staffId  String @id @default(uuid()) @map("staffid") @db.Uuid
-  vendorId String @map("vendorId") @db.Uuid
-  username String @unique @map("username") @db.VarChar(40)
-}
-
 model SessionData {
   accessToken String @id @default(uuid()) @map("accessToken") @db.Uuid
   createdAt   Int
@@ -290,14 +292,16 @@ model SessionData {
 }
 
 model host {
-  userid           String    @unique(map: "unique_host_userid") @db.Uuid
-  expiretime       DateTime? @db.Timestamp(6)
-  bankingaccount   String?   @db.VarChar(20)
-  phone            String?   @db.VarChar(15)
-  email            String?   @db.VarChar(100)
-  eventstoragetime DateTime? @db.Timestamp(6)
-  hostid           String    @id @unique(map: "host_hostid_unique") @db.Uuid
-  account          Account   @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")
+  userid           String     @unique(map: "unique_host_userid") @db.Uuid
+  expiretime       DateTime?  @db.Timestamp(6)
+  bankingaccount   String?    @db.VarChar(20)
+  phone            String?    @db.VarChar(15)
+  email            String?    @db.VarChar(100)
+  eventstoragetime DateTime?  @db.Timestamp(6)
+  hostid           String     @id @unique(map: "host_hostid_unique") @db.Uuid
+  category         Category[]
+  account          Account    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")
+  theme            Theme?
   vendor           Vendor[]
 }
 
@@ -305,7 +309,7 @@ model notification {
   id      String  @id @db.Uuid
   userid  String  @db.Uuid
   source  String?
-  account Account @relation(fields: [userid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  account Account @relation(fields: [userid], references: [id])
 }
 
 /// This model has been renamed to 'Renamedpackage' during introspection, because the original name 'package' is reserved.
@@ -330,4 +334,14 @@ model transaction {
   createdat      DateTime?      @default(now()) @db.Timestamp(6)
   status         String?        @db.VarChar(10)
   Renamedpackage Renamedpackage @relation(fields: [packageid], references: [id], onDelete: SetNull, onUpdate: NoAction)
+}
+
+model staff {
+  staffid  String  @id(map: "Staff_pkey") @db.Uuid
+  vendorId String  @db.Uuid
+  userid   String  @unique(map: "Staff_username_key") @db.Uuid
+  account  Account @relation(fields: [userid], references: [id], map: "staff_account_fk")
+  vendor   Vendor  @relation(fields: [vendorId], references: [vendorId], map: "staff_vendor_fk")
+
+  @@unique([userid, vendorId], map: "staff_unique")
 }

@@ -1,5 +1,6 @@
 import { Payment } from './../../../prisma/clients/postgres/hostdb/index.d';
 import { HostDbClient } from "../../database/host.db";
+import { TransactionObject } from './transaction.schema';
 
 const getTransaction = async ( hostDb : HostDbClient ) => {
 const transaction = await hostDb.payment.findMany()
@@ -10,11 +11,8 @@ const transaction = await hostDb.payment.findMany(
      { where: {orderId: OrderID}, })
 return transaction
 }
-const getTransactionByEvent = async ( eventId: string, hostDb : HostDbClient ) => {
-const transaction = await hostDb.payment.findMany( { where: {eventId: eventId}})
-return transaction 
-}
-const createTransaction = async ( payment : Payment, hostDb : HostDbClient ) => {
+
+const createTransaction = async ( payment : TransactionObject, hostDb : HostDbClient ) => {
   try {
     const transaction = await hostDb.payment.create({ data: payment })
     return {message: 'Successfully created transaction'}
@@ -23,32 +21,28 @@ const createTransaction = async ( payment : Payment, hostDb : HostDbClient ) => 
   }
 }
 const updateTransaction = async ( payment : Payment, hostDb : HostDbClient ) => {
-  await hostDb.payment.update({
+  await hostDb.payment.updateMany({
     where: {
-      transactionId_orderId_eventId:{
-        transactionId: payment.transactionId,
-        orderId: payment.orderId,
-        eventId: payment.eventId
-      }
-    },
-    data: payment,
+        paymentId: payment.paymentId,
+      },
+    data: {
+      transactionType: payment.transactionType,
+      paymentTime: payment.paymentTime,
+      price: payment.price,
+      status: payment.status
+    }
   })
 }
-const deleteTransaction = async ( transactionId: string, OrderID: string, eventId: string, hostDb : HostDbClient ) => {
-  await hostDb.payment.delete({
+const deleteTransaction = async ( transactionId: string, hostDb : HostDbClient ) => {
+  await hostDb.payment.deleteMany({
     where: {
-      transactionId_orderId_eventId:{
-        transactionId: transactionId,
-        orderId: OrderID,
-        eventId: eventId
-      }
-    },
+        paymentId: transactionId,
+      },
   })
 }
 const transactionService = {
   getTransaction,
   getTransactionByOrder,
-  getTransactionByEvent,
   createTransaction,
   updateTransaction,
   deleteTransaction,

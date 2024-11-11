@@ -43,7 +43,7 @@ export const hostRelations = t.Object(
       },
       { additionalProperties: true },
     ),
-    theme: __nullable__(
+    theme: t.Array(
       t.Object(
         {
           themeId: t.String({ additionalProperties: true }),
@@ -132,11 +132,13 @@ export const hostRelationsInputCreate = t.Object(
     theme: t.Optional(
       t.Object(
         {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
           ),
         },
         { additionalProperties: true },
@@ -202,13 +204,22 @@ export const hostRelationsInputUpdate = t.Partial(
       theme: t.Partial(
         t.Object(
           {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
             ),
-            disconnect: t.Boolean(),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
           },
           { additionalProperties: true },
         ),

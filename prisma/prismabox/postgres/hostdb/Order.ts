@@ -19,6 +19,19 @@ export const OrderPlain = t.Object(
 
 export const OrderRelations = t.Object(
   {
+    vendor: t.Object(
+      {
+        vendorId: t.String({ additionalProperties: true }),
+        userid: t.String({ additionalProperties: true }),
+        hostid: t.String({ additionalProperties: true }),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
+        address: __nullable__(t.String({ additionalProperties: true })),
+        urlQr: __nullable__(t.String({ additionalProperties: true })),
+        status: __nullable__(t.Boolean({ additionalProperties: true })),
+      },
+      { additionalProperties: true },
+    ),
     OrderDetail: t.Array(
       t.Object(
         {
@@ -28,6 +41,21 @@ export const OrderRelations = t.Object(
           quantity: __nullable__(t.Integer({ additionalProperties: true })),
           unitPrice: t.Number({ additionalProperties: true }),
           totalPrice: t.Number({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    payment: __nullable__(
+      t.Object(
+        {
+          paymentId: t.String({ additionalProperties: true }),
+          orderId: t.String({ additionalProperties: true }),
+          transactionType: __nullable__(
+            t.String({ additionalProperties: true }),
+          ),
+          paymentTime: __nullable__(t.Date({ additionalProperties: true })),
+          price: t.Number({ additionalProperties: true }),
+          status: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),
@@ -64,6 +92,17 @@ export const OrderPlainInputUpdate = t.Object(
 
 export const OrderRelationsInputCreate = t.Object(
   {
+    vendor: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
     OrderDetail: t.Optional(
       t.Object(
         {
@@ -79,6 +118,19 @@ export const OrderRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
+    payment: t.Optional(
+      t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
   },
   { additionalProperties: true },
 );
@@ -86,6 +138,17 @@ export const OrderRelationsInputCreate = t.Object(
 export const OrderRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      vendor: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
       OrderDetail: t.Partial(
         t.Object(
           {
@@ -105,6 +168,21 @@ export const OrderRelationsInputUpdate = t.Partial(
                 { additionalProperties: true },
               ),
             ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      payment: t.Partial(
+        t.Object(
+          {
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+            disconnect: t.Boolean(),
           },
           { additionalProperties: true },
         ),
@@ -183,7 +261,9 @@ export const OrderSelect = t.Partial(
       createAt: t.Boolean(),
       updatedAt: t.Boolean(),
       status: t.Boolean(),
+      vendor: t.Boolean(),
       OrderDetail: t.Boolean(),
+      payment: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -193,7 +273,12 @@ export const OrderSelect = t.Partial(
 
 export const OrderInclude = t.Partial(
   t.Object(
-    { OrderDetail: t.Boolean(), _count: t.Boolean() },
+    {
+      vendor: t.Boolean(),
+      OrderDetail: t.Boolean(),
+      payment: t.Boolean(),
+      _count: t.Boolean(),
+    },
     { additionalProperties: true },
   ),
   { additionalProperties: true },

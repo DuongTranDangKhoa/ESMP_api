@@ -3,20 +3,18 @@ import { Payment } from "../../../prisma/clients/postgres/hostdb"
 
 export type TransactionType = Payment
 export class TransactionObject {
-    transactionId?: string
+    paymentId?: string
     orderId: string
-    eventId: string
     transactionType?: string
     paymentTime?: Date
     price?:  number
     status?: string 
     constructor(data: any) {
-    this.transactionId = data.transactionId
+    this.paymentId = data.paymentId
     this.transactionType = data.transactionType
-    this.paymentTime = data.paymentTime
+    this.paymentTime = new Date(data.paymentTime)
     this.price = data.price
     this.status = data.status
-    this.eventId = data.eventId
     this.orderId = data.orderId
     }
 }

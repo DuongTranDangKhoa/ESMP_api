@@ -11,12 +11,6 @@ export const transactionGroup = (app: any) =>
         (context: any) => { 
           return {a: context}
         }
-      ).get(
-        '/:eventId', 
-        async ({eventId, hostDb}: {eventId: string, hostDb: HostDbClient}) => {
-          const transaction = await transactionService.getTransactionByEvent(eventId, hostDb)
-          return transaction
-        },
       )
       .get(
         'order/:orderId',
@@ -40,7 +34,7 @@ export const transactionGroup = (app: any) =>
           },
         )
         .delete(
-           '/:transactionId/:orderId/:eventId',
+           '/:transactionId',
   async ({
     params: { transactionId, orderId, eventId },
     hostDb,
@@ -48,7 +42,7 @@ export const transactionGroup = (app: any) =>
     params: { transactionId: string; orderId: string; eventId: string };
     hostDb: HostDbClient;
   }) => {
-    const result = await transactionService.deleteTransaction(transactionId, orderId, eventId, hostDb);
+    const result = await transactionService.deleteTransaction(transactionId, hostDb);
     return 'Deleted';
   }
         )

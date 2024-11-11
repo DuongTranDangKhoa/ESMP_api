@@ -6,7 +6,6 @@ export const PaymentPlain = t.Object(
   {
     paymentId: t.String({ additionalProperties: true }),
     orderId: t.String({ additionalProperties: true }),
-    eventId: t.String({ additionalProperties: true }),
     transactionType: __nullable__(t.String({ additionalProperties: true })),
     paymentTime: __nullable__(t.Date({ additionalProperties: true })),
     price: t.Number({ additionalProperties: true }),
@@ -15,7 +14,25 @@ export const PaymentPlain = t.Object(
   { additionalProperties: true },
 );
 
-export const PaymentRelations = t.Object({}, { additionalProperties: true });
+export const PaymentRelations = t.Object(
+  {
+    order: t.Object(
+      {
+        orderId: t.String({ additionalProperties: true }),
+        eventId: t.String({ additionalProperties: true }),
+        vendorId: t.String({ additionalProperties: true }),
+        name: t.String({ additionalProperties: true }),
+        totalAmount: __nullable__(t.Integer({ additionalProperties: true })),
+        totalPrice: t.Number({ additionalProperties: true }),
+        createAt: __nullable__(t.Date({ additionalProperties: true })),
+        updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+        status: t.String({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
+    ),
+  },
+  { additionalProperties: true },
+);
 
 export const PaymentPlainInputCreate = t.Object(
   {
@@ -44,12 +61,39 @@ export const PaymentPlainInputUpdate = t.Object(
 );
 
 export const PaymentRelationsInputCreate = t.Object(
-  {},
+  {
+    order: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
+  },
   { additionalProperties: true },
 );
 
 export const PaymentRelationsInputUpdate = t.Partial(
-  t.Object({}, { additionalProperties: true }),
+  t.Object(
+    {
+      order: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
@@ -62,7 +106,6 @@ export const PaymentWhere = t.Partial(
         OR: t.Array(Self),
         paymentId: t.String(),
         orderId: t.String(),
-        eventId: t.String(),
         transactionType: t.String(),
         paymentTime: t.Date(),
         price: t.Number(),
@@ -76,8 +119,11 @@ export const PaymentWhere = t.Partial(
 export const PaymentWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({})),
-      t.Union([]),
+      t.Partial(t.Object({ paymentId: t.String(), orderId: t.String() })),
+      t.Union([
+        t.Object({ paymentId: t.String() }),
+        t.Object({ orderId: t.String() }),
+      ]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),
@@ -90,7 +136,6 @@ export const PaymentWhereUnique = t.Recursive(
           {
             paymentId: t.String(),
             orderId: t.String(),
-            eventId: t.String(),
             transactionType: t.String(),
             paymentTime: t.Date(),
             price: t.Number(),
@@ -109,11 +154,11 @@ export const PaymentSelect = t.Partial(
     {
       paymentId: t.Boolean(),
       orderId: t.Boolean(),
-      eventId: t.Boolean(),
       transactionType: t.Boolean(),
       paymentTime: t.Boolean(),
       price: t.Boolean(),
       status: t.Boolean(),
+      order: t.Boolean(),
       _count: t.Boolean(),
     },
     { additionalProperties: true },
@@ -122,7 +167,10 @@ export const PaymentSelect = t.Partial(
 );
 
 export const PaymentInclude = t.Partial(
-  t.Object({ _count: t.Boolean() }, { additionalProperties: true }),
+  t.Object(
+    { order: t.Boolean(), _count: t.Boolean() },
+    { additionalProperties: true },
+  ),
   { additionalProperties: true },
 );
 
@@ -131,7 +179,6 @@ export const PaymentOrderBy = t.Partial(
     {
       paymentId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       orderId: t.Union([t.Literal("asc"), t.Literal("desc")]),
-      eventId: t.Union([t.Literal("asc"), t.Literal("desc")]),
       transactionType: t.Union([t.Literal("asc"), t.Literal("desc")]),
       paymentTime: t.Union([t.Literal("asc"), t.Literal("desc")]),
       price: t.Union([t.Literal("asc"), t.Literal("desc")]),

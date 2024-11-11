@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  additionalProperties        = "true"
   typeboxImportDependencyName = "elysia"
   typeboxImportVariableName   = "t"
   inputModel                  = "true"
+  additionalProperties        = "true"
 }
 
 datasource db {
@@ -105,8 +105,8 @@ model LocationType {
 model Theme {
   themeId String   @id @unique @default(uuid()) @map("themeid") @db.Uuid
   name    String   @map("name") @db.VarChar(250)
-  status  Boolean? @default(false) @map("status")
-  hostid  String?  @unique(map: "theme_unique") @db.Uuid
+  status  Boolean? @default(true) @map("status")
+  hostid  String?  @db.Uuid
   event   Event[]
   host    host?    @relation(fields: [hostid], references: [hostid], onDelete: Restrict, map: "theme_host_fk")
 
@@ -122,6 +122,7 @@ model Vendor {
   address       String?         @map("address") @db.VarChar(500)
   urlQr         String?         @map("ulQr") @db.VarChar
   status        Boolean?        @default(true) @map("status")
+  order         Order[]
   product       Product[]
   productItem   ProductItem[]
   staff         staff[]
@@ -152,14 +153,16 @@ model Account {
 model Order {
   orderId     String        @id @default(uuid()) @map("orderid") @db.Uuid
   eventId     String        @map("eventid") @db.Uuid
-  vendorId    String        @map("vendorid") @db.VarChar(100)
+  vendorId    String        @map("vendorid") @db.Uuid
   name        String        @map("name") @db.VarChar(250)
   totalAmount Int?          @map("totalamount")
   totalPrice  Decimal       @db.Decimal(10, 2)
   createAt    DateTime?     @default(now()) @map("create_at") @db.Date
   updatedAt   DateTime?     @default(now()) @map("updated_at") @db.Date
   status      String        @map("status") @db.VarChar(10)
+  vendor      Vendor        @relation(fields: [vendorId], references: [vendorId], map: "order_vendor_fk")
   OrderDetail OrderDetail[]
+  payment     Payment?
 
   @@map("order")
 }
@@ -236,15 +239,14 @@ model ProductInProductItem {
 }
 
 model Payment {
-  paymentId       String    @default(uuid()) @map("paymentId") @db.Uuid
-  orderId         String    @map("orderid") @db.Uuid
-  eventId         String    @map("eventid") @db.Uuid
+  paymentId       String    @id(map: "payment_pk") @default(uuid()) @map("paymentId") @db.Uuid
+  orderId         String    @unique(map: "payment_unique") @map("orderid") @db.Uuid
   transactionType String?   @map("transactiontype") @db.VarChar
   paymentTime     DateTime? @default(now()) @map("paymentTime") @db.Date
   price           Decimal   @default(0.0) @map("price") @db.Decimal(10, 2)
   status          String    @default("pending") @map("status") @db.VarChar(20)
+  order           Order     @relation(fields: [orderId], references: [orderId], onDelete: NoAction, onUpdate: NoAction, map: "payment_order_fk")
 
-  @@id([paymentId, orderId])
   @@map("payment")
 }
 
@@ -301,7 +303,7 @@ model host {
   hostid           String     @id @unique(map: "host_hostid_unique") @db.Uuid
   category         Category[]
   account          Account    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")
-  theme            Theme?
+  theme            Theme[]
   vendor           Vendor[]
 }
 

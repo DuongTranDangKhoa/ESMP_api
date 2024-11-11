@@ -18,6 +18,22 @@ export const VendorPlain = t.Object(
 
 export const VendorRelations = t.Object(
   {
+    order: t.Array(
+      t.Object(
+        {
+          orderId: t.String({ additionalProperties: true }),
+          eventId: t.String({ additionalProperties: true }),
+          vendorId: t.String({ additionalProperties: true }),
+          name: t.String({ additionalProperties: true }),
+          totalAmount: __nullable__(t.Integer({ additionalProperties: true })),
+          totalPrice: t.Number({ additionalProperties: true }),
+          createAt: __nullable__(t.Date({ additionalProperties: true })),
+          updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+          status: t.String({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     product: t.Array(
       t.Object(
         {
@@ -124,6 +140,21 @@ export const VendorPlainInputUpdate = t.Object(
 
 export const VendorRelationsInputCreate = t.Object(
   {
+    order: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     product: t.Optional(
       t.Object(
         {
@@ -213,6 +244,30 @@ export const VendorRelationsInputCreate = t.Object(
 export const VendorRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      order: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       product: t.Partial(
         t.Object(
           {
@@ -404,6 +459,7 @@ export const VendorSelect = t.Partial(
       address: t.Boolean(),
       urlQr: t.Boolean(),
       status: t.Boolean(),
+      order: t.Boolean(),
       product: t.Boolean(),
       productItem: t.Boolean(),
       staff: t.Boolean(),
@@ -420,6 +476,7 @@ export const VendorSelect = t.Partial(
 export const VendorInclude = t.Partial(
   t.Object(
     {
+      order: t.Boolean(),
       product: t.Boolean(),
       productItem: t.Boolean(),
       staff: t.Boolean(),

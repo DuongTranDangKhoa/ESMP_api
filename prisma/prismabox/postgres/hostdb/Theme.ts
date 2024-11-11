@@ -180,11 +180,8 @@ export const ThemeWhere = t.Partial(
 export const ThemeWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ themeId: t.String(), hostid: t.String() })),
-      t.Union([
-        t.Object({ themeId: t.String() }),
-        t.Object({ hostid: t.String() }),
-      ]),
+      t.Partial(t.Object({ themeId: t.String() })),
+      t.Union([t.Object({ themeId: t.String() })]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),

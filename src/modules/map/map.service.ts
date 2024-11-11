@@ -69,7 +69,6 @@ const getLocationTypeByID = async (hostId: string, locationTypeid: string, hostD
 }
 const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Promise<MapObject> => {
     try {
-        console.log('Input Data:', eventId);
         const event = await eventService.getEventById(eventId, hostDb);
         const mainTemplate = new MainTemplateObject(event);
         const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);

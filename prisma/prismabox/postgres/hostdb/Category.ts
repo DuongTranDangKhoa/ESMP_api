@@ -9,30 +9,24 @@ export const CategoryPlain = t.Object(
     createAt: __nullable__(t.Date({ additionalProperties: true })),
     updatedAt: __nullable__(t.Date({ additionalProperties: true })),
     status: t.Boolean({ additionalProperties: true }),
-    hostid: __nullable__(t.String({ additionalProperties: true })),
+    hostid: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
 
 export const CategoryRelations = t.Object(
   {
-    host: __nullable__(
-      t.Object(
-        {
-          userid: t.String({ additionalProperties: true }),
-          expiretime: __nullable__(t.Date({ additionalProperties: true })),
-          bankingaccount: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          phone: __nullable__(t.String({ additionalProperties: true })),
-          email: __nullable__(t.String({ additionalProperties: true })),
-          eventstoragetime: __nullable__(
-            t.Date({ additionalProperties: true }),
-          ),
-          hostid: t.String({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
+    host: t.Object(
+      {
+        userid: t.String({ additionalProperties: true }),
+        expiretime: __nullable__(t.Date({ additionalProperties: true })),
+        bankingaccount: __nullable__(t.String({ additionalProperties: true })),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
+        eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
+        hostid: t.String({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
     ),
     products: t.Array(
       t.Object(
@@ -77,18 +71,16 @@ export const CategoryPlainInputUpdate = t.Object(
 
 export const CategoryRelationsInputCreate = t.Object(
   {
-    host: t.Optional(
-      t.Object(
-        {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
+    host: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
     ),
     products: t.Optional(
       t.Object(
@@ -112,19 +104,15 @@ export const CategoryRelationsInputCreate = t.Object(
 export const CategoryRelationsInputUpdate = t.Partial(
   t.Object(
     {
-      host: t.Partial(
-        t.Object(
-          {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
+      host: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
         { additionalProperties: true },
       ),
       products: t.Partial(

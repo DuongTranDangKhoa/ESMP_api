@@ -145,7 +145,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
                 y: loc.y,
                 shape: "booth",
                 rotation: loc.rotation,
-                heigth: loc.height,
+                height: loc.height,
                 width: loc.width,
                 status: 'active'
             }
@@ -161,7 +161,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
                     y: shape.y,
                     shape: shape.name,
                     rotation: shape.rotation,
-                    heigth: shape.height,
+                    height: shape.height,
                     width: shape.width,
                     status: 'blocked'
                 }
@@ -183,7 +183,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
                     y: shape.y,
                     shape: shape.name,
                     rotation: shape.rotation,
-                    heigth: shape.height,
+                    height: shape.height,
                     width: shape.width,
                     status: 'blocked'
                 }
@@ -201,7 +201,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
                     y: text.y,
                     shape: 'text',
                     rotation: text.rotation,
-                    heigth: text.height,
+                    height: text.height,
                     width: text.width,
                     status: 'blocked'
                 }
@@ -223,7 +223,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
                     y: text.y,
                     shape: 'text',
                     rotation: text.rotation,
-                    heigth: text.height,
+                    height: text.height,
                     width: text.width,
                     status: 'blocked'
                 }
@@ -252,7 +252,7 @@ const updateMap = async (updateDataArray: LocationObject[], hostDb: HostDbClient
           x: updateData.x,
           y: updateData.y,
           rotation: updateData.rotation,
-          heigth: updateData.height, // Corrected spelling
+          height: updateData.height, // Corrected spelling
           width: updateData.width,
         },
       });

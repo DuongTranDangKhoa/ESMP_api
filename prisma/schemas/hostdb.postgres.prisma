@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  typeboxImportDependencyName = "elysia"
-  typeboxImportVariableName   = "t"
   inputModel                  = "true"
+  typeboxImportVariableName   = "t"
   additionalProperties        = "true"
+  typeboxImportDependencyName = "elysia"
 }
 
 datasource db {
@@ -82,7 +82,7 @@ model Location {
   y            Int?           @map("y")
   width        Int?           @map("width")
   status       String?        @map("status") @db.VarChar(50)
-  heigth       Int?           @map("heigth")
+  height       Int?
   rotation     Int?           @map("rotation")
   EventPayment EventPayment[]
   LocationType LocationType   @relation(fields: [typeId], references: [typeId])
@@ -256,8 +256,8 @@ model Category {
   createAt     DateTime? @default(now()) @map("create_at") @db.Date
   updatedAt    DateTime? @default(now()) @map("updated_at") @db.Date
   status       Boolean   @default(true) @map("status")
-  hostid       String?   @db.Uuid
-  host         host?     @relation(fields: [hostid], references: [hostid], onDelete: NoAction, onUpdate: NoAction, map: "category_host_fk")
+  hostid       String    @db.Uuid
+  host         host      @relation(fields: [hostid], references: [hostid], map: "category_host_fk")
   products     Product[]
 
   @@map("category")

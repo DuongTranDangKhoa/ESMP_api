@@ -25,7 +25,7 @@ export const LocationTypeRelations = t.Object(
           y: __nullable__(t.Integer({ additionalProperties: true })),
           width: __nullable__(t.Integer({ additionalProperties: true })),
           status: __nullable__(t.String({ additionalProperties: true })),
-          heigth: __nullable__(t.Integer({ additionalProperties: true })),
+          height: __nullable__(t.Integer({ additionalProperties: true })),
           rotation: __nullable__(t.Integer({ additionalProperties: true })),
         },
         { additionalProperties: true },

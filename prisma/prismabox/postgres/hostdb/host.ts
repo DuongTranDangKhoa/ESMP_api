@@ -25,7 +25,7 @@ export const hostRelations = t.Object(
           createAt: __nullable__(t.Date({ additionalProperties: true })),
           updatedAt: __nullable__(t.Date({ additionalProperties: true })),
           status: t.Boolean({ additionalProperties: true }),
-          hostid: __nullable__(t.String({ additionalProperties: true })),
+          hostid: t.String({ additionalProperties: true }),
         },
         { additionalProperties: true },
       ),

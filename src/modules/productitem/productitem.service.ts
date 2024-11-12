@@ -120,23 +120,69 @@ const createProductItem = async (
 };
 
 
+// const updateProductItem = async (
+//     inputData: ProductItemObject, hostDb: HostDbClient
+// ) => {
+//     try {
+//         await hostDb.productItem.update({
+//             where: {
+//                 productItemId: inputData.productItemId,
+//             },
+//             data: inputData,
+//         });
+//          await hostDb.$disconnect();
+//         return inputData;
+//     } catch (error) {
+//         throw new InternalServerError('Failed to update product item');
+//     }
+// }
 const updateProductItem = async (
-    inputData: ProductItemObject, hostDb: HostDbClient
+    productItemId: string,
+    vendorId: string,
+    updatedData: ProductItemObject,
+    hostDb: HostDbClient
 ) => {
     try {
-        await hostDb.productItem.update({
-            where: {
-                productItemId: inputData.productItemId,
+        const productItem = await hostDb.productItem.update({
+            where: { productItemId: productItemId }, 
+            data: {
+                vendorId: vendorId,
+                description: updatedData.description,
+                status: updatedData.status !== undefined ? updatedData.status : true,
+                name: updatedData.name,
+                price: updatedData.price,
+                updatedAt: new Date() 
             },
-            data: inputData,
         });
-         await hostDb.$disconnect();
-        return inputData;
-    } catch (error) {
-        throw new InternalServerError('Failed to update product item');
-    }
-}
+        await hostDb.productInProductItem.deleteMany({
+            where: { productItemId: productItemId }
+        });
+        const updatedProductInProductItem = updatedData.details.map(detail => ({
+            productId: detail.productId,
+            productItemId: productItemId,
+            quantity: detail.quantity,
+            unit: detail.unit
+        }));
 
+        for (const detail of updatedProductInProductItem) {
+            
+            await hostDb.productInProductItem.createMany({
+                data: {
+                    productId: detail.productId,
+                    productItemId: productItemId,
+                    quantity: detail.quantity,
+                    unit: detail.unit
+                }
+            });
+        }
+
+        await hostDb.$disconnect();
+        return productItem;
+    } catch (error) {
+        console.error("Error updating product item:", error);
+        throw new Error('Failed to update product item');
+    }
+};
 const deleteProductItem = async (
     productItemId: string, hostDb: HostDbClient
 ) => {

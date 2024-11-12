@@ -8,7 +8,7 @@ const createLocationType = async (hostId: string, eventId: string, inputData: Lo
       const locationType = await hostDb.locationType.createMany({
         data: {
           eventId: eventId,
-          typeName: inputData.name,
+          typeName: inputData.typeName,
           price : inputData.price,
           status: inputData.status,
         },

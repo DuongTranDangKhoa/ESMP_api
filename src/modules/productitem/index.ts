@@ -39,9 +39,10 @@ export const productItemGroup = (app: any) =>
               },        
            )
            .put(
-            '/',
-            async ({  body, hostDb }: {body: any, hostDb: HostDbClient } ) => {
-                const productItem = await productService.updateProductItem(body, hostDb)
+            '/:vendorId/:productItemId/',
+            async ({  params ,body, hostDb }: {params: any ,body: any, hostDb: HostDbClient } ) => {
+              const { productItemId, vendorId } = params;  
+                const productItem = await productService.updateProductItem(productItemId, vendorId,  body, hostDb)
                 return productItem
             },
            )

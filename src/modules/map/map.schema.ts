@@ -59,12 +59,12 @@ export class LocationGetObject {
 }
 export class LocationTypeObject{
     typeId?: string
-    name: string
+    typeName: string
     price: number
     status: string 
     constructor(data: any){
         this.typeId = data.typeId
-        this.name = data.name
+        this.typeName = data.name
         this.price = data.price
         this.status = data.status
     }

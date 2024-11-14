@@ -120,3 +120,17 @@ export class InputEventRegisterObject {
   }
 }
 
+export const UpdateEventResponseSchema = t.Required(
+  t.Object({
+    message: t.String({
+      error: 'Message must be a string',
+    }),
+    id: t.String({
+      format: 'uuid',
+      error: 'ID must be a valid UUID string',
+    }),
+  }),
+  {
+    error: 'Response must contain both message and id',
+  },
+);

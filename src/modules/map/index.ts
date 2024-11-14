@@ -17,15 +17,16 @@ app.group('/:hostId/:eventId', (app: any) =>
                 }) 
                 .post('/',
                 async ({
-                    hostId,
+                    params,
                     body,
                     hostDb,
                 }: {
-                    hostId: string
+                    params: any
                     body: any
                     hostDb: HostDbClient
                 }) => {
-                    return await mapService.createMap(hostId, body, hostDb)
+                    const {hostId, eventId} = params;
+                    return await mapService.createMap(hostId,eventId, body, hostDb)
                 }
             )                                   
         )

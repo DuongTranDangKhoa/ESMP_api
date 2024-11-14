@@ -51,11 +51,12 @@ async function updateEvent(
   hostDb: HostDbClient,
 ) {
   try {
-    await hostDb.event.update({
+    const updatedEvent = await hostDb.event.update({
       where: {
         eventId,
       },
       data: {
+        eventId: eventId,
         name: updateData.name,
         description: updateData.description,
         startDate: updateData.startDate,
@@ -67,13 +68,23 @@ async function updateEvent(
         y: updateData.y,
         width: updateData.width,
         height: updateData.height,
+        stageValue: updateData.stageValue,
       },
-    })
+      select: {
+        eventId: true, 
+      },
+    });
     await hostDb.$disconnect();
+    return {
+      message: "Update event success",
+      id: eventId, 
+    };
   } catch (err: any) {
-    throw new DatabaseError(err.message)
+    throw new DatabaseError(err.message);
   }
 }
+
+
 
 async function deleteEvent(eventId: string, hostDb: HostDbClient) {
   try {

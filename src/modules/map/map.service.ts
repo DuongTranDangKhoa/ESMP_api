@@ -120,14 +120,14 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
         throw new Error('Failed to get map');
     } 
 }
-const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
+const createMap = async (hostId: string,eventId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
     try {
     const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
     console.log("Creating map:", inputData.imageElements[0]);
     if(mainTemplate != null){
     const updateEvent = await hostDb.event.update({
         where: {
-            eventId: inputData.eventId,
+            eventId: eventId,
         }, data: {
             x: mainTemplate.x,
             y: mainTemplate.y,
@@ -155,7 +155,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
         });
     }
     for (const shape of shapes) {
-        const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: shape.name, eventId: inputData.eventId}});
+        const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: shape.name, eventId: eventId}});
         if (locationTypeId != null) { 
              await hostDb.location.createMany({
                 data: {
@@ -173,7 +173,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
         else{
             const locationType = await hostDb.locationType.create({ 
                 data: {
-                    eventId: inputData.eventId,
+                    eventId: eventId,
                     typeName: shape.name,
                     price: '0',
                     status: 'blocked'
@@ -195,7 +195,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
         }
     }
         for (const text of textElements) {
-        const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: text.name,eventId: inputData.eventId}});
+        const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: text.name,eventId: eventId}});
         if (locationTypeId != null) { 
              await hostDb.location.createMany({
                 data: {
@@ -213,7 +213,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
         else{
             const locationType = await hostDb.locationType.create({ 
                 data: {
-                    eventId: inputData.eventId,
+                    eventId: eventId,
                     typeName: text.name,
                     price: '0',
                     status: 'active'

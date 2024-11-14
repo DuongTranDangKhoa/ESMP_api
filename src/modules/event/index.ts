@@ -3,6 +3,7 @@ import * as commonSchema from '../../common/schema.common'
 import eventService from './event.service'
 import status from 'statuses'
 import { HostDbClient } from '../../database/host.db'
+import { UpdateEventResponseSchema } from './event.schema'
 
 export const eventGroup = (app: any) =>
   app
@@ -92,32 +93,30 @@ export const eventGroup = (app: any) =>
              * @response update event status
              */
             .put(
-              '/',
-              async ({
-                eventId,
-                body,
-                set,
-                hostDb,
-              }: {
-                eventId: string
-                body: any
-                set: any
-                hostDb: HostDbClient
-              }) => {
-                const updateData = new eventSchema.EventObject(body)
-                await eventService.updateEvent(eventId, updateData, hostDb)
-                set.status = status('OK')
-                return {
-                  message: 'Update event success',
-                }
-              },
-              {
-                body: eventSchema.InputEventSchema,
-                response: {
-                  200: commonSchema.CommonSuccessResponse,
-                },
-              },
-            )
+  '/',
+  async ({
+    eventId,
+    body,
+    set,
+    hostDb,
+  }: {
+    eventId: string
+    body: any
+    set: any
+    hostDb: HostDbClient
+  }) => {
+    const updateData = new eventSchema.EventObject(body);
+    const response = await eventService.updateEvent(eventId, updateData, hostDb);
+    set.status = status('OK');
+    return response; 
+  },
+  {
+    body: eventSchema.InputEventSchema,
+    response: {
+      200: UpdateEventResponseSchema, 
+    },
+  },
+)
             /**
              * DELETE api/event/:eventId
              * Delete event
@@ -178,12 +177,9 @@ export const eventGroup = (app: any) =>
                 body: any
                 hostDb: HostDbClient
               }) => {
-                const vendorList = body.map(
-                  (item: any) => new eventSchema.InputEventRegisterObject(item),
-                )
                 const eventVendorList = eventService.updateEvent(
                   eventId,
-                  vendorList,
+                  body,
                   hostDb,
                 )
                 return eventVendorList

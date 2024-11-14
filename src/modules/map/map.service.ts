@@ -110,7 +110,8 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
             mainTemplate: mainTemplate,
             status: event.status ?? 'Unknown',
             textElements: textElements, 
-            imageElements: [ event.stageValue ?? ''] 
+            imageElements: event.stageValue ? [event.stageValue] : []
+
         };
          await hostDb.$disconnect();
         return map;

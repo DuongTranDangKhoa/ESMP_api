@@ -52,6 +52,18 @@ export const EventRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
+    service: t.Array(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          eventid: t.String({ additionalProperties: true }),
+          name: t.String({ additionalProperties: true }),
+          price: t.Number({ additionalProperties: true }),
+          quantity: t.Integer({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     VendorInEvent: t.Array(
       t.Object(
         {
@@ -104,14 +116,14 @@ export const EventPlainInputUpdate = t.Object(
     venue: __nullable__(t.String({ additionalProperties: true })),
     createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    x: __nullable__(t.Integer({ additionalProperties: true })),
-    y: __nullable__(t.Integer({ additionalProperties: true })),
+    x: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
+    y: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
     profit: t.Number({ additionalProperties: true }),
     status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
-    height: __nullable__(t.Integer({ additionalProperties: true })),
+    height: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
     stageValue: __nullable__(t.String({ additionalProperties: true })),
     thumbnail: __nullable__(t.String({ additionalProperties: true })),
-    width: __nullable__(t.Integer({ additionalProperties: true })),
+    width: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
     onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
   },
   { additionalProperties: true },
@@ -133,6 +145,21 @@ export const EventRelationsInputCreate = t.Object(
       ),
     ),
     LocationType: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    service: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -185,6 +212,30 @@ export const EventRelationsInputUpdate = t.Partial(
         { additionalProperties: true },
       ),
       LocationType: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      service: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -337,6 +388,7 @@ export const EventSelect = t.Partial(
       onWeb: t.Boolean(),
       theme: t.Boolean(),
       LocationType: t.Boolean(),
+      service: t.Boolean(),
       VendorInEvent: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -350,6 +402,7 @@ export const EventInclude = t.Partial(
     {
       theme: t.Boolean(),
       LocationType: t.Boolean(),
+      service: t.Boolean(),
       VendorInEvent: t.Boolean(),
       _count: t.Boolean(),
     },

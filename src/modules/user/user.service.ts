@@ -7,6 +7,7 @@ import * as hostService from '../host/host.service'
 import * as configService from '../config/config.service'
 import vendorService from '../vendor/vendor.service'
 import { RoleType } from '../../common/constant/common.constant'
+import staffService from '../staff/staff.service'
 /**
  * Create user session
  * @param {MongoDbUserType} userInfo
@@ -45,29 +46,28 @@ async function createUserSession(
 export async function authenticateHostUser(
   username: string,
   password: string,
-  masterDb: MasterDbClient,
+  hostDb: HostDbClient,
   mongoDb: MongoDbClient,
 ): Promise<LoginResponseType> {
   const host = await hostService.authenticateHostUser(
     username,
     password,
-    masterDb,
+    hostDb,
   )
 
   const userInfo = {
     username,
     hostInfo: {
-      hostName: host.hostName as string,
-      hostId: host.hostId as string,
-      hostCode: host.hostCode as string,
-      
+      hostName: host.email as string,
+      hostId: host.hostid as string,
+     expiretime : host.expiretime,
     },
   }
 
   // create session for user
   const accessToken = await createUserSession(
     userInfo as MongoDbUserType,
-    masterDb,
+    hostDb,
     mongoDb,
   )
 
@@ -79,30 +79,26 @@ export async function authenticateHostUser(
 }
 
 export async function authenticateVendorUser(
-  hostCode: string,
   username: string,
   password: string,
-  masterDb: MasterDbClient,
+  hostDb: HostDbClient,
   mongoDb: MongoDbClient,
 ): Promise<LoginResponseType> {
-  const host = await hostService.getHostAndVerify(hostCode, masterDb)
-  console.log("host", host.hostCode) 
-  const hostDb = getHostDbClient(host.hostCode)
   const vendor = await vendorService.authenticateVendorUser(
     username,
     password,
     hostDb,
   )
-  
+  const host = await hostService.getHostAndVerify(vendor?.vendor.hostid, hostDb)
   // create session for user
   const userInfo = {
     username,
     role: RoleType.MANAGER,
     hostInfo: {
-      hostName: host.hostName as string,
-      hostId: host.hostId as string,
-      hostCode: host.hostCode as string,
-      // hostName: "123", 
+       hostName: host.email as string,
+      hostId: host.hostid as string,
+     expiretime : host.expiretime,
+     // hostName: "123", 
       // hostCode,
     },
     vendorInfo: {
@@ -111,7 +107,7 @@ export async function authenticateVendorUser(
       urlQr: vendor.vendor.urlQr as string
     },
   }
-
+  
   // create session for user
   const accessToken = await createUserSession(
     userInfo as MongoDbUserType,
@@ -125,7 +121,62 @@ export async function authenticateVendorUser(
     
   }
 }
+export async function authenticateStaffUser(
+  username: string,
+  password: string,
+  hostDb: HostDbClient,
+  mongoDb: MongoDbClient,
+): Promise<LoginResponseType> {
+  const staff = await staffService.authenticateStaffUser(
+    username,
+    password,
+    hostDb,
+  )
+  const vendor = await hostDb.vendor.findFirst({where: {vendorId: staff.staff.vendorId}});
+  const vendorName = await hostDb.account.findFirst({where: {id: vendor?.userid}});
+  if (!vendor){
+    throw new Error('Vendor not found');
+  }
+  const host = await hostDb.host.findFirst({where: {hostid: vendor?.hostid}});
+  // create session for user
+  const userInfo = {
+  username,
+  role: RoleType.STAFF,
+  hostInfo: {
+    hostName: host?.email as string,
+      hostId: host?.hostid as string,
+     expiretime : host?.expiretime,
+  },
+  vendorInfo: {
+    vendorName: vendorName?.name as string,
+    vendorId: vendor?.vendorId as string,
+    urlQr: vendor?.urlQr as string
+  },
+  staffInfo: {
+    staffId: staff.staff.staffid as string, // Corrected to use `staffId`
+    vendorId: staff.staff.vendorId as string,
+    staffName: staff.account.name as string
+  },
+}
 
+  
+  // create session for user
+  const accessToken = await createUserSession(
+    userInfo as MongoDbUserType,
+    hostDb,
+    mongoDb,
+  )
+
+  return {
+    accessToken,
+    userInfo,
+    
+  }
+}
 export async function logOutUser(accessToken: string, mongoDb: MongoDbClient) {
   await mongoService.clearUserTokens(accessToken, mongoDb)
 }
+export async function authenticateAdminUser(username: any, password: any, hostDb: HostDbClient, mongoDb: MongoDbClient) {
+  
+}
+

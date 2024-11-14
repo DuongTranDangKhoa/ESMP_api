@@ -5,13 +5,13 @@ import {
 } from '../modules/mongoDb/mongoDb.service'
 import { getSessionExpireTime } from '../modules/config/config.service'
 import { initiateHostDatabase } from '../database'
-import { HostDbClient } from '../database/host.db'
+import { hostDb, HostDbClient } from '../database/host.db'
 import { AuthorizationError } from '../errors/authorization.error'
 import { MongoDbUserType, MongoSessionData } from '../database/mongo.db'
 
 export const validateSession = async ({
   headers,
-  masterDb,
+  // masterDb,
   mongoDb,
 }: any): Promise<{ userInfo: MongoDbUserType; hostDb: HostDbClient }> => {
   const accessToken = headers.authorization
@@ -28,8 +28,8 @@ export const validateSession = async ({
   }
   const userInfo: MongoDbUserType = sessionInfo.userInfo
    
-  const hostDb = initiateHostDatabase(userInfo)
-  const sessionExpireTime = await getSessionExpireTime(hostDb ?? masterDb)
+  // const hostDb = initiateHostDatabase(userInfo)
+  const sessionExpireTime = await getSessionExpireTime(hostDb)
 
   await refreshUserSession(accessToken, sessionExpireTime, mongoDb)
 

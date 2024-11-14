@@ -10,16 +10,23 @@ datasource db {
 }
 
 type UserInfo {
-  hostInfo   HostInfo
+  hostInfo   HostInfo?
   username   String
   role       String?
   vendorInfo VendorInfo?
+  staffInfo  StaffInfo?
 }
 
 type HostInfo {
-  hostCode String
-  hostId   String
-  hostName String
+  hostId     String
+  hostName   String
+  expiretime DateTime
+}
+
+type StaffInfo {
+  staffId   String
+  vendorId  String
+  staffName String
 }
 
 type VendorInfo {

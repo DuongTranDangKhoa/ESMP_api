@@ -10,5 +10,11 @@ export function getHostDbClient(hostCode: string) {
   })
   return hostDbClient
 }
-
+export const hostDb: HostDbClient = new PrismaClient({
+  datasources: {
+    db: {
+      url: (Bun.env.HOST_DB_CONNECTION_PREFIX as string) + `_default`,
+    },
+  },
+});
 export type HostDbClient = PrismaClient

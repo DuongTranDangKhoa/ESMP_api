@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  inputModel                  = "true"
-  typeboxImportVariableName   = "t"
-  additionalProperties        = "true"
   typeboxImportDependencyName = "elysia"
+  typeboxImportVariableName   = "t"
+  inputModel                  = "true"
+  additionalProperties        = "true"
 }
 
 datasource db {
@@ -27,19 +27,20 @@ model Event {
   venue         String?         @map("location") @db.VarChar(500)
   createAt      DateTime?       @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime?       @default(now()) @map("updated_at") @db.Date
-  x             Int?            @map("x")
-  y             Int?            @map("y")
+  x             Int?            @default(100) @map("x")
+  y             Int?            @default(100) @map("y")
   profit        Decimal         @map("price") @db.Decimal(10, 2)
   status        String?         @default("On-going") @map("status") @db.VarChar(50)
-  height        Int?            @map("height")
+  height        Int?            @default(400) @map("height")
   hostId        String?         @map("hostid") @db.Uuid
   stageValue    String?         @map("stagevalue") @db.VarChar
   themeId       String?         @map("themeid") @db.Uuid
   thumbnail     String?         @map("thumbnail") @db.VarChar
-  width         Int?            @map("width")
+  width         Int?            @default(600) @map("width")
   onWeb         Boolean?        @map("onweb")
   theme         Theme?          @relation(fields: [themeId], references: [themeId], onDelete: Restrict, map: "event_theme_fk")
   LocationType  LocationType[]
+  service       service[]
   VendorInEvent VendorInEvent[]
 
   @@map("event")
@@ -346,4 +347,13 @@ model staff {
   vendor   Vendor  @relation(fields: [vendorId], references: [vendorId], map: "staff_vendor_fk")
 
   @@unique([userid, vendorId], map: "staff_unique")
+}
+
+model service {
+  id       String  @id @db.Uuid
+  eventid  String  @db.Uuid
+  name     String  @db.VarChar(250)
+  price    Decimal @db.Decimal(10, 2)
+  quantity Int
+  event    Event   @relation(fields: [eventid], references: [eventId], onDelete: NoAction, onUpdate: NoAction, map: "service_event_fk")
 }

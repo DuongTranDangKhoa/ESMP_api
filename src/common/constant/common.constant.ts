@@ -1,4 +1,4 @@
-export const LoginType = { HOST: 'host', VENDOR: 'vendor' }
+export const LoginType = { HOST: 'host', VENDOR: 'vendor', STAFF: 'staff', ADMIN: 'admin' }
 
 export const DEFAULT_SESSION_DURATION = 30  // 30 
 export const RoleType = { ADMIN: 'admin', HOST: 'host', MANAGER: 'manager', STAFF: 'staff' }

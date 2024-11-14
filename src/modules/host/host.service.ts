@@ -1,3 +1,4 @@
+import { HostDbClient } from '../../database/host.db'
 import { MasterDbClient } from '../../database/master.db'
 import { AuthenticationError } from '../../errors/authentication.error'
 import { verifyEncrypted } from '../../utilities/crypting.util'
@@ -7,20 +8,17 @@ import { HostType } from './host.schema'
 export const authenticateHostUser = async (
   username: string,
   password: string,
-  masterDb: MasterDbClient,
+  hostDb: HostDbClient,
 ): Promise<HostType> => {
-  const host = await masterDb.host.findFirst({
-    select: {
-      hostId: true,
-      hostCode: true,
-      username: true,
-      password: true,
-      hostName: true,
-      contractStartDate: true,
-      contractEndDate: true,
-    },
+  const account = await hostDb.account.findFirst({
+    where: { username },
+  });
+  if (!account) {
+    throw new AuthenticationError("Host's account not found")
+  }
+  const host = await hostDb.host.findFirst({
     where: {
-      username,
+    userid: account.id,
     },
   })
   // check if host is existed
@@ -28,7 +26,7 @@ export const authenticateHostUser = async (
     throw new AuthenticationError('Invalid username')
   }
   // verify password
-  const isPasswordMatch = verifyEncrypted(password, host.password)
+  const isPasswordMatch = verifyEncrypted(password, account.password)
   if (!isPasswordMatch) {
     throw new AuthenticationError('Invalid password')
   }
@@ -40,24 +38,15 @@ export const authenticateHostUser = async (
 
 export const getHostAndVerify = async (
   hostCode: string,
-  masterDb: MasterDbClient,
+  hostDb: HostDbClient,
 ): Promise<HostType> => {
   if (!hostCode) {
     throw new AuthenticationError("Host's code not provided")
   }
 
-  const host = await masterDb.host.findUnique({
-    select: {
-      hostId: true,
-      hostCode: true,
-      username: true,
-      password: true,
-      hostName: true,
-      contractStartDate: true,
-      contractEndDate: true,
-    },
+  const host = await hostDb.host.findUnique({
     where: {
-      hostCode,
+      hostid: hostCode,
     },
   })
 
@@ -74,8 +63,7 @@ export const getHostAndVerify = async (
 function verifyHostContract(host: HostType) {
   // verify if host's contract is valid
   if (
-    compareDateToNow(host.contractStartDate) === 1 ||
-    compareDateToNow(host.contractEndDate) === -1
+    compareDateToNow(host.expiretime) === -1
   ) {
     throw new AuthenticationError('Invalid host contract')
   }

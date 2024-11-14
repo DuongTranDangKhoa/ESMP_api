@@ -114,13 +114,14 @@ export class MapCreateObject {
     shapes:  ShapeObject[]
     textElements: ShapeObject[]
     mainTemplate: MainTemplateObject
-
+    imageElements: string[]
     constructor(data: any){
       this.eventId = data.eventId
       this.booths = data.booths
       this.shapes = data.shapes
       this.textElements = data.textElements
       this.mainTemplate = data.mainTemplate
+      this.imageElements = data.imageElements
     }
 }
 export class LocationObject {

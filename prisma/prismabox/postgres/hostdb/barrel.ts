@@ -22,4 +22,5 @@ export * from "./notification";
 export * from "./Renamedpackage";
 export * from "./transaction";
 export * from "./staff";
+export * from "./service";
 export * from "./__nullable__";

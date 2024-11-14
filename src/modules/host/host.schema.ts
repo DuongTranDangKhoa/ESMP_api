@@ -1,13 +1,11 @@
-import { Host } from '../../../prisma/clients/postgres/masterdb'
+import { host } from "../../../prisma/clients";
+
 
 export type HostType = Pick<
-  Host,
-  | 'hostId'
-  | 'hostCode'
-  | 'username'
-  | 'password'
-  | 'hostName'
-  | 'contractStartDate'
-  | 'contractEndDate'
-  | 'contractStartDate'
+  host,
+  | 'hostid'
+  | 'expiretime'
+  | 'phone'
+  | 'email'
+  | 'eventstoragetime'
 >

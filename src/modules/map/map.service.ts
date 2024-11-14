@@ -123,6 +123,7 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
 const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
     try {
     const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
+    console.log("Creating map:", inputData.imageElements[0]);
     if(mainTemplate != null){
     const updateEvent = await hostDb.event.update({
         where: {
@@ -132,6 +133,7 @@ const createMap = async (hostId: string, inputData: MapCreateObject, hostDb: Hos
             y: mainTemplate.y,
             width: mainTemplate.width,
             height: mainTemplate.height,
+            stageValue: inputData.imageElements[0],
         }
     });
    }

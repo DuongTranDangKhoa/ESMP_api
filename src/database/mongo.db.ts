@@ -3,6 +3,7 @@ import {
   UserInfo,
   HostInfo,
   VendorInfo,
+  StaffInfo,
   SessionData,
 } from '../../prisma/clients/mongodb'
 
@@ -11,5 +12,5 @@ export type MongoSessionData = SessionData
 export type MongoDbUserType = UserInfo
 export type MongoDbHostType = HostInfo
 export type MongoDbVendorType = VendorInfo
-
+export type MongoDbStaffType = StaffInfo
 export const mongoDb = new PrismaClient()

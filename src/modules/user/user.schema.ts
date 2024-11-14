@@ -9,21 +9,14 @@ export const LoginParams = t.Object(
     loginType: t.String({
       default: 'host',
       format: 'regex',
-      pattern: '^(host|vendor)$',
-      error: "Login type must be specified between 'host' or 'vendor'",
+      pattern: '^(host|vendor|staff)$',
+      error: "Login type must be specified between 'admin', 'host', 'vendor' or 'staff'",
     }),
   },
   { error: 'Login type must be specified', required: true },
 )
 
 export const LoginBody = t.Object({
-  hostCode: t.Optional(
-    t.String({
-      minLength: 7,
-      maxLength: 7,
-      error: 'Host code must be 8 characters',
-    }),
-  ),
   username: t.String({
     minLength: 8,
     maxLength: 40,
@@ -47,12 +40,16 @@ export const UserInfoSchema = t.Object({
   hostInfo: t.Required(
     t.Object({
       hostName: t.String(),
-      hostCode: t.String(),
     }),
   ),
   vendorInfo: t.Optional(
     t.Object({
       vendorName: t.String(),
+    }),
+  ),
+   staffInfo: t.Optional(
+    t.Object({
+      staffName: t.String(),
     }),
   ),
 })

@@ -26,3 +26,17 @@ export function verifyEncrypted(
     throw new Error('Crypting malfuntioned')
   }
 }
+export function decrypt(encryptedStr: string): string {
+  try {
+    const decryptAgent = crypto.createDecipheriv(
+      cryptingConstant.PASSWORD_CRYPTING_ALGORITHM,
+      cryptingConstant.PASSWORD_CRYPTING_SECRET_KEY,
+      cryptingConstant.PASSWORD_CRYPTING_IV,
+    );
+    return (
+      decryptAgent.update(encryptedStr, 'base64', 'utf-8') + decryptAgent.final('utf-8')
+    );
+  } catch (err: any) {
+    throw new Error('Decrypting malfunctioned');
+  }
+}

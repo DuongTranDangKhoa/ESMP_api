@@ -2,8 +2,8 @@ import { RoleType } from './../../common/constant/common.constant';
 import { NotFoundError } from 'elysia'
 import { HostDbClient } from '../../database/host.db'
 import { AuthenticationError } from '../../errors/authentication.error'
-import { verifyEncrypted } from '../../utilities/crypting.util'
-import { VendorType, VendorObject, VendorAccountType } from './vendor.schema'
+import { decrypt, encrypt, verifyEncrypted } from '../../utilities/crypting.util'
+import { VendorType, VendorObject, VendorAccountType, RegisterVendorObject } from './vendor.schema'
 // import { EventRegisterObject } from '../event/event.schema'
 import { EventRegisterStatus } from '../../common/constant/common.constant'
 
@@ -45,6 +45,48 @@ const getVendorList = async (hostDb: HostDbClient): Promise<VendorObject[]> => {
   return vendorArr
 }
 
+const getVendorByIdHost = async (
+  hostId: string,
+  hostDb: HostDbClient,
+) => {
+  const vendor = await hostDb.vendor.findMany({
+    where: {
+      hostid :hostId,
+    },
+  })
+  if (!vendor) {
+    throw new NotFoundError('Vendor not found')
+  }
+  let Vendoraccount = []
+  for (const vendorArr of vendor) {
+  const account = await hostDb.account.findUnique({
+    where: {
+      id: vendorArr.userid,
+    },
+  })
+
+  if (account) {
+  const password = decrypt(account.password)    
+  const accoutList = {
+    vendorid: vendorArr.vendorId,
+    userid: vendorArr.userid,
+    username: account.username,
+    password: password,
+    name: account.name,
+    phone: vendorArr.phone,
+    email: vendorArr.email,
+    address: vendorArr.address,
+    urlQr: vendorArr.urlQr,
+    status: vendorArr.status,
+    role: account.role,
+  }
+  Vendoraccount.push(accoutList)
+  }
+}
+
+   await hostDb.$disconnect();
+  return Vendoraccount
+}
 const getVendorById = async (
   vendorId: string,
   hostDb: HostDbClient,
@@ -62,21 +104,48 @@ const getVendorById = async (
 }
 
 const createVendor = async (
-  vendor: VendorType,
-  hostCode: string,
+    hostId: string,
+  vendor: RegisterVendorObject,
   hostDb: HostDbClient,
-): Promise<void> => {
-  const inputData = new VendorObject(vendor)
-  await hostDb.vendor.create({
+) => {
+  const inputData = new RegisterVendorObject(vendor)
+  console.log('inputData', inputData.username)
+  const checkAccount = await hostDb.account.findUnique({ 
+    where: { username: inputData.username }
+})
+  console.log('checkAccount', checkAccount)
+  if(checkAccount){
+    throw new Error('Username already exists')
+  }
+  const inputpassword = encrypt(inputData.password)
+  console.log('inputData', inputData)
+  const account = await hostDb.account.create({
     data: {
       username: inputData.username,
-      password: hostCode,
-      vendorName: inputData.vendorName,
+      password: inputpassword,
+      name: inputData.name,
+      role: 'manager',
+    },
+  })
+  const vendorAccount = await hostDb.vendor.create({
+    data: {
+      userid: account.id,
+      hostid: hostId,
+      phone: inputData.phone,
+      email: inputData.email,
+      address: inputData.address,
+      urlQr: inputData.urlQr,
+      status: true,
+      // status: EventRegisterStatus.pending, // pending for approval by host admin
       // createBy: 'host',
       // updatedBy: 'host',
     },
   })
    await hostDb.$disconnect();
+   return {
+    message: 'Vendor created successfully',
+    vendorId: vendorAccount.vendorId,
+   }
 }
 
 const updateVendor = async (
@@ -116,12 +185,18 @@ const updateVendor = async (
 const deleteVendor = async (
   vendorId: string,
   hostDb: HostDbClient,
-): Promise<void> => {
-  await hostDb.vendor.delete({
+) => {
+ const vendor= await hostDb.vendor.delete({
     where: {
       vendorId,
     },
   })
+  await hostDb.account.delete({
+    where: {
+      id: vendor.userid, 
+    },
+  })
+  return { message: 'Vendor deleted' }
    await hostDb.$disconnect();
 }
 
@@ -157,6 +232,7 @@ const vendorService = {
   getVendorList,
   getVendorById,
   updateVendor,
+  getVendorByIdHost,
   deleteVendor,
   createVendor,
   // getVendorRegisteredEvents,

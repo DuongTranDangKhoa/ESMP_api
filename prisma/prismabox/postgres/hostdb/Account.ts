@@ -263,8 +263,11 @@ export const AccountWhere = t.Partial(
 export const AccountWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ id: t.String() })),
-      t.Union([t.Object({ id: t.String() })]),
+      t.Partial(t.Object({ id: t.String(), username: t.String() })),
+      t.Union([
+        t.Object({ id: t.String() }),
+        t.Object({ username: t.String() }),
+      ]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),

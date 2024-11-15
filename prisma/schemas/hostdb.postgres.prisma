@@ -135,8 +135,8 @@ model Vendor {
 }
 
 model Account {
-  id           String         @id @db.Uuid
-  username     String         @db.VarChar(50)
+  id           String         @id @default(uuid()) @db.Uuid
+  username     String         @unique @db.VarChar(50)
   password     String         @db.VarChar(50)
   role         String?        @db.VarChar(10)
   name         String?        @db.VarChar(100)
@@ -276,7 +276,7 @@ model ProductItemInMenu {
 }
 
 model Menu {
-  menuId        String              @id @map("menuId") @db.Uuid
+  menuId        String              @id @default(uuid()) @map("menuId") @db.Uuid
   menuName      String              @map("menuname") @db.VarChar(100)
   createAt      DateTime?           @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime?           @default(now()) @map("updated_at") @db.Date
@@ -301,7 +301,7 @@ model host {
   phone            String?    @db.VarChar(15)
   email            String?    @db.VarChar(100)
   eventstoragetime DateTime?  @db.Timestamp(6)
-  hostid           String     @id @unique(map: "host_hostid_unique") @db.Uuid
+  hostid           String     @id @unique(map: "host_hostid_unique") @default(uuid()) @db.Uuid
   category         Category[]
   account          Account    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")
   theme            Theme[]
@@ -317,7 +317,7 @@ model notification {
 
 /// This model has been renamed to 'Renamedpackage' during introspection, because the original name 'package' is reserved.
 model Renamedpackage {
-  id               String        @id @db.Uuid
+  id               String        @id @default(uuid()) @db.Uuid
   name             String?       @db.VarChar(100)
   description      String?
   eventstoragetime Int?
@@ -331,7 +331,7 @@ model Renamedpackage {
 }
 
 model transaction {
-  id             String         @id @db.Uuid
+  id             String         @id @default(uuid()) @db.Uuid
   hostid         String         @db.Uuid
   packageid      String         @db.Uuid
   createdat      DateTime?      @default(now()) @db.Timestamp(6)
@@ -340,7 +340,7 @@ model transaction {
 }
 
 model staff {
-  staffid  String  @id(map: "Staff_pkey") @db.Uuid
+  staffid  String  @id(map: "Staff_pkey") @default(uuid()) @db.Uuid
   vendorId String  @db.Uuid
   userid   String  @unique(map: "Staff_username_key") @db.Uuid
   account  Account @relation(fields: [userid], references: [id], map: "staff_account_fk")
@@ -350,7 +350,7 @@ model staff {
 }
 
 model service {
-  id       String  @id @db.Uuid
+  id       String  @id @default(uuid()) @db.Uuid
   eventid  String  @db.Uuid
   name     String  @db.VarChar(250)
   price    Decimal @db.Decimal(10, 2)

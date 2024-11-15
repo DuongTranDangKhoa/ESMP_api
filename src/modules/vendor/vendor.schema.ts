@@ -15,7 +15,7 @@ export class VendorAccountType {
   }
 } 
 export class VendorObject {
-  vendorId: string
+  vendorId?: string
   name?: string 
   phone?: string
   email?: string
@@ -24,6 +24,26 @@ export class VendorObject {
   status?: boolean
   constructor(data: any) {
     this.vendorId = data.vendorId
+    this.name = data.name
+    this.phone = data.phone
+    this.email = data.email
+    this.address = data.address
+    this.urlQr = data.urlQr
+    this.status = data.status
+  }
+}
+export class RegisterVendorObject {
+  username: string
+  password: string
+  name: string 
+  phone: string
+  email: string
+  address: string
+  urlQr: string
+  status: boolean
+  constructor(data: any) {
+    this.username = data.username
+    this.password = data.password
     this.name = data.name
     this.phone = data.phone
     this.email = data.email
@@ -43,3 +63,45 @@ export const GetVendorParams = t.Required(
     },
   ),
 )
+export const CreateAccount = t.Object({
+  username: t.String({
+    minLength: 8,
+    maxLength: 40,
+    default: '',
+    pattern: '^[A-Za-z][A-Za-z0-9_-]{7,39}$',
+    error:
+      'Username must be between 8 - 40 characters and start with only letters and contain only letters, numbers and underscores',
+  }),
+  password: t.String({
+    default: '',
+    minLength: 8,
+    maxLength: 40,
+    pattern: '^[A-Za-z][.@A-Za-z0-9_-]{7,39}$',
+    error:
+      'Password must be between 8 - 40 characters and start with only letters and contain only letters, numbers and underscores',
+  }),
+  name: t.String({
+    default: '',
+    error: 'Name must be a valid string',
+  }),
+  phone: t.String({
+    pattern: '^[0-9]{10,15}$',
+    error: 'Phone number must contain only digits and be 10 to 15 characters long',
+  }),
+  email: t.String({
+    format: 'email',
+    error: 'Email must be a valid email address',
+  }),
+  address: t.String({
+    default: '',
+    error: 'Address must be a valid string',
+  }),
+  urlQr: t.String({
+    default: '',
+    error: 'URL QR must be a valid string',
+  }),
+  status: t.Boolean({
+    default: true,
+    error: 'Status must be a boolean value',
+  }),
+});

@@ -7,8 +7,8 @@ export class ServiceObject {
     price: number;
     quantity: number;
     name: string;
-    constructor(data: any) {
-        this.serviceId = data.serviceId
+    constructor( data: any) {
+        this.serviceId = data.id
         this.eventid = data.eventid
         this.quantity = data.quantity
         this.price = data.price

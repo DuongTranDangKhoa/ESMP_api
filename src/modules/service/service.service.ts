@@ -6,8 +6,9 @@ import { ServiceObject } from "./service.schema";
 const getService = async (eventid: string, hostDb: HostDbClient) => {
     try {
     const service = await hostDb.service.findMany({ where: { eventid: eventid } });
+    const serviceList = service.map((service) => new ServiceObject(service));
      await hostDb.$disconnect();
-    return service
+    return serviceList
     } catch (err: any) {
     throw new DatabaseError(err.message);
     }

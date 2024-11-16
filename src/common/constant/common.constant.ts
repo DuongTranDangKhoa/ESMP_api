@@ -14,3 +14,8 @@ export const EventRegisterStatus = {
   CONFIRMED: 1,
   DECLINED: 2,
 }
+export const TrasactionStatus = { 
+  PENDING: 'pending',
+  SUCCESS: 'success',
+  FAILED: 'failed',
+}

@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
+  typeboxImportDependencyName = "elysia"
+  additionalProperties        = "true"
   inputModel                  = "true"
   typeboxImportVariableName   = "t"
-  additionalProperties        = "true"
-  typeboxImportDependencyName = "elysia"
 }
 
 datasource db {

@@ -23,6 +23,7 @@ const updatePackage = async (id: string, body: any, hostDb: HostDbClient) => {
     return updatePackage;
 }
 const deletePackage = async (id: string, hostDb: HostDbClient) => {
+    
     const deletePackage = await hostDb.renamedpackage.delete({
         where: {
             id,

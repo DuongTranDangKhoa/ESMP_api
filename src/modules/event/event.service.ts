@@ -4,13 +4,28 @@ import { Vendor } from '../../../prisma/clients/postgres/hostdb'
 import { EventObject, EventType, InputEventRegisterObject } from './event.schema'
 import { EventStatus } from '../../common/constant/common.constant'
 import { DatabaseError } from '../../errors/database.error'
+import { compareDateToNow } from '../../utilities/datetime.util'
 
-async function getAllEvent(hostDb: HostDbClient) {
+async function getAllEvent(hostId: string, hostDb: HostDbClient) {
   try {
-    const eventList = await hostDb.event.findMany()
+    const eventList = await hostDb.event.findMany({where: {hostId}})
+    if (eventList ) {
+    for (const event of eventList) {    
+    if (
+    compareDateToNow(event.startDate) === -1 &&  compareDateToNow(event.endDate) === 1
+    ) {
+     await hostDb.event.update({ where : {eventId: event.eventId}, data: {status: EventStatus.running}})
+  } else if ( compareDateToNow(event.endDate) === -1 ) {
+   
+     await hostDb.event.update({ where : {eventId: event.eventId}, data: {status: EventStatus.past}})
+    }
+    }
     await hostDb.$disconnect();
     return eventList
-  } catch (err: any) {
+ 
+}
+  }
+   catch (err: any) {
     throw new DatabaseError(err.message)
   }
 }
@@ -59,6 +74,7 @@ async function updateEvent(
         eventId: eventId,
         name: updateData.name,
         description: updateData.description,
+        themeId: updateData.themeId,
         startDate: updateData.startDate,
         endDate: updateData.endDate,
         status: updateData.status,
@@ -69,6 +85,7 @@ async function updateEvent(
         width: updateData.width,
         height: updateData.height,
         stageValue: updateData.stageValue,
+        onWeb: updateData.onWeb,
       },
       select: {
         eventId: true, 

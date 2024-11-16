@@ -7,7 +7,7 @@ export const ThemePlain = t.Object(
     themeId: t.String({ additionalProperties: true }),
     name: t.String({ additionalProperties: true }),
     status: __nullable__(t.Boolean({ additionalProperties: true })),
-    hostid: __nullable__(t.String({ additionalProperties: true })),
+    hostid: t.String({ additionalProperties: true }),
   },
   { additionalProperties: true },
 );
@@ -30,33 +30,26 @@ export const ThemeRelations = t.Object(
           profit: t.Number({ additionalProperties: true }),
           status: __nullable__(t.String({ additionalProperties: true })),
           height: __nullable__(t.Integer({ additionalProperties: true })),
-          hostId: __nullable__(t.String({ additionalProperties: true })),
+          hostId: t.String({ additionalProperties: true }),
           stageValue: __nullable__(t.String({ additionalProperties: true })),
-          themeId: __nullable__(t.String({ additionalProperties: true })),
-          thumbnail: __nullable__(t.String({ additionalProperties: true })),
+          themeId: t.String({ additionalProperties: true }),
           width: __nullable__(t.Integer({ additionalProperties: true })),
           onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),
     ),
-    host: __nullable__(
-      t.Object(
-        {
-          userid: t.String({ additionalProperties: true }),
-          expiretime: __nullable__(t.Date({ additionalProperties: true })),
-          bankingaccount: __nullable__(
-            t.String({ additionalProperties: true }),
-          ),
-          phone: __nullable__(t.String({ additionalProperties: true })),
-          email: __nullable__(t.String({ additionalProperties: true })),
-          eventstoragetime: __nullable__(
-            t.Date({ additionalProperties: true }),
-          ),
-          hostid: t.String({ additionalProperties: true }),
-        },
-        { additionalProperties: true },
-      ),
+    host: t.Object(
+      {
+        userid: t.String({ additionalProperties: true }),
+        expiretime: __nullable__(t.Date({ additionalProperties: true })),
+        bankingaccount: __nullable__(t.String({ additionalProperties: true })),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
+        eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
+        hostid: t.String({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
     ),
   },
   { additionalProperties: true },
@@ -95,18 +88,16 @@ export const ThemeRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
-    host: t.Optional(
-      t.Object(
-        {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
-          ),
-        },
-        { additionalProperties: true },
-      ),
+    host: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
     ),
   },
   { additionalProperties: true },
@@ -139,19 +130,15 @@ export const ThemeRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
-      host: t.Partial(
-        t.Object(
-          {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
-            disconnect: t.Boolean(),
-          },
-          { additionalProperties: true },
-        ),
+      host: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
         { additionalProperties: true },
       ),
     },

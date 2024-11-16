@@ -9,7 +9,7 @@ export const LoginParams = t.Object(
     loginType: t.String({
       default: 'host',
       format: 'regex',
-      pattern: '^(host|vendor|staff)$',
+      pattern: '^(host|vendor|staff|admin)$',
       error: "Login type must be specified between 'admin', 'host', 'vendor' or 'staff'",
     }),
   },
@@ -37,7 +37,7 @@ export const LoginBody = t.Object({
 
 export const UserInfoSchema = t.Object({
   username: t.String(),
-  hostInfo: t.Required(
+  hostInfo: t.Optional(
     t.Object({
       hostName: t.String(),
     }),

@@ -3,7 +3,7 @@ import { sesClient } from "../../config/mail.config";
 
 export const sendEmail = async (toEmail: string, subject: string, body: string) => {
   const params = {
-    Source: "esmpservice@esmp.id.vn", // Địa chỉ email đã xác thực
+    Source: "esmpservice@esmp.id.vn", 
     Destination: {
       ToAddresses: [toEmail],
     },

@@ -9,7 +9,7 @@ export type EventType = Event
 export class EventObject {
       eventId?: string
       hostId: string
-      themeId?: string
+      themeId: string
       name: string
       description: string | null
       startDate: Date | null

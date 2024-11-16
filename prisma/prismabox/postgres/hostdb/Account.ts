@@ -96,7 +96,7 @@ export const AccountPlainInputUpdate = t.Object(
     name: __nullable__(t.String({ additionalProperties: true })),
     createdat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    status: __nullable__(t.Boolean({ additionalProperties: true })),
+    status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );

@@ -13,9 +13,10 @@ export const eventGroup = (app: any) =>
      * @response event list
      */
     .get(
-      '/',
-      async ({ hostDb }: { hostDb: HostDbClient }) => {
-        const response = await eventService.getAllEvent(hostDb)
+      '/host/:hostId',
+      async ({params,  hostDb }: { params: any ,hostDb: HostDbClient }) => {
+        const { hostId }= params
+        const response = await eventService.getAllEvent(hostId, hostDb)
         return response
       },
       {

@@ -15,6 +15,18 @@ export const transactionPlain = t.Object(
 
 export const transactionRelations = t.Object(
   {
+    host: t.Object(
+      {
+        userid: t.String({ additionalProperties: true }),
+        expiretime: __nullable__(t.Date({ additionalProperties: true })),
+        bankingaccount: __nullable__(t.String({ additionalProperties: true })),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
+        eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
+        hostid: t.String({ additionalProperties: true }),
+      },
+      { additionalProperties: true },
+    ),
     Renamedpackage: t.Object(
       {
         id: t.String({ additionalProperties: true }),
@@ -55,6 +67,17 @@ export const transactionPlainInputUpdate = t.Object(
 
 export const transactionRelationsInputCreate = t.Object(
   {
+    host: t.Object(
+      {
+        connect: t.Object(
+          {
+            id: t.String({ additionalProperties: true }),
+          },
+          { additionalProperties: true },
+        ),
+      },
+      { additionalProperties: true },
+    ),
     Renamedpackage: t.Object(
       {
         connect: t.Object(
@@ -73,6 +96,17 @@ export const transactionRelationsInputCreate = t.Object(
 export const transactionRelationsInputUpdate = t.Partial(
   t.Object(
     {
+      host: t.Object(
+        {
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
+          ),
+        },
+        { additionalProperties: true },
+      ),
       Renamedpackage: t.Object(
         {
           connect: t.Object(
@@ -145,6 +179,7 @@ export const transactionSelect = t.Partial(
       packageid: t.Boolean(),
       createdat: t.Boolean(),
       status: t.Boolean(),
+      host: t.Boolean(),
       Renamedpackage: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -155,7 +190,7 @@ export const transactionSelect = t.Partial(
 
 export const transactionInclude = t.Partial(
   t.Object(
-    { Renamedpackage: t.Boolean(), _count: t.Boolean() },
+    { host: t.Boolean(), Renamedpackage: t.Boolean(), _count: t.Boolean() },
     { additionalProperties: true },
   ),
   { additionalProperties: true },

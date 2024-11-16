@@ -94,7 +94,7 @@ const createOrder = async (
     unitPrice: detail.unitPrice,
     totalPrice: detail.quantity * detail.unitPrice
   }));
-
+  
   const orderDetail = await hostDB.orderDetail.createMany({
     data: orderDetailsData
   });
@@ -102,6 +102,43 @@ const createOrder = async (
 
   if (!orderDetail) {
     throw new Error('Failed to create order details');
+  }else{
+    for (const detail of orderDetailsData) {
+  const productInProductItem = await hostDB.productInProductItem.findMany({
+    where: { productItemId: detail.productitemId },
+  });
+
+  for (const item of productInProductItem) {
+    if (!item.quantity) {
+      throw new Error('quantity not exists');
+    }
+
+    const count = detail.quantity * item.quantity;
+    
+    const product = await hostDB.product.findUnique({
+      where: { productId: item.productId },
+    });
+
+    if (!product || product.quantity === null || product.quantity === undefined) {
+      throw new Error('Product or quantity not found');
+    }
+
+    if (product.quantity === 0 || product.quantity - count < 0) {
+      return 'Not enough product in stock';
+    }
+
+    // console.log('product', count, product.quantity, product.count);
+
+      await hostDB.product.update({
+      where: { productId: item.productId },
+      data: {
+        quantity: (product.quantity - count),
+        count: ((product.count || 0) + count), 
+      },
+    });
+    
+  }
+}
   }
     await hostDB.$disconnect();
 

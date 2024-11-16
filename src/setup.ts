@@ -22,6 +22,7 @@ import { vendorineventGroup } from './modules/vendorinevent'
 import { themeGroup } from './modules/theme'
 import { serviceGroup } from './modules/service'
 import { packageGroup } from './modules/package'
+import { transactionpackageGroup } from './modules/transactionPackage'
 
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -44,8 +45,9 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/transaction', (app) => app.use(transactionGroup)) // transaction route
         .group('/category', (app) => app.use(categoryGroup)) // category route
         .group('/theme', (app) => app.use(themeGroup)) // category route
-        .group('/package', (app) => app.use(packageGroup)) // menu route
-        .group('/service', (app) => app.use(serviceGroup)) // menu route
+        .group('/package', (app) => app.use(packageGroup)) // package route
+        .group('/transactionpackage', (app) => app.use(transactionpackageGroup)) // service route
+        .group('/service', (app) => app.use(serviceGroup)) // service route
         .group('/menu', (app) => app.use(menuGroup)) // menu route
         .group('/vendorinevent', (app) => app.use(vendorineventGroup)) // vendor route
         .group('/mail',(app) => app.use(mailGroup)) // mail route)

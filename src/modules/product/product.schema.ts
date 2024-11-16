@@ -10,7 +10,7 @@ export class ProductObject {
   productName: string
   description: string
   quantity: number
-  count: number
+  count?: number
   createAt?: Date 
   updateAt?: Date
   status: boolean

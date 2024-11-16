@@ -153,11 +153,13 @@ const updateVendor = async (
   vendor: VendorObject,
   hostDb: HostDbClient,
 ): Promise<void> => {
-  if(!vendor.name){
-    const vendorAccount = await hostDb.vendor.findFirst({ where: { vendorId } });
+  if(vendor.name){
+    const vendorAccount = await hostDb.vendor.findUnique({ where: { vendorId } });
+    
     if(!vendorAccount){
       throw new NotFoundError('Vendor not found')
     }
+    
     await hostDb.account.update({
     where: {
       id: vendorAccount.userid,

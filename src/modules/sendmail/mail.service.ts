@@ -21,7 +21,6 @@ export const sendEmail = async (toEmail: string, subject: string, body: string) 
     },
   };
 
-  // Sử dụng SESClient từ SDK v3 để gửi email
   const command = new SendEmailCommand(params);
   return sesClient.send(command);
 };

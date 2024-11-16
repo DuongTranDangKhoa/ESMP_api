@@ -30,6 +30,31 @@ export const hostRelations = t.Object(
         { additionalProperties: true },
       ),
     ),
+    event: t.Array(
+      t.Object(
+        {
+          eventId: t.String({ additionalProperties: true }),
+          name: t.String({ additionalProperties: true }),
+          description: __nullable__(t.String({ additionalProperties: true })),
+          startDate: __nullable__(t.Date({ additionalProperties: true })),
+          endDate: __nullable__(t.Date({ additionalProperties: true })),
+          venue: __nullable__(t.String({ additionalProperties: true })),
+          createAt: __nullable__(t.Date({ additionalProperties: true })),
+          updatedAt: __nullable__(t.Date({ additionalProperties: true })),
+          x: __nullable__(t.Integer({ additionalProperties: true })),
+          y: __nullable__(t.Integer({ additionalProperties: true })),
+          profit: t.Number({ additionalProperties: true }),
+          status: __nullable__(t.String({ additionalProperties: true })),
+          height: __nullable__(t.Integer({ additionalProperties: true })),
+          hostId: t.String({ additionalProperties: true }),
+          stageValue: __nullable__(t.String({ additionalProperties: true })),
+          themeId: t.String({ additionalProperties: true }),
+          width: __nullable__(t.Integer({ additionalProperties: true })),
+          onWeb: __nullable__(t.Boolean({ additionalProperties: true })),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     account: t.Object(
       {
         id: t.String({ additionalProperties: true }),
@@ -49,7 +74,19 @@ export const hostRelations = t.Object(
           themeId: t.String({ additionalProperties: true }),
           name: t.String({ additionalProperties: true }),
           status: __nullable__(t.Boolean({ additionalProperties: true })),
-          hostid: __nullable__(t.String({ additionalProperties: true })),
+          hostid: t.String({ additionalProperties: true }),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    transaction: t.Array(
+      t.Object(
+        {
+          id: t.String({ additionalProperties: true }),
+          hostid: t.String({ additionalProperties: true }),
+          packageid: t.String({ additionalProperties: true }),
+          createdat: __nullable__(t.Date({ additionalProperties: true })),
+          status: __nullable__(t.String({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),
@@ -118,6 +155,21 @@ export const hostRelationsInputCreate = t.Object(
         { additionalProperties: true },
       ),
     ),
+    event: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
     account: t.Object(
       {
         connect: t.Object(
@@ -130,6 +182,21 @@ export const hostRelationsInputCreate = t.Object(
       { additionalProperties: true },
     ),
     theme: t.Optional(
+      t.Object(
+        {
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
+          ),
+        },
+        { additionalProperties: true },
+      ),
+    ),
+    transaction: t.Optional(
       t.Object(
         {
           connect: t.Array(
@@ -190,6 +257,30 @@ export const hostRelationsInputUpdate = t.Partial(
         ),
         { additionalProperties: true },
       ),
+      event: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
       account: t.Object(
         {
           connect: t.Object(
@@ -202,6 +293,30 @@ export const hostRelationsInputUpdate = t.Partial(
         { additionalProperties: true },
       ),
       theme: t.Partial(
+        t.Object(
+          {
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
+          },
+          { additionalProperties: true },
+        ),
+        { additionalProperties: true },
+      ),
+      transaction: t.Partial(
         t.Object(
           {
             connect: t.Array(
@@ -320,8 +435,10 @@ export const hostSelect = t.Partial(
       eventstoragetime: t.Boolean(),
       hostid: t.Boolean(),
       category: t.Boolean(),
+      event: t.Boolean(),
       account: t.Boolean(),
       theme: t.Boolean(),
+      transaction: t.Boolean(),
       vendor: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -334,8 +451,10 @@ export const hostInclude = t.Partial(
   t.Object(
     {
       category: t.Boolean(),
+      event: t.Boolean(),
       account: t.Boolean(),
       theme: t.Boolean(),
+      transaction: t.Boolean(),
       vendor: t.Boolean(),
       _count: t.Boolean(),
     },

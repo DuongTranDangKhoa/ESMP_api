@@ -146,6 +146,7 @@ const createVendor = async (
       password: inputpassword,
       name: inputData.name,
       role: 'manager',
+      status: true,
     },
   })
   const vendorAccount = await hostDb.vendor.create({

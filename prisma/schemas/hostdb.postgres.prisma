@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  typeboxImportDependencyName = "elysia"
-  typeboxImportVariableName   = "t"
   inputModel                  = "true"
+  typeboxImportVariableName   = "t"
   additionalProperties        = "true"
+  typeboxImportDependencyName = "elysia"
 }
 
 datasource db {
@@ -30,15 +30,15 @@ model Event {
   x             Int?            @default(100) @map("x")
   y             Int?            @default(100) @map("y")
   profit        Decimal         @map("price") @db.Decimal(10, 2)
-  status        String?         @default("On-going") @map("status") @db.VarChar(50)
+  status        String?         @default("upcomming") @map("status") @db.VarChar(50)
   height        Int?            @default(400) @map("height")
-  hostId        String?         @map("hostid") @db.Uuid
+  hostId        String          @map("hostid") @db.Uuid
   stageValue    String?         @map("stagevalue") @db.VarChar
-  themeId       String?         @map("themeid") @db.Uuid
-  thumbnail     String?         @map("thumbnail") @db.VarChar
+  themeId       String          @map("themeid") @db.Uuid
   width         Int?            @default(600) @map("width")
-  onWeb         Boolean?        @map("onweb")
-  theme         Theme?          @relation(fields: [themeId], references: [themeId], onDelete: Restrict, map: "event_theme_fk")
+  onWeb         Boolean?        @default(false) @map("onweb")
+  host          host            @relation(fields: [hostId], references: [hostid], map: "event_host_fk")
+  theme         Theme           @relation(fields: [themeId], references: [themeId], map: "event_theme_fk")
   LocationType  LocationType[]
   service       service[]
   VendorInEvent VendorInEvent[]
@@ -107,9 +107,9 @@ model Theme {
   themeId String   @id @unique @default(uuid()) @map("themeid") @db.Uuid
   name    String   @map("name") @db.VarChar(250)
   status  Boolean? @default(true) @map("status")
-  hostid  String?  @db.Uuid
+  hostid  String   @db.Uuid
   event   Event[]
-  host    host?    @relation(fields: [hostid], references: [hostid], onDelete: Restrict, map: "theme_host_fk")
+  host    host     @relation(fields: [hostid], references: [hostid], map: "theme_host_fk")
 
   @@map("theme")
 }
@@ -136,13 +136,13 @@ model Vendor {
 
 model Account {
   id           String         @id @default(uuid()) @db.Uuid
-  username     String         @unique @db.VarChar(50)
+  username     String         @unique(map: "account_unique") @db.VarChar(50)
   password     String         @db.VarChar(50)
   role         String?        @db.VarChar(10)
   name         String?        @db.VarChar(100)
   createdat    DateTime?      @default(now()) @db.Timestamp(6)
   updatedat    DateTime?      @default(now()) @db.Timestamp(6)
-  status       Boolean?
+  status       Boolean?       @default(true)
   host         host?
   notification notification[]
   staff        staff?
@@ -295,16 +295,18 @@ model SessionData {
 }
 
 model host {
-  userid           String     @unique(map: "unique_host_userid") @db.Uuid
-  expiretime       DateTime?  @db.Timestamp(6)
-  bankingaccount   String?    @db.VarChar(20)
-  phone            String?    @db.VarChar(15)
-  email            String?    @db.VarChar(100)
-  eventstoragetime DateTime?  @db.Timestamp(6)
-  hostid           String     @id @unique(map: "host_hostid_unique") @default(uuid()) @db.Uuid
+  userid           String        @unique(map: "unique_host_userid") @db.Uuid
+  expiretime       DateTime?     @db.Timestamp(6)
+  bankingaccount   String?       @db.VarChar(20)
+  phone            String?       @db.VarChar(15)
+  email            String?       @db.VarChar(100)
+  eventstoragetime DateTime?     @db.Timestamp(6)
+  hostid           String        @id @unique(map: "host_hostid_unique") @default(uuid()) @db.Uuid
   category         Category[]
-  account          Account    @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")
+  event            Event[]
+  account          Account       @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")
   theme            Theme[]
+  transaction      transaction[]
   vendor           Vendor[]
 }
 
@@ -336,6 +338,7 @@ model transaction {
   packageid      String         @db.Uuid
   createdat      DateTime?      @default(now()) @db.Timestamp(6)
   status         String?        @db.VarChar(10)
+  host           host           @relation(fields: [hostid], references: [hostid], onDelete: NoAction, onUpdate: NoAction, map: "transaction_host_fk")
   Renamedpackage Renamedpackage @relation(fields: [packageid], references: [id], onDelete: SetNull, onUpdate: NoAction)
 }
 

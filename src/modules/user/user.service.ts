@@ -139,7 +139,6 @@ export async function authenticateStaffUser(
     throw new Error('Vendor not found');
   }
   const host = await hostDb.host.findFirst({where: {hostid: vendor?.hostid}});
-  // create session for user
   const userInfo = {
   username,
   role: RoleType.STAFF,
@@ -154,7 +153,7 @@ export async function authenticateStaffUser(
     urlQr: vendor?.urlQr as string
   },
   staffInfo: {
-    staffId: staff.staff.staffid as string, // Corrected to use `staffId`
+    staffId: staff.staff.staffid as string,
     vendorId: staff.staff.vendorId as string,
     staffName: staff.account.name as string
   },

@@ -99,8 +99,29 @@ const getVendorById = async (
   if (!vendor) {
     throw new NotFoundError('Vendor not found')
   }
+
+  const account = await hostDb.account.findUnique({
+    where: {
+      id: vendor.userid,
+    },
+  })
+  const password = decrypt(account!.password)    
+  const accoutList = {
+    vendorid: vendor.vendorId,
+    userid: vendor.userid,
+    username: account!.username,
+    password: password,
+    name: account!.name,
+    phone: vendor.phone,
+    email: vendor.email,
+    address: vendor.address,
+    urlQr: vendor.urlQr,
+    status: vendor.status,
+    role: account!.role,
+  }
+
    await hostDb.$disconnect();
-  return new VendorObject(vendor)
+  return accoutList
 }
 
 const createVendor = async (

@@ -45,7 +45,8 @@ export const userGroup = (app: any) =>
         return await userService.authenticateStaffUser(username, password, hostDb, mongoDb);
       case LoginType.ADMIN:
         return await userService.authenticateAdminUser(username, password, hostDb, mongoDb);
-      default:
+      
+        default:
         throw new Error('Invalid login type');
     }
   },

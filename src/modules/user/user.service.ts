@@ -8,6 +8,7 @@ import * as configService from '../config/config.service'
 import vendorService from '../vendor/vendor.service'
 import { RoleType } from '../../common/constant/common.constant'
 import staffService from '../staff/staff.service'
+import { verifyEncrypted } from '../../utilities/crypting.util'
 /**
  * Create user session
  * @param {MongoDbUserType} userInfo
@@ -143,7 +144,7 @@ export async function authenticateStaffUser(
   username,
   role: RoleType.STAFF,
   hostInfo: {
-    hostName: host?.email as string,
+      hostName: host?.email as string,
       hostId: host?.hostid as string,
      expiretime : host?.expiretime,
   },
@@ -177,6 +178,35 @@ export async function logOutUser(accessToken: string, mongoDb: MongoDbClient) {
   await mongoService.clearUserTokens(accessToken, mongoDb)
 }
 export async function authenticateAdminUser(username: any, password: any, hostDb: HostDbClient, mongoDb: MongoDbClient) {
-  
+  const user = await hostDb.account.findUnique({
+    where: { username }
+  });
+  if (!user) {
+    throw new Error('Invalid username');
+  }
+  console.log('user', user.role);
+  if (user.role!== RoleType.ADMIN) {
+    throw new Error('User is not an admin');
+  }
+  const isPasswordMatch = verifyEncrypted(password, user.password);
+  if (!isPasswordMatch) {
+    throw new Error('Invalid password');
+  }
+
+  const userInfo = {
+    username: user.name,
+    role: RoleType.ADMIN,
+
+  }
+  // create session for user
+  const accessToken = await createUserSession(
+    userInfo as MongoDbUserType,
+    hostDb,
+    mongoDb,
+  )
+  return {
+    accessToken,
+    userInfo,
+  }
 }
 

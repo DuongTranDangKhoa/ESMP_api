@@ -52,7 +52,7 @@ export const VendorInEventRelations = t.Object(
         description: __nullable__(t.String({ additionalProperties: true })),
         startDate: __nullable__(t.Date({ additionalProperties: true })),
         endDate: __nullable__(t.Date({ additionalProperties: true })),
-        venue: __nullable__(t.String({ additionalProperties: true })),
+        coordinates: __nullable__(t.String({ additionalProperties: true })),
         createAt: __nullable__(t.Date({ additionalProperties: true })),
         updatedAt: __nullable__(t.Date({ additionalProperties: true })),
         x: __nullable__(t.Integer({ additionalProperties: true })),

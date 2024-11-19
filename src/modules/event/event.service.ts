@@ -79,7 +79,7 @@ async function updateEvent(
         endDate: updateData.endDate,
         status: updateData.status,
         profit: updateData.profit,
-        venue: updateData.venue,
+        coordinates: updateData.coordinates,
         x: updateData.x,
         y: updateData.y,
         width: updateData.width,

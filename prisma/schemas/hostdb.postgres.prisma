@@ -9,8 +9,8 @@ generator prismabox {
   output                      = "../prismabox/postgres/hostdb"
   typeboxImportDependencyName = "elysia"
   additionalProperties        = "true"
-  inputModel                  = "true"
   typeboxImportVariableName   = "t"
+  inputModel                  = "true"
 }
 
 datasource db {
@@ -24,7 +24,7 @@ model Event {
   description   String?
   startDate     DateTime?       @map("startdate") @db.Date
   endDate       DateTime?       @map("enddate") @db.Date
-  venue         String?         @map("location") @db.VarChar(500)
+  coordinates   String?         @db.VarChar(500)
   createAt      DateTime?       @default(now()) @map("create_at") @db.Date
   updatedAt     DateTime?       @default(now()) @map("updated_at") @db.Date
   x             Int?            @default(100) @map("x")

@@ -14,7 +14,7 @@ export class EventObject {
       description: string | null
       startDate: Date | null
       endDate: Date | null
-      venue?: string | null
+      coordinates?: string | null
       createAt?: Date | null
       updatedAt?: Date | null
       x?: number | null
@@ -33,7 +33,7 @@ export class EventObject {
         this.description = data.description
         this.startDate = data.startDate
         this.endDate = data.endDate
-        this.venue = data.venue
+        this.coordinates = data.coordinates
         this.createAt = data.createAt
         this.updatedAt = data.updatedAt
         this.x = data.x

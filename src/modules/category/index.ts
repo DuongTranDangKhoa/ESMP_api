@@ -1,29 +1,50 @@
+import { t } from "elysia";
 import { HostDbClient } from "../../database/host.db";
+import * as categorySchema from "./category.schema";
 import categoryService from "./category.service";
 
 export const categoryGroup = (app: any) =>
-    app
-        .get('/:categoryId', async ({ params, hostDb }: { params: any, hostDb: HostDbClient }) => {
-            const { categoryId } = params;
-            return await categoryService.getCategoryById(categoryId, hostDb);
+  app
+
+    .group('/:categoryId', (app: any) =>
+      app
+        .guard({
+          params: categorySchema.CategoryParamsSchema,
         })
-        .get('/hostId/:hostId', async ({ params, hostDb }: { params: any, hostDb: HostDbClient }) => {
-            const { hostId } = params;
-            console.log(hostId);
-            const response = await categoryService.getCategory(hostId, hostDb);
-            return response;
+        .get('/', async ({ params, hostDb }: { params: any; hostDb: HostDbClient }) => {
+          const { categoryId } = params;
+          return await categoryService.getCategoryById(categoryId, hostDb);
         })
-        .post('/', async ({ body, hostDb }: { body: any, hostDb: HostDbClient }) => {
-            await categoryService.createCategory(body, hostDb);
-            return 'Create successfully Category';
+        .put('/', async ({ params, body, hostDb }: { params: any; body: any; hostDb: HostDbClient }) => {
+          const { categoryId } = params;
+          await categoryService.updateCategory(categoryId, body, hostDb);
+          return { message: 'Update successfully Category' };
+        },{
+            body: categorySchema.UpdateCategorySchema,
         })
-        .put('/:categoryId', async ({ params, body, hostDb }: { params: any, body: any, hostDb: HostDbClient }) => {
-            const { categoryId } = params;
-            await categoryService.updateCategory(categoryId, body, hostDb);
-            return 'Update successfully Category';
+        .delete('/', async ({ params, hostDb }: { params: any; hostDb: HostDbClient }) => {
+          const { categoryId } = params;
+          await categoryService.deleteCategory(categoryId, hostDb);
+          return { message: 'Delete successfully Category' };
+        }),
+    )
+
+    .group('/host/:hostId', (app: any) =>
+      app
+        .guard({
+          params: categorySchema.HostParamsSchema,
         })
-        .delete('/:categoryId', async ({ params, hostDb }: { params: any, hostDb: HostDbClient }) => {
-            const { categoryId } = params;
-            await categoryService.deleteCategory(categoryId, hostDb);
-            return 'Delete successfully Category';
-        });
+        .get('/', async ({ params, hostDb }: { params: any; hostDb: HostDbClient }) => {
+          const { hostId } = params;
+          return await categoryService.getCategory(hostId, hostDb);
+        }),
+    )
+
+    .post('/', async ({ body, hostDb }: { body: any; hostDb: HostDbClient }) => {
+      await categoryService.createCategory(body, hostDb);
+      return { message: 'Create successfully Category' };
+    },
+    {
+      body: categorySchema.CreateCategorySchema,
+    }
+);

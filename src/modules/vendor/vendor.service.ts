@@ -130,16 +130,16 @@ const createVendor = async (
   hostDb: HostDbClient,
 ) => {
   const inputData = new RegisterVendorObject(vendor)
-  console.log('inputData', inputData.username)
+  // console.log('inputData', inputData.username)
   const checkAccount = await hostDb.account.findUnique({ 
     where: { username: inputData.username }
 })
-  console.log('checkAccount', checkAccount)
+  // console.log('checkAccount', checkAccount)
   if(checkAccount){
     throw new Error('Username already exists')
   }
   const inputpassword = encrypt(inputData.password)
-  console.log('inputData', inputData)
+  // console.log('inputData', inputData)
   const account = await hostDb.account.create({
     data: {
       username: inputData.username,
@@ -220,8 +220,9 @@ const deleteVendor = async (
       id: vendor.userid, 
     },
   })
+  await hostDb.$disconnect();
   return { message: 'Vendor deleted' }
-   await hostDb.$disconnect();
+
 }
 
 // const getVendorRegisteredEvents = async (

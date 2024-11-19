@@ -1,6 +1,7 @@
 import { NotFoundError } from 'elysia'
 import { HostDbClient } from '../../database/host.db'
 import { ProductObject, ProductType } from './product.schema'
+import categoryService from '../category/category.service'
 
 const getProductListByVendorId = async (
   vendorid: string,
@@ -24,21 +25,27 @@ const createVendorProduct = async (
   inputData: ProductObject,
   hostDb: HostDbClient,
 ) => {
-  console.log('Product created', inputData)
- const product = await hostDb.product.create({
-    data: {
-      categoryId: inputData.categoryId,
-      productName: inputData.productName,
-      description: inputData.description,
-      quantity: inputData.quantity,
-      count: inputData.count, 
-      status: inputData.status,
-      vendorid: vendorId,
-    }
-  });
-   await hostDb.$disconnect();
-  return product;
-}
+  try {
+    categoryService.getCategoryById(inputData.categoryId, hostDb)
+    const product = await hostDb.product.create({
+      data: {
+        categoryId: inputData.categoryId,
+        productName: inputData.productName,
+        description: inputData.description,
+        quantity: inputData.quantity,
+        count: inputData.count,
+        status: inputData.status,
+        vendorid: vendorId,
+      },
+    });
+    return product;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw new Error('Failed to create product: ' + error);
+  } finally {
+    await hostDb.$disconnect();
+  }
+};
 
 const getProductById = async (
   productId: string,
@@ -51,7 +58,7 @@ const getProductById = async (
     },
   })
   if (!product) {
-    throw new NotFoundError('Product not existed!')
+    throw new Error('Product not existed!')
   }
    await hostDb.$disconnect();
   return product
@@ -64,6 +71,7 @@ const updateProduct = async (
   hostDb: HostDbClient,
 ) => {
   console.log('Product updated', productid)
+  await categoryService.getCategoryById(updateData.categoryId, hostDb)
   await hostDb.product.update({
     where: {
       productId: productid 
@@ -99,7 +107,6 @@ const deleteProduct = async (
     await hostDb.$disconnect();
   }
 };
-
 
 
 

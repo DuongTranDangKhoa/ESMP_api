@@ -6,7 +6,16 @@ return await hostDb.category.findMany({where: { hostid: hostId }});
 }
 
 const getCategoryById = async (categoryId: string, hostDb: HostDbClient) => {
-return await hostDb.category.findFirst({ where: { categoryId: categoryId } })
+  if (!categoryId) {
+      throw new Error('Category ID is required');
+    }
+
+    const category = await hostDb.category.findUnique({ where: { categoryId } });
+    if (!category) {
+      throw new Error(`Category with ID ${categoryId} does not exist`);
+    }
+
+    return category;
 }
 const createCategory = async (category: Category, hostDb: HostDbClient) => {
     await hostDb.category.create({ data: {

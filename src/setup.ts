@@ -23,6 +23,7 @@ import { themeGroup } from './modules/theme'
 import { serviceGroup } from './modules/service'
 import { packageGroup } from './modules/package'
 import { transactionpackageGroup } from './modules/transactionPackage'
+import { staffGroup } from './modules/staff'
 
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -39,6 +40,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .resolve(validateSession) // implement session validating
         .group('/event', (app) => app.use(eventGroup)) // event route
         .group('/vendor', (app) => app.use(vendorGroup)) // vendor route
+        .group('/staff', (app) => app.use(staffGroup)) // staff route
         .group('/product', (app) => app.use(productGroup)) // product route
         .group('/order', (app) => app.use(orderGroup)) // order route
         .group('/productitem',(app) => app.use(productItemGroup)) // product)

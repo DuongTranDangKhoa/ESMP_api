@@ -88,6 +88,7 @@ export const productGroup = (app: any) =>
                 response: {
                   201: commonSchema.CommonSuccessResponse,
                 },
+                body: productSchema.ProductSchema,
               },
             
           )
@@ -170,7 +171,10 @@ export const productGroup = (app: any) =>
                       return {
                         message: 'Update product success',
                       }
-                    }
+                    },
+                    {
+                      body: productSchema.ProductSchema,
+                    },
                   )
                   /**
                    * DELETE api/product/:vendorId/:productId

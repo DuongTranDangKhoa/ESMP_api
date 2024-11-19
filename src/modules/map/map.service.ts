@@ -137,6 +137,7 @@ const createMap = async (hostId: string,eventId: string, inputData: MapCreateObj
         }
     });
    }
+   
     const location: BoothObject[] = inputData.booths;
     const shapes: ShapeObject[] = inputData.shapes;
     const textElements: ShapeObject[] = inputData.textElements;

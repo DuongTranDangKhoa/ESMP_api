@@ -42,3 +42,18 @@ export const GetProductParams = t.Required(
     },
   ),
 )
+export const ProductSchema = t.Required(
+  t.Object(
+    {
+      categoryId: t.String({ format: 'uuid', error: 'Invalid Category ID' }),
+      productName: t.String({ minLength: 1, error: 'Product Name is required' }),
+      description: t.Optional(t.String({ error: 'Invalid Description' })),
+      quantity: t.Number({ min: 0, error: 'Quantity must be a non-negative number' }),
+      count: t.Optional(t.Number({ min: 0, error: 'Count must be a non-negative number' })),
+      status: t.Boolean({ error: 'Status must be true or false' }),
+    },
+    {
+      error: 'Invalid product data',
+    },
+  ),
+);

@@ -1,3 +1,4 @@
+import { NotFoundError } from 'elysia';
 import { Location } from './../../../prisma/prismabox/postgres/hostdb/Location';
 import { HostDbClient } from "../../database/host.db";
 import eventService from "../event/event.service";
@@ -13,11 +14,13 @@ const createLocationType = async (hostId: string, eventId: string, inputData: Lo
           status: inputData.status,
         },
       });
+      
     } catch (error) {
         console.error("Error creating Loction Type:", error);
         throw new Error('Failed to create Loction Type');
     } finally {
         await hostDb.$disconnect();
+        
     }
 }
 const getLocationType = async (hostId: string, eventId: string, hostDb: HostDbClient) => {
@@ -283,11 +286,52 @@ const deleteMap = async (locationId: string, hostDb: HostDbClient) => {
         throw new Error("Failed to delete location because location have bought after");
     }
 }
+const deleteLocationType = async (locationTypeId: string, hostDb: HostDbClient) => {
+    if (locationTypeId === ':locationTypeId') {
+        throw new Error("LocationTypeId is required");
+    }
+
+    try {
+        const checkLocationinLocationTypeId = await hostDb.location.findMany({
+            where: {
+                typeId: locationTypeId,
+            },
+        });
+        if (checkLocationinLocationTypeId.length > 0) {
+            throw new Error("Cannot delete locationType because it has associated locations.");
+        }
+
+        await hostDb.locationType.delete({
+            where: {
+                typeId: locationTypeId,
+            },
+        });
+
+      return "Successfully deleted locationType";
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error deleting locationType:", error.message);
+            if (error.message.includes("associated locations")) {
+                throw new Error(error.message); 
+            } else if(error.message.includes("required")){
+                throw new Error(error.message);
+            }
+
+            throw new Error("Failed to delete locationType");
+        }
+
+        throw new Error("An unexpected error occurred.");
+    } finally {
+        await hostDb.$disconnect();
+          
+    }
+};
 const mapService = {
     getMap,
     getLocationType,
     createMap,
     updateMap,
+    deleteLocationType,
     deleteMap,
     createLocationType
 }

@@ -155,7 +155,7 @@ const createMap = async (hostId: string,eventId: string, inputData: MapCreateObj
                 rotation: loc.rotation,
                 height: loc.height,
                 width: loc.width,
-                status: 'active'
+                status: 'Available'
             }
         });
     }

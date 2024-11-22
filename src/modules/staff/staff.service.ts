@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import { AuthenticationError } from "../../errors/authentication.error";
 import { decrypt, encrypt, verifyEncrypted } from "../../utilities/crypting.util";
 import { RegisterVendorObject, VendorAccountType } from "./staff.schema";

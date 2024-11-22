@@ -1,3 +1,5 @@
+import { t } from "elysia"
+
   export class VendorInEvent  {
     vendorinEventId?: string
     vendorId: string
@@ -11,3 +13,16 @@
     }
 }
 
+export const GetEventPaymentInEventParams = t.Required(
+  t.Object(
+    {
+      vendorInEventId: t.String({
+        format: 'uuid',
+        error: 'VendorInEventId ID is invalid',
+      }),
+    },
+    {
+      error: 'VendorInEventId ID not provided',
+    },
+  ),
+)

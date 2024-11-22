@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import vendorineventservice from "./vendorinevent.service";
 
 export const vendorineventGroup = (app: any) => 
@@ -8,7 +8,7 @@ export const vendorineventGroup = (app: any) =>
     const eventId = params.eventId;
     const vendorInEvent = await vendorineventservice.getVendorInEvent(eventId, vendorId, hostDb);
     if (!vendorInEvent) {
-        return { message: 'Menu not found' };
+        return { message: 'Vendor do not join' };
     } 
     return vendorInEvent;
           })

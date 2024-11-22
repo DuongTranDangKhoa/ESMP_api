@@ -1,5 +1,5 @@
 import { Theme } from './../../../prisma/prismabox/postgres/hostdb/Theme';
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import themeService from './theme.service';
 
 

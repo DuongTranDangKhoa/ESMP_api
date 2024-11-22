@@ -1,5 +1,5 @@
 import status from 'statuses'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import eventService from '../event/event.service'
 import { GetVendorParams } from '../vendor/vendor.schema'
 import vendorService from '../vendor/vendor.service'

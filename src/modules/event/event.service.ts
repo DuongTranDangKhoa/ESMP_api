@@ -1,5 +1,5 @@
 import { NotFoundError } from 'elysia'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { Vendor } from '../../../prisma/clients/postgres/hostdb'
 import { EventObject, EventType, InputEventRegisterObject } from './event.schema'
 import { EventStatus } from '../../common/constant/common.constant'

@@ -2,7 +2,7 @@ import * as eventSchema from './event.schema'
 import * as commonSchema from '../../common/schema.common'
 import eventService from './event.service'
 import status from 'statuses'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { UpdateEventResponseSchema } from './event.schema'
 
 export const eventGroup = (app: any) =>

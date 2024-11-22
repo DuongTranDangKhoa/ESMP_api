@@ -54,7 +54,7 @@ export const EventRelations = t.Object(
         {
           typeId: t.String({ additionalProperties: true }),
           eventId: t.String({ additionalProperties: true }),
-          typeName: __nullable__(t.String({ additionalProperties: true })),
+          typeName: t.String({ additionalProperties: true }),
           price: t.Number({ additionalProperties: true }),
           status: __nullable__(t.String({ additionalProperties: true })),
         },

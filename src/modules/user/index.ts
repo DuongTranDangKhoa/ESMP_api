@@ -9,7 +9,7 @@ import { LoginType } from '../../common/constant/common.constant'
 import * as userService from './user.service'
 import { MongoDbClient } from '../../database/mongo.db'
 import { MasterDbClient } from '../../database/master.db'
-import { hostDb, HostDbClient,  } from '../../database/host.db'
+import { hostDb, HostDbClient,  } from '../../database/dbClient.db'
 
 export const userGroup = (app: any) =>
   app

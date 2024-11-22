@@ -1,4 +1,4 @@
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { MasterDbClient } from '../../database/master.db'
 import { AuthenticationError } from '../../errors/authentication.error'
 import { verifyEncrypted } from '../../utilities/crypting.util'

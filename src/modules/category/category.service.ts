@@ -1,5 +1,5 @@
 
-import { HostDbClient } from '../../database/host.db';
+import { HostDbClient } from '../../database/dbClient.db';
 import { Category } from './../../../prisma/clients/postgres/hostdb/index.d';
 const getCategory = async ( hostId: string,hostDb: HostDbClient) => {
 return await hostDb.category.findMany({where: { hostid: hostId }});

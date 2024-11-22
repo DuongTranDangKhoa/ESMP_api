@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 
 const getPackage =  async (hostDb: HostDbClient) => {
     const getPackage = await hostDb.renamedpackage.findMany();

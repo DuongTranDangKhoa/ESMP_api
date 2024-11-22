@@ -1,5 +1,5 @@
 import { Payment } from './../../../prisma/clients/postgres/hostdb/index.d';
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import { TransactionObject } from './transaction.schema';
 
 const getTransaction = async ( hostDb : HostDbClient ) => {

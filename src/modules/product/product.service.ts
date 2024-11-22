@@ -1,5 +1,5 @@
 import { NotFoundError } from 'elysia'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { ProductObject, ProductType } from './product.schema'
 import categoryService from '../category/category.service'
 

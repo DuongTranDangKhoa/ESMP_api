@@ -130,6 +130,7 @@ export class LocationObject {
     rotation: number
     height: number 
     width: number 
+    status: string
     constructor( 
         locationId: string,
         typeId: string,
@@ -138,6 +139,7 @@ export class LocationObject {
         x: number,
         y: number,
         rotation: number,
+        status: string
     ) {
         this.locationId = locationId;
         this.typeId = typeId;
@@ -146,5 +148,6 @@ export class LocationObject {
         this.rotation = rotation;
         this.height = height;
         this.width = width;
+        this.status = status;
     }
 }

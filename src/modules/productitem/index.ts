@@ -1,4 +1,4 @@
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import productService from './productitem.service'
 import status from 'statuses'
 import * as productitemshema from "./productitem.schema";

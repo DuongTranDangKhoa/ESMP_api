@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db"
+import { HostDbClient } from "../../database/dbClient.db"
 import { CreateAccount, VendorObject } from "./vendor.schema"
 import vendorService from "./vendor.service"
 

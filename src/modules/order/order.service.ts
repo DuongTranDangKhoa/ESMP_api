@@ -1,7 +1,7 @@
 import { Order } from './../../../prisma/clients/postgres/hostdb/index.d';
 
 import { NotFoundError } from 'elysia'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { CreateOrder, OrderDetailObject, OrderObject } from './order.schema'
 
 const getOrderListOfVendor = async (vendorId: string, hostDb: HostDbClient) => {

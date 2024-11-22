@@ -1,5 +1,5 @@
 import { t } from "elysia";
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import * as categorySchema from "./category.schema";
 import categoryService from "./category.service";
 

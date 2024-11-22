@@ -1,5 +1,5 @@
 import { debuggingGroup } from './../debug/index';
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import { DatabaseError } from "../../errors/database.error";
 import { ServiceObject } from "./service.schema";
 

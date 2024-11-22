@@ -14,7 +14,7 @@ export const VendorInEventPlain = t.Object(
 
 export const VendorInEventRelations = t.Object(
   {
-    EventPayment: t.Array(
+    EventPayment: __nullable__(
       t.Object(
         {
           eventPaymentid: t.String({ additionalProperties: true }),
@@ -23,7 +23,7 @@ export const VendorInEventRelations = t.Object(
           depositPaymentDate: __nullable__(
             t.Date({ additionalProperties: true }),
           ),
-          total: t.Number({ additionalProperties: true }),
+          total: __nullable__(t.Number({ additionalProperties: true })),
           totalPaymentDate: __nullable__(
             t.Date({ additionalProperties: true }),
           ),
@@ -104,13 +104,11 @@ export const VendorInEventRelationsInputCreate = t.Object(
     EventPayment: t.Optional(
       t.Object(
         {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
           ),
         },
         { additionalProperties: true },
@@ -161,22 +159,13 @@ export const VendorInEventRelationsInputUpdate = t.Partial(
       EventPayment: t.Partial(
         t.Object(
           {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
             ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-            ),
+            disconnect: t.Boolean(),
           },
           { additionalProperties: true },
         ),

@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db"
+import { HostDbClient } from "../../database/dbClient.db"
 import transactionService from "./transaction.service"
 
 export const transactionGroup = (app: any) =>

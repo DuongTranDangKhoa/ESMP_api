@@ -19,7 +19,7 @@ export const LocationPlain = t.Object(
 
 export const LocationRelations = t.Object(
   {
-    EventPayment: t.Array(
+    EventPayment: __nullable__(
       t.Object(
         {
           eventPaymentid: t.String({ additionalProperties: true }),
@@ -28,7 +28,7 @@ export const LocationRelations = t.Object(
           depositPaymentDate: __nullable__(
             t.Date({ additionalProperties: true }),
           ),
-          total: t.Number({ additionalProperties: true }),
+          total: __nullable__(t.Number({ additionalProperties: true })),
           totalPaymentDate: __nullable__(
             t.Date({ additionalProperties: true }),
           ),
@@ -43,7 +43,7 @@ export const LocationRelations = t.Object(
       {
         typeId: t.String({ additionalProperties: true }),
         eventId: t.String({ additionalProperties: true }),
-        typeName: __nullable__(t.String({ additionalProperties: true })),
+        typeName: t.String({ additionalProperties: true }),
         price: t.Number({ additionalProperties: true }),
         status: __nullable__(t.String({ additionalProperties: true })),
       },
@@ -86,13 +86,11 @@ export const LocationRelationsInputCreate = t.Object(
     EventPayment: t.Optional(
       t.Object(
         {
-          connect: t.Array(
-            t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
-            ),
+          connect: t.Object(
+            {
+              id: t.String({ additionalProperties: true }),
+            },
+            { additionalProperties: true },
           ),
         },
         { additionalProperties: true },
@@ -119,22 +117,13 @@ export const LocationRelationsInputUpdate = t.Partial(
       EventPayment: t.Partial(
         t.Object(
           {
-            connect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
+            connect: t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
             ),
-            disconnect: t.Array(
-              t.Object(
-                {
-                  id: t.String({ additionalProperties: true }),
-                },
-                { additionalProperties: true },
-              ),
-            ),
+            disconnect: t.Boolean(),
           },
           { additionalProperties: true },
         ),

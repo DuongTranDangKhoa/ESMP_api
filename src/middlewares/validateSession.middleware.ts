@@ -4,8 +4,8 @@ import {
   refreshUserSession,
 } from '../modules/mongoDb/mongoDb.service'
 import { getSessionExpireTime } from '../modules/config/config.service'
-import { initiateHostDatabase } from '../database'
-import { hostDb, HostDbClient } from '../database/host.db'
+// import { initiateHostDatabase } from '../database'
+import { hostDb, HostDbClient } from '../database/dbClient.db'
 import { AuthorizationError } from '../errors/authorization.error'
 import { MongoDbUserType, MongoSessionData } from '../database/mongo.db'
 

@@ -1,5 +1,5 @@
 import { NotFoundError, InternalServerError } from "elysia";
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import { ProductInProductItemObject, ProductItemObject, ProductItemType } from "./productitem.schema";
 import { EventStatus } from "../../common/constant/common.constant";
 import productService from "../product/product.service";

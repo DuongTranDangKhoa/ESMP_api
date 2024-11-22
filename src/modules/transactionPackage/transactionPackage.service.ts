@@ -1,5 +1,5 @@
 import { TrasactionStatus } from "../../common/constant/common.constant";
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 
 const getTransactionPackage = async ( hostDb: HostDbClient) => {
     const getTransactionPackage = await hostDb.transaction.findMany();

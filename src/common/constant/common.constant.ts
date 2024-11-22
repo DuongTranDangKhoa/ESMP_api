@@ -5,7 +5,7 @@ export const RoleType = { ADMIN: 'admin', HOST: 'host', MANAGER: 'manager', STAF
 export const EventStatus = {
   ongoing: 'upcomming',
   running: 'running',
-  past: 'past',
+  past: 'finished',
   cancelled: 'cancelled',
 }
 
@@ -18,4 +18,15 @@ export const TrasactionStatus = {
   PENDING: 'pending',
   SUCCESS: 'success',
   FAILED: 'failed',
+}
+export const LocationStatus = {
+  Avialable: 'Available',
+  OnHold: 'Onhold',
+  Booked: 'Booked', 
+}
+export const EventPaymentStatus = {
+PENDINGDEPOSIT: 'Pending Deposit', 
+SUCESSDEPOSIT: 'Success Deposit', 
+PENDINGTOTAL: 'Pending Total',
+FINISH: 'Refunding Deposit'
 }

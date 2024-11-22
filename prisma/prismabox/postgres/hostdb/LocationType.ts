@@ -6,7 +6,7 @@ export const LocationTypePlain = t.Object(
   {
     typeId: t.String({ additionalProperties: true }),
     eventId: t.String({ additionalProperties: true }),
-    typeName: __nullable__(t.String({ additionalProperties: true })),
+    typeName: t.String({ additionalProperties: true }),
     price: t.Number({ additionalProperties: true }),
     status: __nullable__(t.String({ additionalProperties: true })),
   },
@@ -60,9 +60,7 @@ export const LocationTypeRelations = t.Object(
 
 export const LocationTypePlainInputCreate = t.Object(
   {
-    typeName: t.Optional(
-      __nullable__(t.String({ additionalProperties: true })),
-    ),
+    typeName: t.String({ additionalProperties: true }),
     price: t.Number({ additionalProperties: true }),
     status: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
   },
@@ -71,7 +69,7 @@ export const LocationTypePlainInputCreate = t.Object(
 
 export const LocationTypePlainInputUpdate = t.Object(
   {
-    typeName: __nullable__(t.String({ additionalProperties: true })),
+    typeName: t.String({ additionalProperties: true }),
     price: t.Number({ additionalProperties: true }),
     status: __nullable__(t.String({ additionalProperties: true })),
   },

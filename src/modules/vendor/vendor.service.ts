@@ -1,6 +1,6 @@
 import { RoleType } from './../../common/constant/common.constant';
 import { NotFoundError } from 'elysia'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { AuthenticationError } from '../../errors/authentication.error'
 import { decrypt, encrypt, verifyEncrypted } from '../../utilities/crypting.util'
 import { VendorType, VendorObject, VendorAccountType, RegisterVendorObject } from './vendor.schema'

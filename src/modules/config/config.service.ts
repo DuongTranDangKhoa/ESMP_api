@@ -1,5 +1,5 @@
 import { MasterDbClient } from '../../database/master.db'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import { DEFAULT_SESSION_DURATION } from '../../common/constant/common.constant'
 import { getTimeNow } from '../../utilities/datetime.util'
 

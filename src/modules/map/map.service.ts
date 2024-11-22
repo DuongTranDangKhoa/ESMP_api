@@ -1,8 +1,9 @@
 import { NotFoundError } from 'elysia';
 import { Location } from './../../../prisma/prismabox/postgres/hostdb/Location';
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import eventService from "../event/event.service";
 import { BoothObject, LocationGetObject, LocationObject, LocationTypeObject, LocationTypeType, MainTemplateObject, MapCreateObject, MapObject, ShapeObject } from "./map.schema"
+import { LocationStatus } from '../../common/constant/common.constant';
 
 const createLocationType = async (hostId: string, eventId: string, inputData: LocationTypeObject, hostDb: HostDbClient) => {
     try {
@@ -220,7 +221,7 @@ const createMap = async (hostId: string,eventId: string, inputData: MapCreateObj
                     eventId: eventId,
                     typeName: text.name,
                     price: '0',
-                    status: 'active'
+                    status: 'blocked'
                 }
             } );
             await hostDb.location.createMany({
@@ -245,26 +246,23 @@ const createMap = async (hostId: string,eventId: string, inputData: MapCreateObj
         throw new Error('Failed to create map');
     }
 }
-const updateMap = async (updateDataArray: LocationObject[], hostDb: HostDbClient) => {
+const updateMap = async (updateData: LocationObject, hostDb: HostDbClient) => {
   try {
-    for (const updateData of updateDataArray) {
-      console.log("Updating locationId:", updateData.locationId);
 
-      await hostDb.location.updateMany({
-        where: {
-          locationId: updateData.locationId,
-        },
-        data: {
-          typeId: updateData.typeId,
-          x: updateData.x,
-          y: updateData.y,
-          rotation: updateData.rotation,
-          height: updateData.height, // Corrected spelling
-          width: updateData.width,
-        },
-      });
-    }
-    
+        await hostDb.location.updateMany({
+            where: {
+                locationId: updateData.locationId,
+            },
+            data: {
+                typeId: updateData.typeId,
+                x: updateData.x,
+                y: updateData.y,
+                rotation: updateData.rotation,
+                height: updateData.height, 
+                width: updateData.width,
+                status: updateData.status,
+            },
+    })
     await hostDb.$disconnect();
     return "Successfully updated all locations";
   } catch (error) {
@@ -287,10 +285,10 @@ const deleteMap = async (locationId: string, hostDb: HostDbClient) => {
     }
 }
 const deleteLocationType = async (locationTypeId: string, hostDb: HostDbClient) => {
-    if (locationTypeId === ':locationTypeId') {
+    
+    if (!locationTypeId) {
         throw new Error("LocationTypeId is required");
     }
-
     try {
         const checkLocationinLocationTypeId = await hostDb.location.findMany({
             where: {
@@ -326,11 +324,34 @@ const deleteLocationType = async (locationTypeId: string, hostDb: HostDbClient) 
           
     }
 };
+const updateLocationType = async (locationTypeId: string, inputData: LocationTypeObject, hostDb: HostDbClient) => {
+    try {
+        if (!locationTypeId) {
+        throw new Error("LocationTypeId is required");
+    }
+        await hostDb.locationType.update({
+            where: {
+                typeId: locationTypeId,
+            },
+            data: {
+                typeName: inputData.typeName,
+                price: inputData.price,
+                status: inputData.status,
+            },
+        });
+        await hostDb.$disconnect();
+        return "Successfully updated locationType";
+    } catch (error) {
+        console.error("Error updating locationType:", error);
+        throw new Error("Failed to update locationType");
+    }
+}
 const mapService = {
     getMap,
     getLocationType,
     createMap,
     updateMap,
+    updateLocationType,
     deleteLocationType,
     deleteMap,
     createLocationType

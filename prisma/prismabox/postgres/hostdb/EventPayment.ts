@@ -8,7 +8,7 @@ export const EventPaymentPlain = t.Object(
     locationId: t.String({ additionalProperties: true }),
     deposit: t.Number({ additionalProperties: true }),
     depositPaymentDate: __nullable__(t.Date({ additionalProperties: true })),
-    total: t.Number({ additionalProperties: true }),
+    total: __nullable__(t.Number({ additionalProperties: true })),
     totalPaymentDate: __nullable__(t.Date({ additionalProperties: true })),
     createDate: __nullable__(t.Date({ additionalProperties: true })),
     status: __nullable__(t.String({ additionalProperties: true })),
@@ -52,7 +52,7 @@ export const EventPaymentPlainInputCreate = t.Object(
     depositPaymentDate: t.Optional(
       __nullable__(t.Date({ additionalProperties: true })),
     ),
-    total: t.Number({ additionalProperties: true }),
+    total: t.Optional(__nullable__(t.Number({ additionalProperties: true }))),
     totalPaymentDate: t.Optional(
       __nullable__(t.Date({ additionalProperties: true })),
     ),
@@ -68,7 +68,7 @@ export const EventPaymentPlainInputUpdate = t.Object(
   {
     deposit: t.Number({ additionalProperties: true }),
     depositPaymentDate: __nullable__(t.Date({ additionalProperties: true })),
-    total: t.Number({ additionalProperties: true }),
+    total: __nullable__(t.Number({ additionalProperties: true })),
     totalPaymentDate: __nullable__(t.Date({ additionalProperties: true })),
     createDate: t.Optional(
       __nullable__(t.Date({ additionalProperties: true })),
@@ -162,8 +162,18 @@ export const EventPaymentWhere = t.Partial(
 export const EventPaymentWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ eventPaymentid: t.String() })),
-      t.Union([t.Object({ eventPaymentid: t.String() })]),
+      t.Partial(
+        t.Object({
+          eventPaymentid: t.String(),
+          locationId: t.String(),
+          vendorinEventId: t.String(),
+        }),
+      ),
+      t.Union([
+        t.Object({ eventPaymentid: t.String() }),
+        t.Object({ locationId: t.String() }),
+        t.Object({ vendorinEventId: t.String() }),
+      ]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),

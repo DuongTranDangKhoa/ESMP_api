@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import { ThemeObject } from "./theme.schema";
 
 const getTheme = async ( hostId: string,hostDb: HostDbClient) => {

@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import vendorineventservice from "../vendorinevent/vendorinevent.service";
 import { MenuObject, ProductItemInMenuObject, ProductItemInMenuUpdateObject } from "./menu.schema";
 

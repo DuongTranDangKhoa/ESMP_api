@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db"
+import { HostDbClient } from "../../database/dbClient.db"
 import menuService from "../menu/menu.service"
 import mapService from "./map.service";
 import * as commonSchema from '../../common/schema.common'
@@ -31,7 +31,7 @@ app.group('/:hostId/:eventId', (app: any) =>
             )                                   
         )
             
-      .group('locationTyple/:hostId/:eventId', (app: any) => 
+      .group('locationType/:hostId/:eventId', (app: any) => 
            app
             .get('/',
                 async ({
@@ -84,7 +84,7 @@ app.group('/:hostId/:eventId', (app: any) =>
             },
 
         )
-        .delete('/locationTyple/:locationTypeId',
+        .delete('/locationType/:typeId',
             async ({
             params,
             hostDb,
@@ -92,8 +92,23 @@ app.group('/:hostId/:eventId', (app: any) =>
                 params: any
                 hostDb: HostDbClient
             }) => {
-                const {locationTypeId} = params;
-                return await mapService.deleteLocationType(locationTypeId, hostDb)
+                const {typeId} = params;
+                return await mapService.deleteLocationType(typeId, hostDb)
             }
         )
+        .put('/locationType/:typeId',
+             async ({
+            params,
+            body,
+            hostDb,
+        }: {
+            params: any
+            body: any
+            hostDb: HostDbClient
+        }) => {
+            const {typeId} = params;
+            return await mapService.updateLocationType(typeId, body, hostDb)
+        }
+        )
+
             

@@ -1,5 +1,5 @@
 import status from 'statuses'
-import { HostDbClient } from '../../database/host.db'
+import { HostDbClient } from '../../database/dbClient.db'
 import * as commonSchema from '../../common/schema.common'
 import * as vendorSchema from '../vendor/vendor.schema'
 import * as productSchema from './product.schema'
@@ -62,7 +62,7 @@ export const productGroup = (app: any) =>
            * @response create product status
            */
           .post(
-            '/',
+            '/',  
             async ({
               vendorId,
               body,

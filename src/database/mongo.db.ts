@@ -14,3 +14,9 @@ export type MongoDbHostType = HostInfo
 export type MongoDbVendorType = VendorInfo
 export type MongoDbStaffType = StaffInfo
 export const mongoDb = new PrismaClient()
+export const initiateDatabase = (): {
+  mongoDb: MongoDbClient
+
+} => {
+  return { mongoDb  }
+}

@@ -1,4 +1,4 @@
-import { HostDbClient } from "../../database/host.db";
+import { HostDbClient } from "../../database/dbClient.db";
 import { DatabaseError } from "../../errors/database.error";
 import { VendorInEvent } from "./vendorinevent.schema";
 
@@ -8,6 +8,20 @@ const getVendorInEvent = async (eventId: string, vendorId: string, hostDb: HostD
             where: {
                 eventId,
                 vendorId,
+            },
+        });
+        await hostDb.$disconnect();
+        return vendorInEvent;
+    } catch (err) {
+       console.error("Error retrieving Vendor In Event:", err);
+        throw new Error('Failed to retrieve Vendor In Event');
+    }
+};
+const getVendorInEventById = async (vendorinevent: string, hostDb: HostDbClient) => {
+    try {
+        const vendorInEvent = await hostDb.vendorInEvent.findUnique({
+            where: {
+                vendorinEventId: vendorinevent
             },
         });
         await hostDb.$disconnect();
@@ -53,6 +67,7 @@ const updateVendorInEvent = async (vendorInEventId: string, body: VendorInEvent 
 const vendorineventservice = {
     getVendorInEvent,
     createVendorInEvent,
-    updateVendorInEvent
+    updateVendorInEvent,
+    getVendorInEventById
 }
 export default vendorineventservice;

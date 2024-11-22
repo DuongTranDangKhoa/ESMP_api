@@ -1,5 +1,5 @@
 import { t } from 'elysia';
-import { HostDbClient } from '../../database/host.db';
+import { HostDbClient } from '../../database/dbClient.db';
 import staffService from './staff.service';
 import { GetStaffParams, RegisterStaff, UpdateStaffSchema } from './staff.schema';
 

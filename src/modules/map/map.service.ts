@@ -71,181 +71,336 @@ const getLocationTypeByID = async (hostId: string, locationTypeid: string, hostD
         throw new Error('Failed to create map');
     } 
 }
+// const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Promise<MapObject> => {
+//     try {
+//         const event = await eventService.getEventById(eventId, hostDb);
+//         const mainTemplate = new MainTemplateObject(event);
+//         const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);
+
+//         const locations: LocationGetObject[] = [];
+//         const shapes: LocationGetObject[] = [];
+//         const textElements: LocationGetObject[] = [];
+//         for (const type of locationTypes) {
+//             const locationData = await hostDb.location.findMany({
+//                 where: {
+//                     typeId: type.typeId
+//                 }
+//             });
+           
+//             for (const loc of locationData) {
+//                 if (loc.shape =='booth' ) {
+//                     const name = await getLocationTypeByID(hostId, loc.typeId, hostDb);
+//                     let booth = new LocationGetObject(loc, name?.typeName ?? '');
+//                     locations.push(booth);;
+//                 } else if (loc.shape =='text'){
+//                     const name = await getLocationTypeByID(hostId, loc.typeId, hostDb);
+//                     let booth = new LocationGetObject(loc, name?.typeName ?? '');
+//                     textElements.push(booth);
+//                 }
+//                 else{
+//                     const name = await getLocationTypeByID(hostId, loc.typeId, hostDb);
+//                     let booth = new LocationGetObject(loc, name?.typeName ?? '');
+//                     shapes.push(booth);
+//                 }
+
+//             }
+//         }
+        
+//         const map: MapObject = {
+//             eventId: event.eventId,
+//             typeId: locationTypes[0]?.typeId ?? '',
+//             booths: locations,
+//             shapes: shapes, 
+//             mainTemplate: mainTemplate,
+//             status: event.status ?? 'Unknown',
+//             textElements: textElements, 
+//             imageElements: event.stageValue ? [event.stageValue] : []
+
+//         };
+//         //  await hostDb.$disconnect();
+//         return map;
+//     } catch (error) {
+//         console.error("Error creating map:", error);
+//         throw new Error('Failed to get map');
+//     } 
+// }
 const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Promise<MapObject> => {
     try {
         const event = await eventService.getEventById(eventId, hostDb);
         const mainTemplate = new MainTemplateObject(event);
         const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);
 
+        const locationTypeMap = new Map<string, string>();
+        for (const type of locationTypes) {
+            locationTypeMap.set(type.typeId, type.typeName ?? '');
+        }
+
+        // Fetch all location data in a single query
+        const locationTypeIds = locationTypes.map((type) => type.typeId);
+        const locationData = await hostDb.location.findMany({
+            where: {
+                typeId: { in: locationTypeIds }
+            }
+        });
+
         const locations: LocationGetObject[] = [];
         const shapes: LocationGetObject[] = [];
         const textElements: LocationGetObject[] = [];
-        for (const type of locationTypes) {
-            const locationData = await hostDb.location.findMany({
-                where: {
-                    typeId: type.typeId
-                }
-            });
-           
-            for (const loc of locationData) {
-                if (loc.shape =='booth' ) {
-                    const name = await getLocationTypeByID(hostId, loc.typeId, hostDb);
-                    let booth = new LocationGetObject(loc, name?.typeName ?? '');
-                    locations.push(booth);;
-                } else if (loc.shape =='text'){
-                    const name = await getLocationTypeByID(hostId, loc.typeId, hostDb);
-                    let booth = new LocationGetObject(loc, name?.typeName ?? '');
-                    textElements.push(booth);
-                }
-                else{
-                    const name = await getLocationTypeByID(hostId, loc.typeId, hostDb);
-                    let booth = new LocationGetObject(loc, name?.typeName ?? '');
-                    shapes.push(booth);
-                }
 
+        for (const loc of locationData) {
+            const typeName = locationTypeMap.get(loc.typeId) ?? '';
+            const locationObject = new LocationGetObject(loc, typeName);
+
+            if (loc.shape === 'booth') {
+                locations.push(locationObject);
+            } else if (loc.shape === 'text') {
+                textElements.push(locationObject);
+            } else {
+                shapes.push(locationObject);
             }
         }
-        
+
         const map: MapObject = {
             eventId: event.eventId,
             typeId: locationTypes[0]?.typeId ?? '',
             booths: locations,
-            shapes: shapes, 
+            shapes: shapes,
             mainTemplate: mainTemplate,
             status: event.status ?? 'Unknown',
-            textElements: textElements, 
+            textElements: textElements,
             imageElements: event.stageValue ? [event.stageValue] : []
-
         };
-         await hostDb.$disconnect();
+
         return map;
     } catch (error) {
         console.error("Error creating map:", error);
         throw new Error('Failed to get map');
-    } 
-}
-const createMap = async (hostId: string,eventId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
-    try {
-    const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
-    console.log("Creating map:", inputData.imageElements[0]);
-    if(mainTemplate != null){
-    const updateEvent = await hostDb.event.update({
-        where: {
-            eventId: eventId,
-        }, data: {
-            x: mainTemplate.x,
-            y: mainTemplate.y,
-            width: mainTemplate.width,
-            height: mainTemplate.height,
-            stageValue: inputData.imageElements[0],
-        }
-    });
-   }
+    }
+};
+// const createMap = async (hostId: string,eventId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
+//     try {
+//     const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
+//     console.log("Creating map:", inputData.imageElements[0]);
+//     if(mainTemplate != null){
+//     const updateEvent = await hostDb.event.update({
+//         where: {
+//             eventId: eventId,
+//         }, data: {
+//             x: mainTemplate.x,
+//             y: mainTemplate.y,
+//             width: mainTemplate.width,
+//             height: mainTemplate.height,
+//             stageValue: inputData.imageElements[0],
+//         }
+//     });
+//    }
    
-    const location: BoothObject[] = inputData.booths;
-    const shapes: ShapeObject[] = inputData.shapes;
-    const textElements: ShapeObject[] = inputData.textElements;
-    for (const loc of location) {
-        await hostDb.location.createMany({
-            data: {
-                typeId: loc.typeId,
-                x: loc.x,
-                y: loc.y,
-                shape: "booth",
-                rotation: loc.rotation,
-                height: loc.height,
-                width: loc.width,
-                status: 'Available'
+//     const location: BoothObject[] = inputData.booths;
+//     const shapes: ShapeObject[] = inputData.shapes;
+//     const textElements: ShapeObject[] = inputData.textElements;
+//     for (const loc of location) {
+//         await hostDb.location.createMany({
+//             data: {
+//                 typeId: loc.typeId,
+//                 x: loc.x,
+//                 y: loc.y,
+//                 shape: "booth",
+//                 rotation: loc.rotation,
+//                 height: loc.height,
+//                 width: loc.width,
+//                 status: 'Available'
+//             }
+//         });
+//     }
+//     for (const shape of shapes) {
+//         const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: shape.name, eventId: eventId}});
+//         if (locationTypeId != null) { 
+//              await hostDb.location.createMany({
+//                 data: {
+//                     typeId: locationTypeId.typeId,
+//                     x: shape.x,
+//                     y: shape.y,
+//                     shape: shape.name,
+//                     rotation: shape.rotation,
+//                     height: shape.height,
+//                     width: shape.width,
+//                     status: 'blocked'
+//                 }
+//             });
+//         } 
+//         else{
+//             const locationType = await hostDb.locationType.create({ 
+//                 data: {
+//                     eventId: eventId,
+//                     typeName: shape.name,
+//                     price: '0',
+//                     status: 'blocked'
+//                 }
+//             } );
+//             await hostDb.location.createMany({
+//                 data: {
+//                     typeId: locationType.typeId,
+//                     x: shape.x,
+//                     y: shape.y,
+//                     shape: shape.name,
+//                     rotation: shape.rotation,
+//                     height: shape.height,
+//                     width: shape.width,
+//                     status: 'blocked'
+//                 }
+//             });
+            
+//         }
+//     }
+//         for (const text of textElements) {
+//         const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: text.name,eventId: eventId}});
+//         if (locationTypeId != null) { 
+//              await hostDb.location.createMany({
+//                 data: {
+//                     typeId: locationTypeId.typeId,
+//                     x: text.x,
+//                     y: text.y,
+//                     shape: 'text',
+//                     rotation: text.rotation,
+//                     height: text.height,
+//                     width: text.width,
+//                     status: 'blocked'
+//                 }
+//             });
+//         } 
+//         else{
+//             const locationType = await hostDb.locationType.create({ 
+//                 data: {
+//                     eventId: eventId,
+//                     typeName: text.name,
+//                     price: '0',
+//                     status: 'blocked'
+//                 }
+//             } );
+//             await hostDb.location.createMany({
+//                 data: {
+//                     typeId: locationType.typeId,
+//                     x: text.x,
+//                     y: text.y,
+//                     shape: 'text',
+//                     rotation: text.rotation,
+//                     height: text.height,
+//                     width: text.width,
+//                     status: 'blocked'
+//                 }
+//             });
+            
+//         }
+//     }
+//     // await hostDb.$disconnect();
+//     return "Successfully created template";
+//    } catch (error) {
+//         console.error("Error creating map:", error);
+//         throw new Error('Failed to create map');
+//     }
+// }
+const createMap = async (hostId: string, eventId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
+    try {
+        // Cập nhật main template nếu tồn tại
+        const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
+        if (mainTemplate) {
+            await hostDb.event.update({
+                where: { eventId: eventId },
+                data: {
+                    x: mainTemplate.x,
+                    y: mainTemplate.y,
+                    width: mainTemplate.width,
+                    height: mainTemplate.height,
+                    stageValue: inputData.imageElements[0],
+                }
+            });
+        }
+
+        // Gom tất cả typeName để kiểm tra trong một lần
+        const allShapesAndTexts = [...inputData.shapes, ...inputData.textElements];
+        const allTypeNames = new Set(allShapesAndTexts.map(item => item.name));
+        
+        const existingLocationTypes = await hostDb.locationType.findMany({
+            where: {
+                eventId: eventId,
+                typeName: { in: Array.from(allTypeNames) }
             }
         });
-    }
-    for (const shape of shapes) {
-        const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: shape.name, eventId: eventId}});
-        if (locationTypeId != null) { 
-             await hostDb.location.createMany({
-                data: {
-                    typeId: locationTypeId.typeId,
-                    x: shape.x,
-                    y: shape.y,
-                    shape: shape.name,
-                    rotation: shape.rotation,
-                    height: shape.height,
-                    width: shape.width,
-                    status: 'blocked'
-                }
-            });
-        } 
-        else{
-            const locationType = await hostDb.locationType.create({ 
-                data: {
+
+        // Tạo Map cho tra cứu nhanh
+        const locationTypeMap = new Map(existingLocationTypes.map(type => [type.typeName, type.typeId]));
+
+        // Xác định typeName chưa tồn tại
+        const newTypeNames = Array.from(allTypeNames).filter(name => !locationTypeMap.has(name));
+        if (newTypeNames.length > 0) {
+            const newLocationTypes = await hostDb.locationType.createMany({
+                data: newTypeNames.map(name => ({
                     eventId: eventId,
-                    typeName: shape.name,
+                    typeName: name,
                     price: '0',
                     status: 'blocked'
-                }
-            } );
-            await hostDb.location.createMany({
-                data: {
-                    typeId: locationType.typeId,
-                    x: shape.x,
-                    y: shape.y,
-                    shape: shape.name,
-                    rotation: shape.rotation,
-                    height: shape.height,
-                    width: shape.width,
-                    status: 'blocked'
-                }
+                }))
             });
-            
-        }
-    }
-        for (const text of textElements) {
-        const locationTypeId = await hostDb.locationType.findFirst({where: {typeName: text.name,eventId: eventId}});
-        if (locationTypeId != null) { 
-             await hostDb.location.createMany({
-                data: {
-                    typeId: locationTypeId.typeId,
-                    x: text.x,
-                    y: text.y,
-                    shape: 'text',
-                    rotation: text.rotation,
-                    height: text.height,
-                    width: text.width,
-                    status: 'blocked'
-                }
-            });
-        } 
-        else{
-            const locationType = await hostDb.locationType.create({ 
-                data: {
+
+            // Lấy lại các loại locationType vừa tạo
+            const createdLocationTypes = await hostDb.locationType.findMany({
+                where: {
                     eventId: eventId,
-                    typeName: text.name,
-                    price: '0',
-                    status: 'blocked'
-                }
-            } );
-            await hostDb.location.createMany({
-                data: {
-                    typeId: locationType.typeId,
-                    x: text.x,
-                    y: text.y,
-                    shape: 'text',
-                    rotation: text.rotation,
-                    height: text.height,
-                    width: text.width,
-                    status: 'blocked'
+                    typeName: { in: newTypeNames }
                 }
             });
-            
+
+            // Cập nhật Map
+            for (const type of createdLocationTypes) {
+                locationTypeMap.set(type.typeName, type.typeId);
+            }
         }
-    }
-    await hostDb.$disconnect();
-    return "Successfully created template";
-   } catch (error) {
+
+        // Gom tất cả dữ liệu cần tạo
+        const boothData = inputData.booths.map(loc => ({
+            typeId: loc.typeId,
+            x: loc.x,
+            y: loc.y,
+            shape: "booth",
+            rotation: loc.rotation,
+            height: loc.height,
+            width: loc.width,
+            status: 'Available'
+        }));
+
+        const shapeData = inputData.shapes.map(shape => ({
+            typeId: locationTypeMap.get(shape.name)!,
+            x: shape.x,
+            y: shape.y,
+            shape: shape.name,
+            rotation: shape.rotation,
+            height: shape.height,
+            width: shape.width,
+            status: 'blocked'
+        }));
+
+        const textData = inputData.textElements.map(text => ({
+            typeId: locationTypeMap.get(text.name)!,
+            x: text.x,
+            y: text.y,
+            shape: 'text',
+            rotation: text.rotation,
+            height: text.height,
+            width: text.width,
+            status: 'blocked'
+        }));
+
+        // Tạo dữ liệu trong một lần gọi
+        await hostDb.location.createMany({
+            data: [...boothData, ...shapeData, ...textData]
+        });
+
+        return "Successfully created template";
+    } catch (error) {
         console.error("Error creating map:", error);
         throw new Error('Failed to create map');
     }
-}
+};
 const updateMap = async (updateData: LocationObject, hostDb: HostDbClient) => {
   try {
 

@@ -53,12 +53,18 @@ const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) =>
                 eventId
             }
         });
+      const formatDate = (date: Date | null): Date | null => {
+    if (!date) {
+        return null; // Trả về null nếu date là null
+    }
+    return new Date(date.toISOString().split('T')[0]); // Trả về một đối tượng Date mới
+};
         // console.log(event, "event");
         const paymentValue = new EventPaymentObject(
   eventPayment.eventPaymentid,
   locationType?.typeName ?? "Default Location Name",
   account?.name ?? "Default Name",
-  eventPayment.depositPaymentDate,
+  formatDate(eventPayment.depositPaymentDate),
   eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
   eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
   event?.profit ?? new Decimal(0),
@@ -67,8 +73,8 @@ const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) =>
 );
         payment.push(paymentValue);
     }
+} 
         return payment;
-    } 
     
      }catch (error) {   
         throw new Error('Error getting event payment in event: ' + error);

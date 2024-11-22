@@ -25,6 +25,7 @@ import { packageGroup } from './modules/package'
 import { transactionpackageGroup } from './modules/transactionPackage'
 import { staffGroup } from './modules/staff'
 import { eventPaymentGroup } from './modules/eventpayment'
+import { notificationGroup } from './modules/notification'
 
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -44,6 +45,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/staff', (app) => app.use(staffGroup)) // staff route
         .group('/product', (app) => app.use(productGroup)) // product route
         .group('/eventpayment', (app) => app.use(eventPaymentGroup)) // event route
+        .group('/notification', (app) => app.use(notificationGroup))
         .group('/order', (app) => app.use(orderGroup)) // order route
         .group('/productitem',(app) => app.use(productItemGroup)) // product)
         .group('/transaction', (app) => app.use(transactionGroup)) // transaction route

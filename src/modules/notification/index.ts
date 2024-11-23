@@ -1,4 +1,5 @@
 import { HostDbClient } from '../../database/dbClient.db';
+import { getIo } from '../../utilities/socket.util';
 import { NotificationSchema, CreateNotificationInput } from './notification.schema';
 import { notificationService } from './notification.service';
 
@@ -6,16 +7,29 @@ export const notificationGroup = (app: any) =>
   app
     .get('/:userid', async ({ params, hostDb }: { params: any; hostDb: HostDbClient }) => {
       const { userid } = params;
-      return await notificationService.getNotificationsByUserId(userid, hostDb);
+
+      // Lấy thông báo từ database
+      const notifications = await notificationService.getNotificationsByUserId(userid, hostDb);
+
+      // Gửi thông báo tới client qua Socket.IO
+      const io = getIo();
+      io.to(userid).emit('notifications', notifications); // Emit tới phòng theo userId
+
+      return notifications;
     })
     .post(
       '/',
       async ({ body, hostDb }: { body: any; hostDb: HostDbClient }) => {
         const userNoti = await notificationService.createNotification(body, hostDb);
+
+        // Gửi thông báo mới tới client
+        const io = getIo();
+        io.to(userNoti.userid).emit('new_notification', userNoti);
+
         return {
-            message: 'Notification created successfully',
-            userid: userNoti.userid
-        } 
+          message: 'Notification created successfully',
+          userid: userNoti.userid,
+        };
       },
       {
         body: CreateNotificationInput,

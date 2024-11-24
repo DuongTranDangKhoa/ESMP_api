@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
+  additionalProperties        = "true"
+  typeboxImportVariableName   = "t"
   typeboxImportDependencyName = "elysia"
   inputModel                  = "true"
-  typeboxImportVariableName   = "t"
-  additionalProperties        = "true"
 }
 
 datasource db {
@@ -315,6 +315,7 @@ model notification {
   userid    String    @db.Uuid
   source    String?
   create_at DateTime? @default(now()) @db.Timestamp(6)
+  status    Boolean?  @default(false)
   account   Account   @relation(fields: [userid], references: [id])
 }
 

@@ -8,6 +8,7 @@ export const notificationPlain = t.Object(
     userid: t.String({ additionalProperties: true }),
     source: __nullable__(t.String({ additionalProperties: true })),
     create_at: __nullable__(t.Date({ additionalProperties: true })),
+    status: __nullable__(t.Boolean({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -35,6 +36,7 @@ export const notificationPlainInputCreate = t.Object(
   {
     source: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
     create_at: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
+    status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -42,7 +44,8 @@ export const notificationPlainInputCreate = t.Object(
 export const notificationPlainInputUpdate = t.Object(
   {
     source: __nullable__(t.String({ additionalProperties: true })),
-    create_at: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
+    create_at: __nullable__(t.Date({ additionalProperties: true })),
+    status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -95,6 +98,7 @@ export const notificationWhere = t.Partial(
         userid: t.String(),
         source: t.String(),
         create_at: t.Date(),
+        status: t.Boolean(),
       }),
     { $id: "notification" },
   ),
@@ -120,6 +124,7 @@ export const notificationWhereUnique = t.Recursive(
             userid: t.String(),
             source: t.String(),
             create_at: t.Date(),
+            status: t.Boolean(),
           },
           { additionalProperties: true },
         ),
@@ -136,6 +141,7 @@ export const notificationSelect = t.Partial(
       userid: t.Boolean(),
       source: t.Boolean(),
       create_at: t.Boolean(),
+      status: t.Boolean(),
       account: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -159,6 +165,7 @@ export const notificationOrderBy = t.Partial(
       userid: t.Union([t.Literal("asc"), t.Literal("desc")]),
       source: t.Union([t.Literal("asc"), t.Literal("desc")]),
       create_at: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      status: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

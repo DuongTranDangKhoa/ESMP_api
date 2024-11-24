@@ -42,6 +42,7 @@ export const AccountRelations = t.Object(
           id: t.String({ additionalProperties: true }),
           userid: t.String({ additionalProperties: true }),
           source: __nullable__(t.String({ additionalProperties: true })),
+          create_at: __nullable__(t.Date({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),

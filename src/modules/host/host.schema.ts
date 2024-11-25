@@ -28,6 +28,8 @@ export const UpdateHostSchema = {
   email:  t.String(),
   expiretime: t.Optional(t.String({ format: 'date-time' })),
   eventstoragetime: t.Optional(t.String({ format: 'date-time' })),
+  bankingaccount:  t.String(),
+  apibanking:  t.String(),
 };
 
 export const UpdatePasswordSchema =t.Object( {

@@ -11,6 +11,7 @@ export const hostPlain = t.Object(
     email: __nullable__(t.String({ additionalProperties: true })),
     eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
     hostid: t.String({ additionalProperties: true }),
+    apibanking: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -123,6 +124,9 @@ export const hostPlainInputCreate = t.Object(
     eventstoragetime: t.Optional(
       __nullable__(t.Date({ additionalProperties: true })),
     ),
+    apibanking: t.Optional(
+      __nullable__(t.String({ additionalProperties: true })),
+    ),
   },
   { additionalProperties: true },
 );
@@ -134,6 +138,7 @@ export const hostPlainInputUpdate = t.Object(
     phone: __nullable__(t.String({ additionalProperties: true })),
     email: __nullable__(t.String({ additionalProperties: true })),
     eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
+    apibanking: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -384,6 +389,7 @@ export const hostWhere = t.Partial(
         email: t.String(),
         eventstoragetime: t.Date(),
         hostid: t.String(),
+        apibanking: t.String(),
       }),
     { $id: "host" },
   ),
@@ -415,6 +421,7 @@ export const hostWhereUnique = t.Recursive(
             email: t.String(),
             eventstoragetime: t.Date(),
             hostid: t.String(),
+            apibanking: t.String(),
           },
           { additionalProperties: true },
         ),
@@ -434,6 +441,7 @@ export const hostSelect = t.Partial(
       email: t.Boolean(),
       eventstoragetime: t.Boolean(),
       hostid: t.Boolean(),
+      apibanking: t.Boolean(),
       category: t.Boolean(),
       event: t.Boolean(),
       account: t.Boolean(),
@@ -473,6 +481,7 @@ export const hostOrderBy = t.Partial(
       email: t.Union([t.Literal("asc"), t.Literal("desc")]),
       eventstoragetime: t.Union([t.Literal("asc"), t.Literal("desc")]),
       hostid: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      apibanking: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

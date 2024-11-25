@@ -48,6 +48,7 @@ export const ThemeRelations = t.Object(
         email: __nullable__(t.String({ additionalProperties: true })),
         eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
         hostid: t.String({ additionalProperties: true }),
+        apibanking: __nullable__(t.String({ additionalProperties: true })),
       },
       { additionalProperties: true },
     ),

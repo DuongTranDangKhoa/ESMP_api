@@ -32,6 +32,7 @@ export const AccountRelations = t.Object(
             t.Date({ additionalProperties: true }),
           ),
           hostid: t.String({ additionalProperties: true }),
+          apibanking: __nullable__(t.String({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),

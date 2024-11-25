@@ -14,7 +14,7 @@ export const notificationRepo = {
   },
 
   async updateNotification(id: string, data: any, hostdb: HostDbClient) {
-     await hostdb.notification.update({
+    await hostdb.notification.update({
       where: { id },
       data,
     });

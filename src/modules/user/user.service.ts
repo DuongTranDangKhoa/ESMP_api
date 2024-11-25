@@ -1,5 +1,4 @@
-import { getHostDbClient, HostDbClient } from '../../database/dbClient.db'
-import { MasterDbClient } from '../../database/master.db'
+import {  HostDbClient } from '../../database/dbClient.db'
 import { MongoDbClient, MongoDbUserType } from '../../database/mongo.db'
 import { LoginResponseType } from './user.schema'
 import * as mongoService from '../mongoDb/mongoDb.service'
@@ -18,7 +17,7 @@ import { verifyEncrypted } from '../../utilities/crypting.util'
  */
 async function createUserSession(
   userInfo: MongoDbUserType,
-  db: MasterDbClient | HostDbClient,
+  db: HostDbClient,
   mongoDb: MongoDbClient,
 ) {
   // declare session expired time

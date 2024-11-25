@@ -14,7 +14,8 @@ export const transactionGroup = (app: any) =>
       )
       .get(
         'order/:orderId',
-        async ({orderId, hostDb}: {orderId: string, hostDb: HostDbClient}) => {
+        async ({params, hostDb}: {params: any, hostDb: HostDbClient}) => {
+          const {orderId} = params
           const transaction = await transactionService.getTransactionByOrder(orderId, hostDb)
           return transaction
         },

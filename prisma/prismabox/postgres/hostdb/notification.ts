@@ -44,7 +44,7 @@ export const notificationPlainInputCreate = t.Object(
 export const notificationPlainInputUpdate = t.Object(
   {
     source: __nullable__(t.String({ additionalProperties: true })),
-    create_at: __nullable__(t.Date({ additionalProperties: true })),
+    create_at: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
   },
   { additionalProperties: true },

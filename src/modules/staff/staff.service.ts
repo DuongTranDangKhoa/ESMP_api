@@ -12,13 +12,13 @@ const authenticateStaffUser = async (
   if (!hostDb || !hostDb.account) {
     throw new Error('Database client not initialized or account model missing');
   }
-
-  const user = await hostDb.account.findFirst({
+  
+  const user = await hostDb.account.findUnique({
     where: { username }
   });
   
   if (!user) {
-    throw new AuthenticationError('Invalid username or you are not a vendor');
+    throw new AuthenticationError('Invalid username or you are not a staff');
   }
 
   const staff = await hostDb.staff.findFirst({

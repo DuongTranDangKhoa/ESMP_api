@@ -27,6 +27,7 @@ import { staffGroup } from './modules/staff'
 import { eventPaymentGroup } from './modules/eventpayment'
 import { notificationGroup } from './modules/notification'
 import { initSocket, httpServer } from './utilities/socket.util'
+import { hostGroup } from './modules/host'
 const io = initSocket(httpServer);
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
@@ -46,6 +47,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/staff', (app) => app.use(staffGroup)) // staff route
         .group('/product', (app) => app.use(productGroup)) // product route
         .group('/eventpayment', (app) => app.use(eventPaymentGroup)) // event route
+        .group('/host', (app) => app.use(hostGroup))
         .group('/notification', (app) => app.use(notificationGroup))
         .group('/order', (app) => app.use(orderGroup)) // order route
         .group('/productitem',(app) => app.use(productItemGroup)) // product)

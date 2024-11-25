@@ -7,7 +7,7 @@ const transaction = await hostDb.payment.findMany()
 return transaction
 }
 const getTransactionByOrder = async (  OrderID: string ,hostDb : HostDbClient ) => {
-const transaction = await hostDb.payment.findMany(
+  const transaction = await hostDb.payment.findMany(
      { where: {orderId: OrderID}, })
 return transaction
 }

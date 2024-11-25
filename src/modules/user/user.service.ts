@@ -22,7 +22,7 @@ async function createUserSession(
 ) {
   // declare session expired time
   const sessionExpireTime = await configService.getSessionExpireTime(db)
-
+ 
   // create session for user
   const accessToken = await mongoService.createUserSession(
     userInfo as MongoDbUserType,

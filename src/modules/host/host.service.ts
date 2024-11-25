@@ -68,7 +68,7 @@
 //   }
 // }
 import { hostRepo } from './host.repo';
-import { HostDbClient } from '../../database/dbClient.db';
+import { hostDb,HostDbClient } from '../../database/dbClient.db';
 import { AuthenticationError } from '../../errors/authentication.error';
 import { decrypt, verifyEncrypted } from '../../utilities/crypting.util';
 import { compareDateToNow } from '../../utilities/datetime.util';
@@ -119,13 +119,13 @@ export const getHostAndVerify = async (
 export const getAllHosts = async (hostDb: HostDbClient) => {
   return await hostRepo.getAllHosts(hostDb);
 };
-export const createHost = async (data: any, hostDb: HostDbClient) => {
+export const createHost = async (data: any) => {
   return await hostRepo.createHost(data, hostDb);
 };
 
-export const updateHost = async (hostId: string, data: any, hostDb: HostDbClient) => {
-   const host = await hostRepo.updateHost(hostId, data, hostDb);
-  //  await hostRepo.updateAccount(host.userid, data.name , hostDb);
+export const updateHost = async (hostId: string, data: any, hostDB: HostDbClient) => {
+  const host = await hostRepo.updateHost(hostId, data, hostDB);
+  await hostRepo.updateAccount(host.userid, data.name , hostDb);
    return 'Update Successfull Host'
 };
 export const dencryptionApiBanking = async (data: any, hostDb: HostDbClient) => {
@@ -138,9 +138,9 @@ export const dencryptionApiBanking = async (data: any, hostDb: HostDbClient) => 
 export const updatePassword = async (
   accountId: string,
   newPassword: string,
-  hostDb: HostDbClient
+  hostDB: HostDbClient
 ) => {
-  return await hostRepo.updateAccount(accountId, { password: newPassword }, hostDb);
+  return await hostRepo.updatePassword(accountId, { password: newPassword }, hostDB);
 };
 
 function verifyHostContract(host: HostType) {

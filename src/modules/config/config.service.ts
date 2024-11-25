@@ -1,4 +1,4 @@
-import { MasterDbClient } from '../../database/master.db'
+
 import { HostDbClient } from '../../database/dbClient.db'
 import { DEFAULT_SESSION_DURATION } from '../../common/constant/common.constant'
 import { getTimeNow } from '../../utilities/datetime.util'
@@ -8,7 +8,7 @@ import { getTimeNow } from '../../utilities/datetime.util'
  * @param {(MasterDbClient | HostDbClient)} db
  * @returns {number} sessionExpireTime
  */
-export async function getSessionExpireTime(db: MasterDbClient | HostDbClient) {
+export async function getSessionExpireTime(db:  HostDbClient) {
   const config = await db.config.findFirst()
   const sessionExpireTime =
     getTimeNow() + (config?.sessionDuration || DEFAULT_SESSION_DURATION) * 60 //minutes to second

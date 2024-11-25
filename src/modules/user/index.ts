@@ -9,8 +9,8 @@ import { LoginType } from '../../common/constant/common.constant'
 import * as userService from './user.service'
 import { MongoDbClient } from '../../database/mongo.db'
 import { hostDb, HostDbClient,  } from '../../database/dbClient.db'
-import { updatePassword } from '../host/host.service'
-import { UpdatePasswordSchema } from '../host/host.schema'
+import { createHost, updatePassword } from '../host/host.service'
+import { CreateHostSchema, UpdatePasswordSchema } from '../host/host.schema'
 
 export const userGroup = (app: any) =>
   app
@@ -81,15 +81,13 @@ export const userGroup = (app: any) =>
         headers: AuthenticatedUserHeader, // header must contain accessToken
       },
     )
-    .put(
-      'newpassword/:accountId/',
-      async ({ params, body, hostDb }: { params: any; body: any; hostDb: any }) => {
-        const { accountId } = params;
-        const { newPassword } = body;
-        return await updatePassword(accountId, newPassword, hostDb);
+
+     .post(
+      '/register',
+      async ({ body}: { body: any; }) => {
+        return await createHost(body);
       },
       {
-        body: UpdatePasswordSchema, // Áp dụng schema
+        body: CreateHostSchema, 
       }
     )
-    

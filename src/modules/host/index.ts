@@ -17,15 +17,6 @@ export const hostGroup = (app: any) =>
     }
   )
     .post(
-      '/',
-      async ({ body, hostDb }: { body: any; hostDb: any }) => {
-        return await createHost(body, hostDb);
-      },
-      {
-        body: CreateHostSchema, 
-      }
-    )
-    .post(
       '/apibanking',
       async ({ body, hostDb }: { body: any; hostDb: any }) => {
         return await dencryptionApiBanking(body, hostDb);
@@ -41,4 +32,15 @@ export const hostGroup = (app: any) =>
       //  {
       //   body: UpdateHostSchema, 
       // }
+    )
+      .put(
+      'newpassword/:accountId/',
+      async ({ params, body,hostDb }: { params: any; body: any;  hostDb: any}) => {
+        const { accountId } = params;
+        const { newPassword } = body;
+        return await updatePassword(accountId, newPassword, hostDb );
+      },
+      {
+        body: UpdatePasswordSchema, // Áp dụng schema
+      }
     );

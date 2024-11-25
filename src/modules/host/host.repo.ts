@@ -1,6 +1,7 @@
 import { HostDbClient } from '../../database/dbClient.db';
 import { encrypt } from '../../utilities/crypting.util';
 
+
 export const hostRepo = {
      async getAllHosts(hostDb: HostDbClient) {
     return await hostDb.host.findMany({
@@ -70,6 +71,15 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
       where: { id: accountId },
       data: {
         name: data.name,
+      },
+    });
+  },
+  async updatePassword(accountId: string, data: any, hostDb: HostDbClient) {
+    const inputpassword = encrypt(data.password)
+    return await hostDb.account.update({
+      where: { id: accountId },
+      data: {
+        password: inputpassword,
       },
     });
   },

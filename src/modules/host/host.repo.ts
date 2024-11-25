@@ -48,7 +48,10 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
   },
 
   async updateHost(hostId: string, data: any, hostDb: HostDbClient) {
-    const inputpassword = encrypt(data.apibanking)
+    let inputpassword
+    if(data.apibanking){
+     inputpassword = encrypt(data.apibanking)
+    }
     return await hostDb.host.update({
       where: { hostid: hostId },
       data:{

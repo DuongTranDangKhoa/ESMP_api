@@ -19,10 +19,6 @@ export class NotificationObject {
 export type AccountType = Account;
 
 export const NotificationSchema = t.Object({
-   id: t.String({
-    format: 'uuid',
-    error: 'User ID is invalid',
-  }),
   source: t.Optional(t.String()),
   status: t.Optional(t.Boolean()),
 });
@@ -41,3 +37,4 @@ export const GetNotificationsByUserParams = t.Object({
     error: 'User ID is invalid',
   }),
 });
+

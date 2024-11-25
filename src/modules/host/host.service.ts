@@ -70,9 +70,10 @@
 import { hostRepo } from './host.repo';
 import { HostDbClient } from '../../database/dbClient.db';
 import { AuthenticationError } from '../../errors/authentication.error';
-import { verifyEncrypted } from '../../utilities/crypting.util';
+import { decrypt, verifyEncrypted } from '../../utilities/crypting.util';
 import { compareDateToNow } from '../../utilities/datetime.util';
 import { HostType } from './host.schema';
+import { message } from 'statuses';
 
 export const authenticateHostUser = async (
   username: string,
@@ -110,7 +111,8 @@ export const getHostAndVerify = async (
   if (!host) {
     throw new AuthenticationError('Invalid host');
   }
-
+    const decryptedPassword = decrypt(host.account.password); 
+    host.account.password = decryptedPassword;
   verifyHostContract(host);
   return host;
 };
@@ -123,10 +125,16 @@ export const createHost = async (data: any, hostDb: HostDbClient) => {
 
 export const updateHost = async (hostId: string, data: any, hostDb: HostDbClient) => {
    const host = await hostRepo.updateHost(hostId, data, hostDb);
-   await hostRepo.updateAccount(host.userid, data.name , hostDb);
+  //  await hostRepo.updateAccount(host.userid, data.name , hostDb);
    return 'Update Successfull Host'
 };
-
+export const dencryptionApiBanking = async (data: any, hostDb: HostDbClient) => {
+   const inputpassword = decrypt(data.apibanking)
+   return {
+    message: 'Dencryption Sucessfully',
+    id: inputpassword
+   }
+}
 export const updatePassword = async (
   accountId: string,
   newPassword: string,

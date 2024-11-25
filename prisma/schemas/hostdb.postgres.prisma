@@ -8,9 +8,9 @@ generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
   additionalProperties        = "true"
+  inputModel                  = "true"
   typeboxImportVariableName   = "t"
   typeboxImportDependencyName = "elysia"
-  inputModel                  = "true"
 }
 
 datasource db {
@@ -302,6 +302,7 @@ model host {
   email            String?       @db.VarChar(100)
   eventstoragetime DateTime?     @db.Timestamp(6)
   hostid           String        @id @unique(map: "host_hostid_unique") @default(uuid()) @db.Uuid
+  apibanking       String?       @db.VarChar
   category         Category[]
   event            Event[]
   account          Account       @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_host_account")

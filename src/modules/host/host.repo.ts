@@ -29,10 +29,11 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
   });
 },
   async createHost(data: any, hostDb: HostDbClient) {
+    const inputpassword = encrypt(data.password)
     return await hostDb.account.create({
       data: {
         username: data.username,
-        password: data.password,
+        password: inputpassword,
         role: 'host',
         name: data.name,
         host: {
@@ -47,6 +48,7 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
   },
 
   async updateHost(hostId: string, data: any, hostDb: HostDbClient) {
+    const inputpassword = encrypt(data.apibanking)
     return await hostDb.host.update({
       where: { hostid: hostId },
       data:{
@@ -55,16 +57,16 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         phone: data.phone,
         email: data.email,
         eventstoragetime: data.eventstoragetime,
+        apibanking: inputpassword,
       },
     });
   },
 
   async updateAccount(accountId: string, data: any, hostDb: HostDbClient) {
-    const inputpassword = encrypt(data.newPassword)
     return await hostDb.account.update({
       where: { id: accountId },
       data: {
-        name: inputpassword,
+        name: data.name,
       },
     });
   },

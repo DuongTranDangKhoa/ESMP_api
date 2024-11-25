@@ -30,6 +30,6 @@ export const UpdateHostSchema = {
   eventstoragetime: t.Optional(t.String({ format: 'date-time' })),
 };
 
-export const UpdatePasswordSchema = {
-  newPassword: 'string',
-};
+export const UpdatePasswordSchema =t.Object( {
+  newPassword: t.String(),
+});

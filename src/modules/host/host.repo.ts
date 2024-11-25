@@ -1,10 +1,11 @@
 import { HostDbClient } from '../../database/dbClient.db';
+import { encrypt } from '../../utilities/crypting.util';
 
 export const hostRepo = {
      async getAllHosts(hostDb: HostDbClient) {
     return await hostDb.host.findMany({
       include: {
-        account: true, // Bao gồm thông tin tài khoản liên kết
+        account: true, 
       },
     });
   },
@@ -19,13 +20,14 @@ export const hostRepo = {
       where: { userid: userId },
     });
   },
-
-  async findHostByHostId(hostId: string, hostDb: HostDbClient) {
-    return await hostDb.host.findUnique({
-      where: { hostid: hostId },
-    });
-  },
-
+async findHostByHostId(hostId: string, hostDb: HostDbClient) {
+  return await hostDb.host.findUnique({
+    where: { hostid: hostId },
+    include: {
+      account: true,
+    },
+  });
+},
   async createHost(data: any, hostDb: HostDbClient) {
     return await hostDb.account.create({
       data: {
@@ -58,10 +60,11 @@ export const hostRepo = {
   },
 
   async updateAccount(accountId: string, data: any, hostDb: HostDbClient) {
+    const inputpassword = encrypt(data.newPassword)
     return await hostDb.account.update({
       where: { id: accountId },
       data: {
-        name: data.name,
+        name: inputpassword,
       },
     });
   },

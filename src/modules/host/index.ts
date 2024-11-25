@@ -33,17 +33,4 @@ export const hostGroup = (app: any) =>
         const { hostId } = params;
         return await updateHost(hostId, body, hostDb);
       },
-    )
-
-
-    .put(
-      'newpassword/:accountId/',
-      async ({ params, body, hostDb }: { params: any; body: any; hostDb: any }) => {
-        const { accountId } = params;
-        const { newPassword } = body;
-        return await updatePassword(accountId, newPassword, hostDb);
-      },
-      {
-        body: UpdatePasswordSchema, // Áp dụng schema
-      }
     );

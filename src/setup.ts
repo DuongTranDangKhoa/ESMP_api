@@ -26,9 +26,8 @@ import { transactionpackageGroup } from './modules/transactionPackage'
 import { staffGroup } from './modules/staff'
 import { eventPaymentGroup } from './modules/eventpayment'
 import { notificationGroup } from './modules/notification'
-import { initSocket, httpServer } from './utilities/socket.util'
 import { hostGroup } from './modules/host'
-const io = initSocket(httpServer);
+
 const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .use(cors()) // implicit CORS
   .error(APIErrors) // assign custom error

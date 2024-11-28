@@ -110,5 +110,16 @@ app.group('/:hostId/:eventId', (app: any) =>
             return await mapService.updateLocationType(typeId, body, hostDb)
         }
         )
-
+        .get('/location/:hostId/:eventId',
+            async ({
+            params,
+            hostDb,
+            }: {
+                params: any
+                hostDb: HostDbClient
+            }) => {
+                const {hostId, eventId} = params;
+                return await mapService.getLocation(hostId, eventId, hostDb)
+            }
+        )
             

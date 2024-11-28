@@ -501,8 +501,43 @@ const updateLocationType = async (locationTypeId: string, inputData: LocationTyp
         throw new Error("Failed to update locationType");
     }
 }
+const getLocation = async (hostId:string, eventId: string, hostDb: HostDbClient) => {
+ try {
+        const event = await eventService.getEventById(eventId, hostDb);
+        const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);
+
+        const locationTypeMap = new Map<string, string>();
+        for (const type of locationTypes) {
+            locationTypeMap.set(type.typeId, type.typeName ?? '');
+        }
+
+        // Fetch all location data in a single query
+        const locationTypeIds = locationTypes.map((type) => type.typeId);
+        const locationData = await hostDb.location.findMany({
+            where: {
+                typeId: { in: locationTypeIds }
+            }
+        });
+
+        const locations: LocationGetObject[] = [];
+
+        for (const loc of locationData) {
+            const typeName = locationTypeMap.get(loc.typeId) ?? '';
+            const locationObject = new LocationGetObject(loc, typeName);
+
+            if (loc.shape === 'booth') {
+                locations.push(locationObject);
+            } 
+        }
+        return locationData;
+    } catch (error) {
+        console.error("Error creating map:", error);
+        throw new Error('Failed to get Location');
+    }
+}
 const mapService = {
     getMap,
+    getLocation,
     getLocationType,
     createMap,
     updateMap,

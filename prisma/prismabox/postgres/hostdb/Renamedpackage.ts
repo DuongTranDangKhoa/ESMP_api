@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { __transformDate__ } from "./__transformDate__";
+
 import { __nullable__ } from "./__nullable__";
 
 export const RenamedpackagePlain = t.Object(
@@ -12,6 +14,7 @@ export const RenamedpackagePlain = t.Object(
     updatedat: __nullable__(t.Date({ additionalProperties: true })),
     status: __nullable__(t.Boolean({ additionalProperties: true })),
     price: __nullable__(t.Number({ additionalProperties: true })),
+    expiretime: __nullable__(t.Integer({ additionalProperties: true })),
   },
   {
     additionalProperties: true,
@@ -53,6 +56,9 @@ export const RenamedpackagePlainInputCreate = t.Object(
     updatedat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
     price: t.Optional(__nullable__(t.Number({ additionalProperties: true }))),
+    expiretime: t.Optional(
+      __nullable__(t.Integer({ additionalProperties: true })),
+    ),
   },
   {
     additionalProperties: true,
@@ -67,8 +73,9 @@ export const RenamedpackagePlainInputUpdate = t.Object(
     eventstoragetime: __nullable__(t.Integer({ additionalProperties: true })),
     createdat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
-    status: __nullable__(t.Boolean({ additionalProperties: true })),
+    status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
     price: __nullable__(t.Number({ additionalProperties: true })),
+    expiretime: __nullable__(t.Integer({ additionalProperties: true })),
   },
   {
     additionalProperties: true,
@@ -152,6 +159,7 @@ export const RenamedpackageWhere = t.Partial(
           updatedat: t.Date(),
           status: t.Boolean(),
           price: t.Number(),
+          expiretime: t.Integer(),
         },
         {
           description: `This model has been renamed to 'Renamedpackage' during introspection, because the original name 'package' is reserved.`,
@@ -192,6 +200,7 @@ export const RenamedpackageWhereUnique = t.Recursive(
             updatedat: t.Date(),
             status: t.Boolean(),
             price: t.Number(),
+            expiretime: t.Integer(),
           },
           { additionalProperties: true },
         ),
@@ -212,6 +221,7 @@ export const RenamedpackageSelect = t.Partial(
       updatedat: t.Boolean(),
       status: t.Boolean(),
       price: t.Boolean(),
+      expiretime: t.Boolean(),
       transaction: t.Boolean(),
       _count: t.Boolean(),
     },
@@ -245,6 +255,7 @@ export const RenamedpackageOrderBy = t.Partial(
       updatedat: t.Union([t.Literal("asc"), t.Literal("desc")]),
       status: t.Union([t.Literal("asc"), t.Literal("desc")]),
       price: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      expiretime: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     {
       additionalProperties: true,

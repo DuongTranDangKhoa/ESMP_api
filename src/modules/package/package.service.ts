@@ -1,46 +1,31 @@
+import { PackageRepository } from "./package.repo";
 import { HostDbClient } from "../../database/dbClient.db";
 
-const getPackage =  async (hostDb: HostDbClient) => {
-    const getPackage = await hostDb.renamedpackage.findMany();
-    await hostDb.$disconnect();
-    return getPackage;
-}
+const getPackage = async (hostDb: HostDbClient) => {
+    const repository = new PackageRepository(hostDb);
+    return await repository.getAllPackages();
+};
+
 const createPackage = async (body: any, hostDb: HostDbClient) => {
-    const createPackage = await hostDb.renamedpackage.create({
-        data: body,
-    });
-    await hostDb.$disconnect();
-    return createPackage;
-}
+    const repository = new PackageRepository(hostDb);
+    return await repository.createPackage(body);
+};
+
 const updatePackage = async (id: string, body: any, hostDb: HostDbClient) => {
-    const updatePackage = await hostDb.renamedpackage.update({
-        where: {
-            id,
-        },
-        data: body,
-    });
-    await hostDb.$disconnect();
-    return updatePackage;
-}
+    const repository = new PackageRepository(hostDb);
+    return await repository.updatePackage(id, body);
+};
+
 const deletePackage = async (id: string, hostDb: HostDbClient) => {
-    
-    const deletePackage = await hostDb.renamedpackage.delete({
-        where: {
-            id,
-        },
-    });
-    await hostDb.$disconnect();
-    return deletePackage;
-}
+    const repository = new PackageRepository(hostDb);
+    return await repository.deletePackage(id);
+};
+
 const getPackageById = async (id: string, hostDb: HostDbClient) => {
-    const getPackageById = await hostDb.renamedpackage.findUnique({
-        where: {
-            id,
-        },
-    });
-    await hostDb.$disconnect();
-    return getPackageById;
-}
+    const repository = new PackageRepository(hostDb);
+    return await repository.getPackageById(id);
+};
+
 const packageService = {
     getPackage,
     createPackage,
@@ -48,4 +33,5 @@ const packageService = {
     deletePackage,
     getPackageById,
 };
+
 export default packageService;

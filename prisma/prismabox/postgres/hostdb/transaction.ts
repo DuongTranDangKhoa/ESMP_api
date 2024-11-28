@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { __transformDate__ } from "./__transformDate__";
+
 import { __nullable__ } from "./__nullable__";
 
 export const transactionPlain = t.Object(
@@ -40,6 +42,7 @@ export const transactionRelations = t.Object(
         updatedat: __nullable__(t.Date({ additionalProperties: true })),
         status: __nullable__(t.Boolean({ additionalProperties: true })),
         price: __nullable__(t.Number({ additionalProperties: true })),
+        expiretime: __nullable__(t.Integer({ additionalProperties: true })),
       },
       {
         additionalProperties: true,

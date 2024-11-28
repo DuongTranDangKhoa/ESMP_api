@@ -1,5 +1,7 @@
 import { t } from "elysia";
 
+import { __transformDate__ } from "./__transformDate__";
+
 import { __nullable__ } from "./__nullable__";
 
 export const ProductPlain = t.Object(
@@ -85,7 +87,7 @@ export const ProductPlainInputUpdate = t.Object(
     createAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedAt: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
-    count: __nullable__(t.Integer({ additionalProperties: true })),
+    count: t.Optional(__nullable__(t.Integer({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );

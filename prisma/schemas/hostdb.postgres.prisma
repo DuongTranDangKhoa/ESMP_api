@@ -7,10 +7,10 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  additionalProperties        = "true"
   inputModel                  = "true"
-  typeboxImportVariableName   = "t"
   typeboxImportDependencyName = "elysia"
+  additionalProperties        = "true"
+  typeboxImportVariableName   = "t"
 }
 
 datasource db {
@@ -191,7 +191,7 @@ model Product {
   createAt             DateTime?              @default(now()) @map("create_at") @db.Date
   updatedAt            DateTime?              @default(now()) @map("updated_at") @db.Date
   status               Boolean?               @default(false) @map("status")
-  count                Int?                   @map("count")
+  count                Int?                   @default(0) @map("count")
   category             Category               @relation(fields: [categoryId], references: [categoryId])
   vendor               Vendor                 @relation(fields: [vendorid], references: [vendorId])
   ProductInProductItem ProductInProductItem[]
@@ -328,8 +328,9 @@ model Renamedpackage {
   eventstoragetime Int?
   createdat        DateTime?     @default(now()) @db.Timestamp(6)
   updatedat        DateTime?     @default(now()) @db.Timestamp(6)
-  status           Boolean?
+  status           Boolean?      @default(true)
   price            Decimal?      @db.Decimal(10, 2)
+  expiretime       Int?
   transaction      transaction[]
 
   @@map("package")

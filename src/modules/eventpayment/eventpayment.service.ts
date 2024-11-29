@@ -1,6 +1,6 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import { HostDbClient } from "../../database/dbClient.db";
-import { EventPaymentObject, EventPaymentType } from "./eventpayment.shema";
+import { EventPaymentObject, EventPaymentType, EventPaymentVendorObject } from "./eventpayment.shema";
 import vendorineventservice from "../vendorinevent/vendorinevent.service";
 
 const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) => {
@@ -64,6 +64,83 @@ const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) =>
   eventPayment.eventPaymentid,
   locationType?.typeName ?? "Default Location Name",
   account?.name ?? "Default Name",
+  formatDate(eventPayment.depositPaymentDate),
+  eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
+  eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
+  event?.profit ?? new Decimal(0),
+  eventPayment.totalPaymentDate ?? null,
+  eventPayment.status ?? "Pending Deposit"
+);
+        payment.push(paymentValue);
+    }
+} 
+        return payment;
+    
+     }catch (error) {   
+        throw new Error('Error getting event payment in event: ' + error);
+    } 
+}
+const getEventPaymentInVendor = async (vendorId: string,  hostdb: HostDbClient) => {
+    if(!vendorId) {
+        throw new Error('Vendor ID is required');
+    }
+    try {
+        // console.log(vendorId, "Event");
+        const vendorInEvent = await hostdb.vendorInEvent.findMany({
+            where: {
+                vendorId
+            }
+         });
+        //  console.log(vendorInEvent, "vendorInEvent");
+         let payment: EventPaymentVendorObject[] = [];
+         for(const vendorEvent of vendorInEvent) {
+         const eventPayment = await hostdb.eventPayment.findUnique({
+            where: {
+                vendorinEventId: vendorEvent.vendorinEventId
+            }
+        });
+        // console.log(eventPayment, "eventPayment");
+        if(eventPayment) {
+        const location = await hostdb.location.findUnique({
+            where: {
+                locationId: eventPayment?.locationId
+            }
+        });
+        // console.log(location, "location");
+        const locationType = await hostdb.locationType.findUnique({
+            where: {
+                typeId: location?.typeId
+            }
+        });
+        // console.log(locationType, "locationType");
+        const vendor = await hostdb.vendor.findUnique({
+            where: {
+                vendorId
+            }
+        });
+        // console.log(vendor, "vendor");
+        const account = await hostdb.account.findUnique({
+            where: {
+                id: vendor?.userid
+            }
+        });
+        // console.log(account, "account");
+        const event = await hostdb.event.findUnique({
+            where: {
+                 eventId: vendorEvent.eventId
+            }
+        });
+      const formatDate = (date: Date | null): Date | null => {
+    if (!date) {
+        return null; // Trả về null nếu date là null
+    }
+    return new Date(date.toISOString().split('T')[0]); // Trả về một đối tượng Date mới
+};
+        // console.log(event, "event");
+        const paymentValue = new EventPaymentVendorObject(
+  eventPayment.eventPaymentid,
+  locationType?.typeName ?? "Default Location Name",
+  event?.name ?? "Default Name",
   formatDate(eventPayment.depositPaymentDate),
   eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
   eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
@@ -161,6 +238,7 @@ if(!vendorInEventId) {
 }
 const eventpaymentService = {
     getEventPaymentInEvent,
+    getEventPaymentInVendor,
     createEventPayment,
     updateEventPayment,
     deleteEvetPayment

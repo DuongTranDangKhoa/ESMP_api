@@ -8,6 +8,12 @@ export const eventPaymentGroup = (app: any) =>
         const payment = await eventpaymentService.getEventPaymentInEvent(eventId, hostDb)
                 return payment
             })
+        .get('/vendor/:vendorId', async ({params, hostDb }: { params: any, hostDb: HostDbClient }) => {
+        const vendorId = params.vendorId
+        const payment = await eventpaymentService.getEventPaymentInVendor(vendorId, hostDb)
+        return payment
+        }
+    )
         .post('/', async ({ body, hostDb }: {  body: any, hostDb: HostDbClient }) => {
                return await eventpaymentService.createEventPayment(body, hostDb);
             },{

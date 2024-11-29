@@ -37,7 +37,39 @@ export class EventPaymentObject {
     this.status = status;
   }
 }
+export class EventPaymentVendorObject {
+  id?: string;
+  locationtypename: string
+  eventname: string
+  depositpaymentdate: Date | null 
+  deposit: Decimal
+  totalprofit: Decimal
+  profitpercent: Decimal
+  profitpaymentdate: Date | null
+  status: string
 
+  constructor(
+    id: string | undefined,
+    locationtypename: string,
+    eventname: string,
+    depositpaymentdate: Date | null,
+    deposit: Decimal | 0.00,
+    totalprofit: Decimal | 0.00,
+    profitpercent: Decimal | 0.00,
+    profitpaymentdate: Date | null,
+    status: string
+  ) {
+    this.id = id;
+    this.locationtypename = locationtypename;
+    this.eventname = eventname;
+    this.depositpaymentdate = depositpaymentdate;
+    this.deposit =new Decimal(deposit);
+    this.totalprofit = new Decimal(totalprofit);
+    this.profitpercent = new Decimal(profitpercent);
+    this.profitpaymentdate = profitpaymentdate;
+    this.status = status;
+  }
+}
 export const EventPaymentSchema = t.Required(
   t.Object(
     {

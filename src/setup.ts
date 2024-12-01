@@ -9,7 +9,7 @@ import { transactionGroup } from './modules/transaction'
 import { errorHandler } from './middlewares/errorHandler.middleware'
 import { healthCheck } from './utilities/healthCheck.util'
 import { validateSession } from './middlewares/validateSession.middleware'
- import { initiateDatabase } from './database/mongo.db'
+//  import { initiateDatabase } from './database/mongo.db'
 import { APIErrors } from './errors'
 import cors from '@elysiajs/cors'
 import { AuthenticatedUserHeader } from './modules/user/user.schema'
@@ -33,7 +33,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
   .error(APIErrors) // assign custom error
   .onError(errorHandler) // implement error handler
   .get('/healthcheck', healthCheck) // health check route
-  .decorate(initiateDatabase) // initiate master and mongo database
+  // .decorate(initiateDatabase) // initiate master and mongo database
   .group('/user', (app) => app.use(userGroup)) // user routing route
   // authenticated user route
   .guard(

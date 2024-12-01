@@ -4,17 +4,17 @@ import { Static, t } from 'elysia'
  * Authentication
  */
 
-export const LoginParams = t.Object(
-  {
-    loginType: t.String({
-      default: 'host',
-      format: 'regex',
-      pattern: '^(host|vendor|staff|admin)$',
-      error: "Login type must be specified between 'admin', 'host', 'vendor' or 'staff'",
-    }),
-  },
-  { error: 'Login type must be specified', required: true },
-)
+// export const LoginParams = t.Object(
+//   {
+//     loginType: t.String({
+//       default: 'host',
+//       format: 'regex',
+//       pattern: '^(host|vendor|staff|admin)$',
+//       error: "Login type must be specified between 'admin', 'host', 'vendor' or 'staff'",
+//     }),
+//   },
+//   { error: 'Login type must be specified', required: true },
+// )
 
 export const LoginBody = t.Object({
   username: t.String({

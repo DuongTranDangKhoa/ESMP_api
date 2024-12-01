@@ -1,3 +1,4 @@
+import { SessionData } from '../../prisma/clients';
 import { PrismaClient } from '../../prisma/clients/postgres/hostdb'
 
 

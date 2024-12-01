@@ -1,13 +1,15 @@
 import {  HostDbClient } from '../../database/dbClient.db'
-import { MongoDbClient, MongoDbUserType } from '../../database/mongo.db'
+// import { MongoDbClient, MongoDbUserType } from '../../database/mongo.db'
 import { LoginResponseType } from './user.schema'
-import * as mongoService from '../mongoDb/mongoDb.service'
+import * as dbService from '../clientDb/Db.service'
 import * as hostService from '../host/host.service'
 import * as configService from '../config/config.service'
 import vendorService from '../vendor/vendor.service'
 import { RoleType } from '../../common/constant/common.constant'
 import staffService from '../staff/staff.service'
 import { verifyEncrypted } from '../../utilities/crypting.util'
+import { JsonValue } from '../../../prisma/clients/postgres/hostdb/runtime/library'
+import { userRepository } from './user.repo'
 /**
  * Create user session
  * @param {MongoDbUserType} userInfo
@@ -16,16 +18,16 @@ import { verifyEncrypted } from '../../utilities/crypting.util'
  * @returns {UUID} accessToken
  */
 async function createUserSession(
-  userInfo: MongoDbUserType,
+  userInfo: JsonValue,
   db: HostDbClient,
-  mongoDb: MongoDbClient,
+  mongoDb: HostDbClient ,
 ) {
   // declare session expired time
   const sessionExpireTime = await configService.getSessionExpireTime(db)
  
   // create session for user
-  const accessToken = await mongoService.createUserSession(
-    userInfo as MongoDbUserType,
+  const accessToken = await dbService.createUserSession(
+    userInfo as JsonValue,
     sessionExpireTime,
     mongoDb,
   )
@@ -47,7 +49,7 @@ export async function authenticateHostUser(
   username: string,
   password: string,
   hostDb: HostDbClient,
-  mongoDb: MongoDbClient,
+  mongoDb: HostDbClient,
 ): Promise<LoginResponseType> {
   const host = await hostService.authenticateHostUser(
     username,
@@ -58,7 +60,8 @@ export async function authenticateHostUser(
   const userInfo = {
     username,
     hostInfo: {
-      hostName: host.email as string,
+      hostName: host.name as string,
+      email: host.email as string,
       hostId: host.hostid as string,
      expiretime : host.expiretime,
     },
@@ -66,7 +69,7 @@ export async function authenticateHostUser(
 
   // create session for user
   const accessToken = await createUserSession(
-    userInfo as MongoDbUserType,
+    userInfo as JsonValue,
     hostDb,
     mongoDb,
   )
@@ -82,7 +85,7 @@ export async function authenticateVendorUser(
   username: string,
   password: string,
   hostDb: HostDbClient,
-  mongoDb: MongoDbClient,
+  mongoDb: HostDbClient,
 ): Promise<LoginResponseType> {
   const vendor = await vendorService.authenticateVendorUser(
     username,
@@ -95,7 +98,8 @@ export async function authenticateVendorUser(
     username,
     role: RoleType.MANAGER,
     hostInfo: {
-       hostName: host.email as string,
+       hostName: host.name as string,
+       email: host.email as string,
       hostId: host.hostid as string,
      expiretime : host.expiretime,
      // hostName: "123", 
@@ -110,7 +114,7 @@ export async function authenticateVendorUser(
   
   // create session for user
   const accessToken = await createUserSession(
-    userInfo as MongoDbUserType,
+    userInfo as JsonValue,
     hostDb,
     mongoDb,
   )
@@ -125,30 +129,33 @@ export async function authenticateStaffUser(
   username: string,
   password: string,
   hostDb: HostDbClient,
-  mongoDb: MongoDbClient,
+  mongoDb: HostDbClient,
 ): Promise<LoginResponseType> {
   const staff = await staffService.authenticateStaffUser(
     username,
     password,
     hostDb,
   )
-  const vendor = await hostDb.vendor.findFirst({where: {vendorId: staff.staff.vendorId}});
-  const vendorName = await hostDb.account.findFirst({where: {id: vendor?.userid}});
+  const vendor = await vendorService.getVendorById( staff.staff.vendorId, hostDb);
+  const vendorName = await userRepository.getAccountbyId(vendor?.userid, hostDb);
+  // const vendorName = await hostDb.account.findUnique({where: {id: vendor?.userid}});
   if (!vendor){
     throw new Error('Vendor not found');
   }
-  const host = await hostDb.host.findFirst({where: {hostid: vendor?.hostid}});
+   const host = await hostService.getHostAndVerify(vendor?.hostid, hostDb)
   const userInfo = {
   username,
   role: RoleType.STAFF,
   hostInfo: {
-      hostName: host?.email as string,
+      hostName: host?.name as string,
+      email: host?.email as string,
       hostId: host?.hostid as string,
-     expiretime : host?.expiretime,
+      expiretime : host?.expiretime,
   },
   vendorInfo: {
     vendorName: vendorName?.name as string,
-    vendorId: vendor?.vendorId as string,
+    email: vendorName?.email as string,
+    vendorId: vendor?.vendorid as string,
     urlQr: vendor?.urlQr as string
   },
   staffInfo: {
@@ -161,7 +168,7 @@ export async function authenticateStaffUser(
   
   // create session for user
   const accessToken = await createUserSession(
-    userInfo as MongoDbUserType,
+    userInfo as JsonValue,
     hostDb,
     mongoDb,
   )
@@ -172,10 +179,10 @@ export async function authenticateStaffUser(
     
   }
 }
-export async function logOutUser(accessToken: string, mongoDb: MongoDbClient) {
-  await mongoService.clearUserTokens(accessToken, mongoDb)
+export async function logOutUser(accessToken: string, mongoDb: HostDbClient) {
+  await dbService.clearUserTokens(accessToken, mongoDb)
 }
-export async function authenticateAdminUser(username: any, password: any, hostDb: HostDbClient, mongoDb: MongoDbClient) {
+export async function authenticateAdminUser(username: any, password: any, hostDb: HostDbClient, mongoDb: HostDbClient) {
   const user = await hostDb.account.findUnique({
     where: { username }
   });
@@ -198,7 +205,7 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
   }
   // create session for user
   const accessToken = await createUserSession(
-    userInfo as MongoDbUserType,
+    userInfo as JsonValue,
     hostDb,
     mongoDb,
   )
@@ -206,5 +213,16 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
     accessToken,
     userInfo,
   }
+}
+export async function forgotPassword(email: string, hostDb: HostDbClient) {
+ const emailUser = await userRepository.getAccoutbyEmail(email, hostDb);
+  return emailUser;
+}
+export async function getRole(username: string, hostDb: HostDbClient): Promise<string> {
+  const role = await userRepository.getRole(username, hostDb);
+  if (!role) {
+    throw new Error('User not found');
+  }
+  return role;
 }
 

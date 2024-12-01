@@ -27,6 +27,8 @@ export const notificationRelations = t.Object(
         createdat: __nullable__(t.Date({ additionalProperties: true })),
         updatedat: __nullable__(t.Date({ additionalProperties: true })),
         status: __nullable__(t.Boolean({ additionalProperties: true })),
+        phone: __nullable__(t.String({ additionalProperties: true })),
+        email: __nullable__(t.String({ additionalProperties: true })),
       },
       { additionalProperties: true },
     ),

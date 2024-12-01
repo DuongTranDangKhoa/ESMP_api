@@ -71,6 +71,16 @@ export const UpdateStaffSchema = t.Object({
     maxLength: 50,
     error: 'Name is required',
   }),
+  email: t.String({
+    minLength: 1,
+    maxLength: 50,
+    error: 'Email is required',
+  }),
+  phone: t.String({
+    minLength: 1,
+    maxLength: 10,
+    error: 'Phone number is required',
+  }),
   status: t.Optional(t.Boolean({ error: 'Status must be true or false' })),
 });
 export const GetStaffParams = t.Required(

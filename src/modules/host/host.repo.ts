@@ -15,7 +15,11 @@ export const hostRepo = {
       where: { username },
     });
   },
-
+   async findAccountByUserId(id: string, hostDb: HostDbClient) {
+    return await hostDb.account.findFirst({
+      where: { id },
+    });
+  },
   async findHostByUserId(userId: string, hostDb: HostDbClient) {
     return await hostDb.host.findFirst({
       where: { userid: userId },
@@ -37,10 +41,10 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         password: inputpassword,
         role: 'host',
         name: data.name,
+         phone: data.phone,
+         email: data.email,
         host: {
           create: {
-            phone: data.phone,
-            email: data.email,
             expiretime: data.expiretime,
           },
         },
@@ -53,13 +57,12 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
     if(data.apibanking){
      inputpassword = encrypt(data.apibanking)
     }
+  
     return await hostDb.host.update({
       where: { hostid: hostId },
       data:{
         expiretime: data.expiretime,
         bankingaccount: data.bankingaccount,
-        phone: data.phone,
-        email: data.email,
         eventstoragetime: data.eventstoragetime,
         apibanking: inputpassword,
       },
@@ -67,10 +70,16 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
   },
 
   async updateAccount(accountId: string, data: any, hostDb: HostDbClient) {
+    const checkemail = await hostDb.account.count({where: { email: data.email }});
+    if(checkemail > 1){
+      throw new Error('Email already exists')
+    }
     return await hostDb.account.update({
       where: { id: accountId },
       data: {
         name: data.name,
+        phone: data.phone,
+        email: data.email,
       },
     });
   },

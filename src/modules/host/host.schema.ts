@@ -12,7 +12,12 @@
 import { t } from 'elysia';
 import { host } from '../../../prisma/clients';
 
-export type HostType = Pick<host, 'hostid' | 'expiretime' | 'phone' | 'email' | 'eventstoragetime' | 'bankingaccount'>;
+export type HostType = Pick<host, 'hostid' | 'expiretime' | 'eventstoragetime' | 'bankingaccount'> & {
+  phone: string | null;
+  email: string | null;
+  name: string | null;
+};
+
 
 export const CreateHostSchema = t.Object({
   username: t.String(), // Bắt buộc

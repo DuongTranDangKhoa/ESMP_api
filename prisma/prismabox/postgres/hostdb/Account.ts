@@ -14,6 +14,8 @@ export const AccountPlain = t.Object(
     createdat: __nullable__(t.Date({ additionalProperties: true })),
     updatedat: __nullable__(t.Date({ additionalProperties: true })),
     status: __nullable__(t.Boolean({ additionalProperties: true })),
+    phone: __nullable__(t.String({ additionalProperties: true })),
+    email: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -28,8 +30,6 @@ export const AccountRelations = t.Object(
           bankingaccount: __nullable__(
             t.String({ additionalProperties: true }),
           ),
-          phone: __nullable__(t.String({ additionalProperties: true })),
-          email: __nullable__(t.String({ additionalProperties: true })),
           eventstoragetime: __nullable__(
             t.Date({ additionalProperties: true }),
           ),
@@ -67,11 +67,8 @@ export const AccountRelations = t.Object(
           vendorId: t.String({ additionalProperties: true }),
           userid: t.String({ additionalProperties: true }),
           hostid: t.String({ additionalProperties: true }),
-          phone: __nullable__(t.String({ additionalProperties: true })),
-          email: __nullable__(t.String({ additionalProperties: true })),
           address: __nullable__(t.String({ additionalProperties: true })),
           urlQr: __nullable__(t.String({ additionalProperties: true })),
-          status: __nullable__(t.Boolean({ additionalProperties: true })),
         },
         { additionalProperties: true },
       ),
@@ -89,6 +86,8 @@ export const AccountPlainInputCreate = t.Object(
     createdat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
+    phone: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
+    email: t.Optional(__nullable__(t.String({ additionalProperties: true }))),
   },
   { additionalProperties: true },
 );
@@ -102,6 +101,8 @@ export const AccountPlainInputUpdate = t.Object(
     createdat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     updatedat: t.Optional(__nullable__(t.Date({ additionalProperties: true }))),
     status: t.Optional(__nullable__(t.Boolean({ additionalProperties: true }))),
+    phone: __nullable__(t.String({ additionalProperties: true })),
+    email: __nullable__(t.String({ additionalProperties: true })),
   },
   { additionalProperties: true },
 );
@@ -259,6 +260,8 @@ export const AccountWhere = t.Partial(
         createdat: t.Date(),
         updatedat: t.Date(),
         status: t.Boolean(),
+        phone: t.String(),
+        email: t.String(),
       }),
     { $id: "Account" },
   ),
@@ -268,10 +271,13 @@ export const AccountWhere = t.Partial(
 export const AccountWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(t.Object({ id: t.String(), username: t.String() })),
+      t.Partial(
+        t.Object({ id: t.String(), username: t.String(), email: t.String() }),
+      ),
       t.Union([
         t.Object({ id: t.String() }),
         t.Object({ username: t.String() }),
+        t.Object({ email: t.String() }),
       ]),
       t.Partial(
         t.Object({
@@ -291,6 +297,8 @@ export const AccountWhereUnique = t.Recursive(
             createdat: t.Date(),
             updatedat: t.Date(),
             status: t.Boolean(),
+            phone: t.String(),
+            email: t.String(),
           },
           { additionalProperties: true },
         ),
@@ -311,6 +319,8 @@ export const AccountSelect = t.Partial(
       createdat: t.Boolean(),
       updatedat: t.Boolean(),
       status: t.Boolean(),
+      phone: t.Boolean(),
+      email: t.Boolean(),
       host: t.Boolean(),
       notification: t.Boolean(),
       staff: t.Boolean(),
@@ -347,6 +357,8 @@ export const AccountOrderBy = t.Partial(
       createdat: t.Union([t.Literal("asc"), t.Literal("desc")]),
       updatedat: t.Union([t.Literal("asc"), t.Literal("desc")]),
       status: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      phone: t.Union([t.Literal("asc"), t.Literal("desc")]),
+      email: t.Union([t.Literal("asc"), t.Literal("desc")]),
     },
     { additionalProperties: true },
   ),

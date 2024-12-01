@@ -7,9 +7,9 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  inputModel                  = "true"
   typeboxImportDependencyName = "elysia"
   additionalProperties        = "true"
+  inputModel                  = "true"
   typeboxImportVariableName   = "t"
 }
 
@@ -118,11 +118,8 @@ model Vendor {
   vendorId      String          @id @default(uuid()) @map("vendorid") @db.Uuid
   userid        String          @unique(map: "unique_vendor_userid") @db.Uuid
   hostid        String          @db.Uuid
-  phone         String?         @map("phone") @db.VarChar(10)
-  email         String?         @map("email") @db.VarChar(100)
   address       String?         @map("address") @db.VarChar(500)
   urlQr         String?         @map("ulQr") @db.VarChar
-  status        Boolean?        @default(true) @map("status")
   order         Order[]
   product       Product[]
   productItem   ProductItem[]
@@ -143,6 +140,8 @@ model Account {
   createdat    DateTime?      @default(now()) @db.Timestamp(6)
   updatedat    DateTime?      @default(now()) @db.Timestamp(6)
   status       Boolean?       @default(true)
+  phone        String?        @db.VarChar(10)
+  email        String?        @unique(map: "account_unique_1") @db.VarChar(50)
   host         host?
   notification notification[]
   staff        staff?
@@ -298,8 +297,6 @@ model host {
   userid           String        @unique(map: "unique_host_userid") @db.Uuid
   expiretime       DateTime?     @db.Timestamp(6)
   bankingaccount   String?       @db.VarChar(20)
-  phone            String?       @db.VarChar(15)
-  email            String?       @db.VarChar(100)
   eventstoragetime DateTime?     @db.Timestamp(6)
   hostid           String        @id @unique(map: "host_hostid_unique") @default(uuid()) @db.Uuid
   apibanking       String?       @db.VarChar

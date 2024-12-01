@@ -1,5 +1,6 @@
+
 import {
-  LoginParams,
+  // LoginParams,
   LoginBody,
   LoginResponseSchema,
   AuthenticatedUserHeader,
@@ -7,7 +8,7 @@ import {
 } from './user.schema'
 import { LoginType } from '../../common/constant/common.constant'
 import * as userService from './user.service'
-import { MongoDbClient } from '../../database/mongo.db'
+// import { dbClient } from '../../database/mongo.db'
 import { hostDb, HostDbClient,  } from '../../database/dbClient.db'
 import { createHost, updatePassword } from '../host/host.service'
 import { CreateHostSchema, UpdatePasswordSchema } from '../host/host.schema'
@@ -22,37 +23,36 @@ export const userGroup = (app: any) =>
      * @body password
      */
     .post(
-  '/login/:loginType',
+  '/login',
   async ({
     body,
-    params,
-    mongoDb,
+
+    db,
   }: {
     body: any;
     params: any;
-    mongoDb: MongoDbClient;
+    db: HostDbClient;
   }) => {
-   
-
     const { username, password } = body;
-    const { loginType } = params;
+    const  loginType  = await userService.getRole(username, hostDb)  ;
 
     switch (loginType) {
       case LoginType.HOST:
-        return await userService.authenticateHostUser(username, password, hostDb, mongoDb);
+        return await userService.authenticateHostUser(username, password, hostDb, db);
       case LoginType.VENDOR:
-        return await userService.authenticateVendorUser(username, password, hostDb, mongoDb);
+        return await userService.authenticateVendorUser(username, password, hostDb, db);
       case LoginType.STAFF:
-        return await userService.authenticateStaffUser(username, password, hostDb, mongoDb);
+        return await userService.authenticateStaffUser(username, password, hostDb, db);
       case LoginType.ADMIN:
-        return await userService.authenticateAdminUser(username, password, hostDb, mongoDb);
+        return await userService.authenticateAdminUser(username, password, hostDb, db);
       
         default:
         throw new Error('Invalid login type');
     }
+  
   },
   {
-    params: LoginParams,
+    // params: LoginParams,
     body: LoginBody,
     response: LoginResponseSchema,
   },
@@ -66,13 +66,13 @@ export const userGroup = (app: any) =>
       '/logout',
       async ({
         headers,
-        mongoDb,
+        db,
       }: {
         headers: any
-        mongoDb: MongoDbClient
+        db: HostDbClient
       }) => {
         const accessToken = headers.authorization
-        await userService.logOutUser(accessToken, mongoDb)
+        await userService.logOutUser(accessToken, db)
         return {
           message: 'User logged out!',
         }
@@ -91,3 +91,7 @@ export const userGroup = (app: any) =>
         body: CreateHostSchema, 
       }
     )
+    .post('/forget-password', async ({ body }: { body: any }) => {
+    const { email } = body;
+    return await userService.forgotPassword(email, hostDb);
+    })

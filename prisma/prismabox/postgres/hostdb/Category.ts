@@ -23,8 +23,6 @@ export const CategoryRelations = t.Object(
         userid: t.String({ additionalProperties: true }),
         expiretime: __nullable__(t.Date({ additionalProperties: true })),
         bankingaccount: __nullable__(t.String({ additionalProperties: true })),
-        phone: __nullable__(t.String({ additionalProperties: true })),
-        email: __nullable__(t.String({ additionalProperties: true })),
         eventstoragetime: __nullable__(t.Date({ additionalProperties: true })),
         hostid: t.String({ additionalProperties: true }),
         apibanking: __nullable__(t.String({ additionalProperties: true })),

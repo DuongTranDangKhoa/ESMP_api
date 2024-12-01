@@ -100,8 +100,4 @@ export const CreateAccount = t.Object({
     default: '',
     error: 'URL QR must be a valid string',
   }),
-  status: t.Boolean({
-    default: true,
-    error: 'Status must be a boolean value',
-  }),
 });

@@ -1,8 +1,7 @@
-import {
-  MongoDbClient,
-  MongoDbUserType,
-  MongoSessionData,
-} from '../../database/mongo.db'
+
+
+import { JsonValue } from '../../../prisma/clients/postgres/hostdb/runtime/library';
+import {hostDb, HostDbClient } from '../../database/dbClient.db'
 import { DatabaseError } from '../../errors/database.error'
 import { getTimeNow } from '../../utilities/datetime.util'
 
@@ -14,11 +13,11 @@ import { getTimeNow } from '../../utilities/datetime.util'
  * @returns {accessToken}
  */
 export const createUserSession = async (
-  userInfo: MongoDbUserType,
+  userInfo: JsonValue, // JSON value for user info
   sessionExpireTime: number,
-  mongoDb: MongoDbClient,
+  mongoDb: HostDbClient,
 ) => {
-  const accessToken = crypto.randomUUID()
+  const accessToken = crypto.randomUUID();
 
   // preparing session data
   const sessionInfo = {
@@ -28,20 +27,34 @@ export const createUserSession = async (
     createdAt: getTimeNow(),
     updatedAt: getTimeNow(),
     expiredAt: sessionExpireTime,
-  }
-  console.log('sessionInfo', sessionInfo)
-  console.log('userInfo', userInfo)
+  };
+
+  console.log('sessionInfo:', sessionInfo);
+  console.log('userInfo:', userInfo);
+
+  // Log the data before creating the session
+  const dataToCreate = {
+    accessToken: sessionInfo.accessToken,
+    createdAt: sessionInfo.createdAt,
+    expiredAt: sessionInfo.expiredAt,
+    updatedAt: sessionInfo.updatedAt,
+    sessionInfo: sessionInfo, // Add sessionInfo as a JSON object
+  };
+  console.log('Data to create:', dataToCreate);
+
   // create user session
-  await mongoDb.sessionData
+  await hostDb.sessionData
     .create({
-      data: sessionInfo,
+      data: dataToCreate, // Use the logged data
     })
     .catch((err: Error) => {
-      throw new DatabaseError(err.message)
-    })
+      throw new DatabaseError(err.message);
+    });
 
-  return accessToken
-}
+  return accessToken;
+};
+
+
 
 /**
  * Get User session
@@ -51,9 +64,9 @@ export const createUserSession = async (
  */
 export const getUserSession = async (
   accessToken: string,
-  mongoDb: MongoDbClient,
-): Promise<MongoSessionData | null> => {
-  const sessionInfo = await mongoDb.sessionData
+  hostdb: HostDbClient,
+) => {
+  const sessionInfo = await hostDb.sessionData
     .findFirst({
       where: { accessToken },
     })
@@ -72,10 +85,10 @@ export const getUserSession = async (
 export const refreshUserSession = async (
   accessToken: string,
   expiredAt: number,
-  mongoDb: MongoDbClient,
+  hostdb: HostDbClient,
 ) => {
   try {
-    await mongoDb.sessionData.update({
+    await hostDb.sessionData.update({
       where: {
         accessToken,
       },
@@ -96,9 +109,9 @@ export const refreshUserSession = async (
  */
 export const clearUserTokens = async (
   accessToken: string,
-  mongoDb: MongoDbClient,
+  mongoDb: HostDbClient,
 ) => {
-  await mongoDb.sessionData
+  await hostDb.sessionData
     .deleteMany({
       where: {
         accessToken,

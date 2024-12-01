@@ -84,7 +84,10 @@ export const authenticateHostUser = async (
   if (!account) {
     throw new AuthenticationError("Host's account not found");
   }
-
+  if (account.status === false) {
+    throw new AuthenticationError('Account is blocked');
+  }
+  console.log('account:', account);
   const host = await hostRepo.findHostByUserId(account.id, hostDb);
   if (!host) {
     throw new AuthenticationError('Invalid username');
@@ -94,9 +97,17 @@ export const authenticateHostUser = async (
   if (!isPasswordMatch) {
     throw new AuthenticationError('Invalid password');
   }
-
-  verifyHostContract(host);
-  return host;
+ const hostType: HostType = {
+  hostid: host.hostid,
+  expiretime: host.expiretime,
+  name: account.name,
+  phone: account.phone || null,   
+  email: account.email || null,   
+  eventstoragetime: host.eventstoragetime,
+  bankingaccount: host.bankingaccount,
+};
+  verifyHostContract(hostType);
+  return hostType;
 };
 
 export const getHostAndVerify = async (
@@ -111,10 +122,26 @@ export const getHostAndVerify = async (
   if (!host) {
     throw new AuthenticationError('Invalid host');
   }
+  const inforHost = await hostRepo.findAccountByUserId(host.userid, hostDb);
+  if (!host) {
+    throw new AuthenticationError('Invalid host');
+  }
     const decryptedPassword = decrypt(host.account.password); 
     host.account.password = decryptedPassword;
-  verifyHostContract(host);
-  return host;
+    if (!inforHost) {
+    throw new AuthenticationError('Invalid host');
+    }
+  const hostType: HostType = {
+  hostid: host.hostid,
+  expiretime: host.expiretime,
+  name: inforHost.name,
+  phone: inforHost.phone || null,   
+  email: inforHost.email || null,   
+  eventstoragetime: host.eventstoragetime,
+  bankingaccount: host.bankingaccount,
+};
+  verifyHostContract(hostType);
+  return hostType;
 };
 export const getAllHosts = async (hostDb: HostDbClient) => {
   return await hostRepo.getAllHosts(hostDb);
@@ -125,7 +152,7 @@ export const createHost = async (data: any) => {
 
 export const updateHost = async (hostId: string, data: any, hostDB: HostDbClient) => {
   const host = await hostRepo.updateHost(hostId, data, hostDB);
-  await hostRepo.updateAccount(host.userid, data.name , hostDb);
+  await hostRepo.updateAccount(host.userid, data , hostDb);
    return 'Update Successfull Host'
 };
 export const dencryptionApiBanking = async (data: any, hostDb: HostDbClient) => {

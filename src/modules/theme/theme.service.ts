@@ -9,7 +9,9 @@ const getThemeById = async (themeId: string, hostDb: HostDbClient) => {
 return await hostDb.theme.findFirst({ where: { themeId: themeId } })
 }
 const createTheme = async (theme: ThemeObject, hostDb: HostDbClient) => {
-    console.log(theme);
+    if (!theme.hostid) {
+        throw new Error('Theme hostid is required')
+    }
     await hostDb.theme.create({ data: {
         name: theme.name,
         status: theme.status,

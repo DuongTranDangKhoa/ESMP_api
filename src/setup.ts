@@ -40,6 +40,7 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
     (app) =>
       
       app
+        .group('/mail',(app) => app.use(mailGroup)) // mail route)
         .resolve(validateSession) // implement session validating
         .group('/event', (app) => app.use(eventGroup)) // event route
         .group('/vendor', (app) => app.use(vendorGroup)) // vendor route
@@ -58,7 +59,6 @@ const app = new Elysia({ prefix: '/api' }) // declare app with '/api' prefix
         .group('/service', (app) => app.use(serviceGroup)) // service route
         .group('/menu', (app) => app.use(menuGroup)) // menu route
         .group('/vendorinevent', (app) => app.use(vendorineventGroup)) // vendor route
-        .group('/mail',(app) => app.use(mailGroup)) // mail route)
         .group('/map', (app) => app.use(mapGroup)) // map route
         // .group('/transaction', (app) => app.use(transactionGroup)) // transaction route
         .group('/debug/host', debuggingGroup), // authenticated debug route

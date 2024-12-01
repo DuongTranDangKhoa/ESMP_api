@@ -3,7 +3,7 @@ import {
   UpdateHostSchema,
   UpdatePasswordSchema,
 } from './host.schema';
-import { createHost, getAllHosts, getHostAndVerify, updateHost, updatePassword, dencryptionApiBanking } from './host.service';
+import { createHost, getAllHosts, getHostAndVerify, updateHost, updatePassword, dencryptionApiBanking, getHostByUserId } from './host.service';
 
 export const hostGroup = (app: any) =>
   app
@@ -13,7 +13,7 @@ export const hostGroup = (app: any) =>
     )   
     .get('/:hostid', async ({ params, hostDb }: { params: any, hostDb: any })=> {
       const {hostid} = params;
-      return await getHostAndVerify(hostid, hostDb);
+      return await getHostByUserId(hostid, hostDb);
     }
   )
     .post(

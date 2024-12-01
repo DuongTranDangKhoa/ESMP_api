@@ -143,6 +143,9 @@ export const getHostAndVerify = async (
   verifyHostContract(hostType);
   return hostType;
 };
+export const getHostByUserId = async (hostId: string, hostDb: HostDbClient) => {
+  return await hostRepo.findHostByHostId(hostId, hostDb);
+}
 export const getAllHosts = async (hostDb: HostDbClient) => {
   return await hostRepo.getAllHosts(hostDb);
 };

@@ -97,7 +97,7 @@ export const userGroup = (app: any) =>
     })
     .put(
       'newpassword/:accountId/',
-      async ({ params, body,hostDb }: { params: any; body: any;  hostDb: any}) => {
+      async ({ params, body, }: { params: any; body: any; }) => {
         const { accountId } = params;
         const { newPassword } = body;
         return await updatePassword(accountId, newPassword, hostDb );

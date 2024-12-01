@@ -22,7 +22,7 @@ export const userRepository = {
         where: { email },
       });
       return{ email: user?.email,
-              accountid: user?.id
+              accountId: user?.id
         };
     }
      catch (error) {

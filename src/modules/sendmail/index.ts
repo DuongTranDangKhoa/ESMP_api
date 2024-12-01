@@ -17,4 +17,6 @@ export const mailGroup = (app: any) =>
       error: (error as Error).message,
     };
   }
-});
+})
+  
+;

@@ -27,4 +27,11 @@ export const vendorineventGroup = (app: any) =>
                 message: 'Update vendorInEvent success',
             };
         })
+        .delete('/:vendorInEventId', async ({ params, hostDb }: { params: any, hostDb: HostDbClient }) => {
+        })
+        .get('/countevents/:hostid', async ({ params, hostDb }: { params: any, hostDb: HostDbClient }) => {
+            const hostid = params.hostid;
+            const eventCount = await vendorineventservice.countEventByMostVendor(hostid, hostDb);
+            return { eventCount };
+        })
     

@@ -34,4 +34,37 @@ export class ProductInProductItemObject {
     this.unit = productItem.unit
   }
 }
-        
+export const ProductItemObjectSchema = t.Object({
+  name: t.String(),
+  description: t.String(),
+  price: t.Number(),
+  details: t.Array(
+    t.Object({
+      productId: t.String(),
+      quantity: t.Number(),
+      unit: t.String(),
+    })
+  ),
+});
+
+export const ProductInProductItemObjectSchema = t.Object({
+    productId: t.String(),
+    quantity: t.Number(),
+    unit: t.String(),
+});       
+export const ProductItemObjectSchemaUpdate = t.Object({
+  name: t.Optional(t.String()),            
+  description: t.Optional(t.String()),   
+  price: t.Optional(t.Number()),           
+  details: t.Optional(
+    t.Array(
+      t.Object({
+        productId: t.String(),
+        quantity: t.Number(),
+        unit: t.String(),
+      })
+    )
+  ),
+  createAt: t.Optional(t.Date()),          
+  status: t.Optional(t.Boolean()),        
+});

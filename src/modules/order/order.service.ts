@@ -1,173 +1,95 @@
-import { Order } from './../../../prisma/clients/postgres/hostdb/index.d';
+// src/modules/order/order.service.ts
 
-import { NotFoundError } from 'elysia'
-import { HostDbClient } from '../../database/dbClient.db'
-import { CreateOrder, OrderDetailObject, OrderObject } from './order.schema'
+import { NotFoundError } from 'elysia';
+import { HostDbClient } from '../../database/dbClient.db';
+import { CreateOrder, OrderDetailObject, OrderObject } from './order.schema';
+import { orderRepo } from './order.repo';
+import { productItemRepo } from '../productitem/productitem.repo';
 
 const getOrderListOfVendor = async (vendorId: string, hostDb: HostDbClient) => {
-  console.log('orderListOfVendor', vendorId)
-  const orderListOfVendor = await hostDb.order.findMany({
-    where: {
-      vendorId,
-    },
-  })
-  await hostDb.$disconnect();
-  return orderListOfVendor
-}
+  console.log('Getting order list for vendor:', vendorId);
+  const orderListOfVendor = await orderRepo.getOrderListOfVendor(vendorId, hostDb);
+  return orderListOfVendor;
+};
 
-const getOrderListOfEvent = async (eventId: string,vendorId: string, hostDb: HostDbClient) => {
-  const orderListOfVendor = await hostDb.order.findMany({
-    where: {
-      eventId,
-      vendorId
-    },
-  })
-   await hostDb.$disconnect();
-  return orderListOfVendor
-}
+const getOrderListOfEvent = async (eventId: string, vendorId: string, hostDb: HostDbClient) => {
+  console.log('Getting order list for event:', eventId, 'and vendor:', vendorId);
+  const orderListOfEvent = await orderRepo.getOrderListOfEvent(eventId, vendorId, hostDb);
+  return orderListOfEvent;
+};
 
-// const createOrder = async (
-//   eventId: string,
-//   vendorId: string,
-//   orderData: any,
-//   hostDB: HostDbClient,
-// ) => {
-//   const total = orderData.reduce(
-//     (total: number, orderItem: any) => (total += orderItem.price),
-//   )
+const createOrder = async (inputOrderDetail: CreateOrder, hostDB: HostDbClient) => {
+  const orderData = {
+    eventId: inputOrderDetail.eventId,
+    vendorId: inputOrderDetail.vendorId,
+    name: inputOrderDetail.name,
+    totalAmount: inputOrderDetail.totalAmount,
+    totalPrice: inputOrderDetail.totalPrice,
+    status: "Prepared",
+  };
 
-//   await hostDB.$transaction(async (hostDB) => {
-//     const order = await hostDB.order.create({
-//       data: {
-//         eventId,
-//         vendorId,
-//         total,
-//         createBy: vendorId,
-//         updatedBy: vendorId,
-//       },
-//     })
-
-//     const orderItems = orderData.map(
-//       (orderItem: any, index: any) =>
-//         new OrderDetailObject(
-//           eventId,
-//           vendorId,
-//           order.orderId,
-//           Number(index + 1),
-//           orderItem,
-//         ),
-//     )
-
-//     await Promise.all(
-//       orderItems.map(async (orderItem: OrderDetailObject) => {
-//         await hostDB.orderDetail.create({ data: orderItem })
-//       }),
-//     )
-//   })
-// }
-const createOrder = async (
-  inputOrderDetail: CreateOrder,
-  hostDB: HostDbClient,
-) => {
-
-  const order = await hostDB.order.create({
-    data: {
-      eventId: inputOrderDetail.eventId,
-      vendorId: inputOrderDetail.vendorId,
-      name: inputOrderDetail.name,
-      totalAmount: inputOrderDetail.totalAmount,
-      totalPrice: inputOrderDetail.totalPrice,
-      status: "Prepared"
-    }
-  });
-
+  const order = await orderRepo.createOrder(orderData, hostDB);
 
   if (!order) {
-    throw new NotFoundError('Order not exists');
+    throw new NotFoundError('Order not created');
   }
-
 
   const orderDetailsData = inputOrderDetail.details.map(detail => ({
     productitemId: detail.productitemId,
-    orderId: order.orderId,  
+    orderId: order.orderId,
     quantity: detail.quantity,
     unitPrice: detail.unitPrice,
-    totalPrice: detail.quantity * detail.unitPrice
+    totalPrice: detail.quantity * detail.unitPrice,
   }));
-  
-  const orderDetail = await hostDB.orderDetail.createMany({
-    data: orderDetailsData
-  });
 
+  const orderDetail = await orderRepo.createOrderDetails(orderDetailsData, hostDB);
 
   if (!orderDetail) {
     throw new Error('Failed to create order details');
-  }else{
-    for (const detail of orderDetailsData) {
-  const productInProductItem = await hostDB.productInProductItem.findMany({
-    where: { productItemId: detail.productitemId },
-  });
+  } else {
 
-  for (const item of productInProductItem) {
-    if (!item.quantity) {
+    for (const detail of orderDetailsData) {
+      const productInProductItem = await productItemRepo.getProductInProductItem(detail.productitemId, hostDB);
+
+      for (const item of productInProductItem) {
+          if (!item.quantity) {
       throw new Error('quantity not exists');
     }
+        const product = await productItemRepo.getProductById(item.productId, hostDB);
 
-    const count = detail.quantity * item.quantity;
-    
-    const product = await hostDB.product.findUnique({
-      where: { productId: item.productId },
-    });
+        if (!product || product.quantity === null || product.quantity === undefined) {
+          throw new Error('Product or quantity not found');
+        }
 
-    if (!product || product.quantity === null || product.quantity === undefined) {
-      throw new Error('Product or quantity not found');
+        const count = detail.quantity * item.quantity;
+
+        if (product.quantity === 0 || product.quantity - count < 0) {
+          return 'Not enough product in stock';
+        }
+
+        // Update product stock and count
+        await productItemRepo.updateProductQuantityAndCount(item.productId, count, hostDB);
+      }
     }
-
-    if (product.quantity === 0 || product.quantity - count < 0) {
-      return 'Not enough product in stock';
-    }
-
-    // console.log('product', count, product.quantity, product.count);
-
-      await hostDB.product.update({
-      where: { productId: item.productId },
-      data: {
-        quantity: (product.quantity - count),
-        count: ((product.count || 0) + count), 
-      },
-    });
-    
   }
-}
-  }
-    await hostDB.$disconnect();
 
   return {
     order,
-    orderDetails: orderDetail
+    orderDetails: orderDetail,
   };
-}
+};
 
-const getOrderDetails = async (
-  orderId: string,
-  hostDb: HostDbClient,
-) => {
-  console.log('orderDetails', orderId)
-  const orderDetails = hostDb.orderDetail.findMany({
-    where: {
-      orderId
-    },
-  })
-   await hostDb.$disconnect();
-  return orderDetails
-  
-}
+const getOrderDetails = async (orderId: string, hostDb: HostDbClient) => {
+  console.log('Getting order details for orderId:', orderId);
+  const orderDetails = await orderRepo.getOrderDetailsByOrderId(orderId, hostDb);
+  return orderDetails;
+};
 
 const orderService = {
   getOrderListOfVendor,
   getOrderListOfEvent,
   createOrder,
   getOrderDetails,
-}
+};
 
-export default orderService
+export default orderService;

@@ -120,3 +120,27 @@ export const OrderSchema = t.Object({
   ),
   transactionType: t.String(),
 });
+export const CreateOrderSchema = t.Object({
+  eventId: t.String({
+    format: 'uuid',
+    error: 'Event ID must be a valid UUID',
+  }),
+  vendorId: t.String({
+    format: 'uuid',
+    error: 'Vendor ID must be a valid UUID',
+  }),
+  name: t.String(),
+  totalAmount: t.Number(),
+  totalPrice: t.Number(),
+  details: t.Array(
+    t.Object({
+      productitemId: t.String({
+        format: 'uuid',
+        error: 'Product Item ID must be a valid UUID',
+      }),
+      quantity: t.Number(),
+      unitPrice: t.Number(),
+    })
+  ),
+  transactionType: t.String(),
+});

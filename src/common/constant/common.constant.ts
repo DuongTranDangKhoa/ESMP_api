@@ -28,5 +28,6 @@ export const EventPaymentStatus = {
 PENDINGDEPOSIT: 'Pending Deposit', 
 SUCESSDEPOSIT: 'Success Deposit', 
 PENDINGTOTAL: 'Pending Total',
-FINISH: 'Refunding Deposit'
+FINISH: 'Refunding Deposit',
+FINISHED: 'Finished',
 }

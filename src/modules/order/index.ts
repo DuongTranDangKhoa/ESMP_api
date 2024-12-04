@@ -67,6 +67,9 @@ export const orderGroup = (app: any) =>
           message: 'Create order success',
         };
       },
+      {
+        body: orderSchema.CreateOrderSchema,
+      }
     )
     .get(
       '/orderDetail/:orderId',

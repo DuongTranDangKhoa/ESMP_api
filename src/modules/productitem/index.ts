@@ -3,6 +3,7 @@ import productService from './productitem.service'
 import status from 'statuses'
 import * as productitemshema from "./productitem.schema";
 import * as commonSchema from '../../common/schema.common'
+import { ProductItemObjectSchema, ProductItemObjectSchemaUpdate } from './productitem.schema';
 export const productItemGroup = (app: any) =>
     app
         .guard('/', (app: any) =>
@@ -16,7 +17,7 @@ export const productItemGroup = (app: any) =>
             '/:vendorId',
             async (req: { params: { vendorId: string }; hostDb: HostDbClient } ) => {  
               const { vendorId } = req.params;          
-                const productItems =  productService.getProductItem(vendorId, req.hostDb)
+                const productItems =  productService.getProductItems(vendorId, req.hostDb)
                 return productItems
             },
            )
@@ -36,6 +37,7 @@ export const productItemGroup = (app: any) =>
                 response: {
                   201: commonSchema.CommonSuccessResponse,
                 },
+                body: ProductItemObjectSchema,
               },        
            )
            .put(
@@ -45,6 +47,9 @@ export const productItemGroup = (app: any) =>
                 const productItem = await productService.updateProductItem(productItemId, vendorId,  body, hostDb)
                 return productItem
             },
+            {
+              body: ProductItemObjectSchemaUpdate,
+            }
            )
            .delete(
   '/:productItemId',

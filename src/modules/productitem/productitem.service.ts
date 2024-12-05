@@ -1,5 +1,5 @@
 import { productItemRepo } from './productitem.repo';
-import { ProductItemObject } from './productitem.schema';
+import { ProductInProductItemObject, ProductItemObject } from './productitem.schema';
 import { HostDbClient } from '../../database/dbClient.db';
 import { NotFoundError, InternalServerError } from 'elysia';
 
@@ -10,8 +10,27 @@ const getProductItems = async (vendorId: string, hostDb: HostDbClient) => {
         if (!productItems || productItems.length === 0) {
             throw new NotFoundError('Product items not found');
         }
-
-        return productItems;
+        const productItemDetails: ProductItemObject[] = [];
+        for (const productItem of productItems) {
+        const productInProductItems = await productItemRepo.getProductInProductItem(productItem.productItemId, hostDb);
+        const details = productInProductItems.map(detail => new ProductInProductItemObject({
+                productId: detail.productId,
+                quantity: detail.quantity,
+                unit: detail.unit
+            }));
+                productItemDetails.push(new ProductItemObject({
+                productItemId: productItem.productItemId,
+                vendorId: vendorId,
+                name: productItem.name,
+                description: productItem.description,
+                price: productItem.price,  
+                details: details,  
+                createAt: productItem.createAt ,
+                updateAt: productItem.updatedAt,
+                status: productItem.status,
+            }));
+        }
+        return productItemDetails;
     } catch (error) {
         throw new InternalServerError('Failed to retrieve product items');
     }

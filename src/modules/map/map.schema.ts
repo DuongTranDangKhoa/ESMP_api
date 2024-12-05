@@ -51,19 +51,23 @@ export class BoothObject {
 }
 export class LocationGetObject {
    name : string
+   color: string
    location: LocationTypeType
-   constructor(locationType: LocationTypeType, name: string){
+   constructor(locationType: LocationTypeType, name: string, color: string){
          this.location = locationType
          this.name = name
+         this.color = color
     }
 }
 export class LocationTypeObject{
     typeId?: string
+    color: string
     typeName: string
     price: number
     status: string 
     constructor(data: any){
         this.typeId = data.typeId
+        this.color = data.color
         this.typeName = data.name
         this.price = data.price
         this.status = data.status

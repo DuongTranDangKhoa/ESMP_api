@@ -10,6 +10,7 @@ const createLocationType = async (hostId: string, eventId: string, inputData: Lo
       const locationType = await hostDb.locationType.createMany({
         data: {
           eventId: eventId,
+          color: inputData.color,
           typeName: inputData.typeName,
           price : inputData.price,
           status: inputData.status,
@@ -131,8 +132,10 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
         const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);
 
         const locationTypeMap = new Map<string, string>();
+        const locationTypeMapColor = new Map<string, string>();
         for (const type of locationTypes) {
             locationTypeMap.set(type.typeId, type.typeName ?? '');
+            locationTypeMapColor.set(type.typeId, type.color ?? '');
         }
 
         // Fetch all location data in a single query
@@ -149,7 +152,8 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
 
         for (const loc of locationData) {
             const typeName = locationTypeMap.get(loc.typeId) ?? '';
-            const locationObject = new LocationGetObject(loc, typeName);
+            const color = locationTypeMapColor.get(loc.typeId) ?? '';
+            const locationObject = new LocationGetObject(loc, typeName,color);
 
             if (loc.shape === 'booth') {
                 locations.push(locationObject);
@@ -489,6 +493,7 @@ const updateLocationType = async (locationTypeId: string, inputData: LocationTyp
                 typeId: locationTypeId,
             },
             data: {
+                color: inputData.color,
                 typeName: inputData.typeName,
                 price: inputData.price,
                 status: inputData.status,
@@ -507,8 +512,10 @@ const getLocation = async (hostId:string, eventId: string, hostDb: HostDbClient)
         const locationTypes = await getLocationTypeofMap(hostId, eventId, hostDb);
 
         const locationTypeMap = new Map<string, string>();
+        const locationTypeMapColor = new Map<string, string>();
         for (const type of locationTypes) {
             locationTypeMap.set(type.typeId, type.typeName ?? '');
+            locationTypeMapColor.set(type.typeId, type.color ?? '');
         }
 
         // Fetch all location data in a single query
@@ -523,7 +530,8 @@ const getLocation = async (hostId:string, eventId: string, hostDb: HostDbClient)
 
         for (const loc of locationData) {
             const typeName = locationTypeMap.get(loc.typeId) ?? '';
-            const locationObject = new LocationGetObject(loc, typeName);
+            const color = locationTypeMapColor.get(loc.typeId) ?? '';
+            const locationObject = new LocationGetObject(loc, typeName,color);
 
             if (loc.shape === 'booth') {
                 locations.push(locationObject);

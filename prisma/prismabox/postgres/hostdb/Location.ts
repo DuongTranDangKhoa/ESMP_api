@@ -48,6 +48,7 @@ export const LocationRelations = t.Object(
         typeName: t.String({ additionalProperties: true }),
         price: t.Number({ additionalProperties: true }),
         status: __nullable__(t.String({ additionalProperties: true })),
+        color: __nullable__(t.String({ additionalProperties: true })),
       },
       { additionalProperties: true },
     ),

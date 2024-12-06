@@ -82,8 +82,9 @@ const getEventPaymentInEvent = async (eventId: string, hostdb: HostDbClient) => 
             const vendorItem = vendorId ? vendors.find(v => v.vendorId === vendorId) : null;
             const account = vendorItem ? accounts.find(a => a.id === vendorItem.userid) : null;
 
-            const paymentValue = new EventPaymentVendorObject(
+            const paymentValue = new EventPaymentObject(
                 eventPayment.eventPaymentid,
+                vendorItem?.vendorId,
                 locationType?.typeName ?? "Default Location Name",
                 account?.name ?? "Default Name",
                 formatDate(eventPayment.depositPaymentDate),

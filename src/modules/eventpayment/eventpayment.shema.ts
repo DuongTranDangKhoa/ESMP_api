@@ -6,6 +6,7 @@ export type EventPaymentType = EventPayment
 
 export class EventPaymentObject {
   id?: string;
+  vendorId: string | undefined ;
   locationtypename: string
   name: string
   depositpaymentdate: Date | null 
@@ -16,6 +17,7 @@ export class EventPaymentObject {
 
   constructor(
     id: string | undefined,
+    vendorId: string | undefined,
     locationtypename: string,
     name: string,
     depositpaymentdate: Date | null,
@@ -25,6 +27,7 @@ export class EventPaymentObject {
     status: string
   ) {
     this.id = id;
+    this.vendorId = vendorId;
     this.locationtypename = locationtypename;
     this.name = name;
     this.depositpaymentdate = depositpaymentdate;

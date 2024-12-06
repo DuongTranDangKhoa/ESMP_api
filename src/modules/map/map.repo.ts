@@ -117,6 +117,13 @@ export const mapRepo = {
             },
         });
   },
+  async findLocationbyLocationId(locationId: string, hostDb: HostDbClient) {
+  return await hostDb.location.findUnique({
+            where: {
+                locationId: locationId,
+            },
+        });
+  },
   // Get Map Data
   async getMapData(locationTypeIds: string[], hostDb: HostDbClient) {
     return await hostDb.location.findMany({

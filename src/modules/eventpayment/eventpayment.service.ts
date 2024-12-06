@@ -4,6 +4,8 @@ import { EventPaymentObject, EventPaymentType, EventPaymentVendorObject } from "
 import eventpaymentRepo from "./eventpayment.repo"; // Import the repository
 import { VendorInEventRepository } from "../vendorinevent/vendorinevent.repo";
 import { vendorRepository } from "../vendor/vendor.repo";
+import { mapRepo } from "../map/map.repo";
+import { LocationType } from "../../../prisma/prismabox/postgres/hostdb/LocationType";
 const getEventPaymentInLocation = async (locationId: string, hostdb: HostDbClient) => {
     const vendorInEventRepo = new VendorInEventRepository(hostdb);
     const eventPaymentInfo = await eventpaymentRepo.getEventPaymentByLocationId(locationId, hostdb);
@@ -20,7 +22,17 @@ const getEventPaymentInLocation = async (locationId: string, hostdb: HostDbClien
          throw new Error('Location is not booked or Location of status is Available ' );
     }
 };
-
+const getEventPaymentInVendorId = async (vendorinEventId: string, hostdb: HostDbClient) => {
+    const eventPaymentInfo = await eventpaymentRepo.getEventPaymentByVendorInEvent(vendorinEventId, hostdb);
+    if (eventPaymentInfo.length === 0) {
+        throw new Error('Vendor In Event not found');
+    }
+    const location = await mapRepo.findLocationbyLocationId(eventPaymentInfo[0].locationId, hostdb);
+    return {
+        locationId: location?.locationId,
+        typeId: location?.typeId
+    };
+}   
 const getEventPaymentInEvent = async (eventId: string, hostdb: HostDbClient) => {
     if (!eventId) {
         throw new Error('eventId ID is required');
@@ -204,6 +216,7 @@ const deleteEventPayment = async (vendorInEventId: string, hostdb: HostDbClient)
 const eventpaymentService = {
     getEventPaymentInEvent,
     getEventPaymentInLocation,
+    getEventPaymentInVendorId,
     getEventPaymentInVendor,
     createEventPayment,
     updateEventPayment,

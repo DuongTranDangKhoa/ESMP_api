@@ -16,7 +16,16 @@ const getEventPaymentByLocationId = async (locationId: string, hostdb: HostDbCli
         }
     });
 };
-
+const getEventPaymentByVendorInEvent = async (vendorinEventId: string, hostdb: HostDbClient) => {
+    return await hostdb.eventPayment.findMany({
+        where: {
+            vendorinEventId,
+            status: {
+                not: 'Cancel'
+            }
+        }
+    });
+};
 const getVendor = async (vendorId: string, hostdb: HostDbClient) => {
     return await hostdb.vendorInEvent.findMany({
         where: { vendorId }
@@ -80,6 +89,7 @@ const deleteEventPayment = async (vendorInEventId: string, hostdb: HostDbClient)
 const eventpaymentRepo = {
     getVendorInEvent,
     getEventPaymentByLocationId,
+    getEventPaymentByVendorInEvent,
     getVendor,
     getEventPaymentsByVendorInEventIds,
     getLocationsByIds,

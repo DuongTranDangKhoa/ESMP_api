@@ -8,6 +8,10 @@ export const eventPaymentGroup = (app: any) =>
         const payment = await eventpaymentService.getEventPaymentInEvent(eventId, hostDb)
                 return payment
             })
+        .get('/location/:locationId', async ({params, hostDb }: { params: any, hostDb: HostDbClient }) => {
+        const locationId = params.locationId
+        return await eventpaymentService.getEventPaymentInLocation(locationId, hostDb)
+        })
         .get('/vendor/:vendorId', async ({params, hostDb }: { params: any, hostDb: HostDbClient }) => {
         const vendorId = params.vendorId
         const payment = await eventpaymentService.getEventPaymentInVendor(vendorId, hostDb)

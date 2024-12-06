@@ -2,6 +2,24 @@ import { Decimal } from "@prisma/client/runtime/library";
 import { HostDbClient } from "../../database/dbClient.db";
 import { EventPaymentObject, EventPaymentType, EventPaymentVendorObject } from "./eventpayment.shema";
 import eventpaymentRepo from "./eventpayment.repo"; // Import the repository
+import { VendorInEventRepository } from "../vendorinevent/vendorinevent.repo";
+import { vendorRepository } from "../vendor/vendor.repo";
+const getEventPaymentInLocation = async (locationId: string, hostdb: HostDbClient) => {
+    const vendorInEventRepo = new VendorInEventRepository(hostdb);
+    const eventPaymentInfo = await eventpaymentRepo.getEventPaymentByLocationId(locationId, hostdb);
+
+    if (eventPaymentInfo.length === 0) {
+       throw new Error('Location is not booked or Location of status is Available ' );
+    }
+
+    const vendorInEvent = await vendorInEventRepo.getVendorInEventById(eventPaymentInfo[0].vendorinEventId);
+
+    if (vendorInEvent) {
+        return (await vendorRepository.getVendorById( vendorInEvent.vendorId, hostdb)).name;
+    } else {
+         throw new Error('Location is not booked or Location of status is Available ' );
+    }
+};
 
 const getEventPaymentInEvent = async (eventId: string, hostdb: HostDbClient) => {
     if (!eventId) {
@@ -185,6 +203,7 @@ const deleteEventPayment = async (vendorInEventId: string, hostdb: HostDbClient)
 
 const eventpaymentService = {
     getEventPaymentInEvent,
+    getEventPaymentInLocation,
     getEventPaymentInVendor,
     createEventPayment,
     updateEventPayment,

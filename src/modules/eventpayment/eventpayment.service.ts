@@ -1,242 +1,202 @@
 import { Decimal } from "@prisma/client/runtime/library";
 import { HostDbClient } from "../../database/dbClient.db";
 import { EventPaymentObject, EventPaymentType, EventPaymentVendorObject } from "./eventpayment.shema";
-import vendorineventservice from "../vendorinevent/vendorinevent.service";
+import eventpaymentRepo from "./eventpayment.repo"; // Import the repository
 
-const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) => {
-    if(!eventId) {
-        throw new Error('Event ID is required');
+const getEventPaymentInEvent = async (eventId: string, hostdb: HostDbClient) => {
+    if (!eventId) {
+        throw new Error('eventId ID is required');
     }
+
     try {
-        // console.log(eventId, "Event");
-        const vendorInEvent = await hostdb.vendorInEvent.findMany({
-            where: {
-                eventId
-            }
-         });
-        //  console.log(vendorInEvent, "vendorInEvent");
-         let payment: EventPaymentObject[] = [];
-         for(const vendorEvent of vendorInEvent) {
-         const eventPayment = await hostdb.eventPayment.findFirst({
-            where: {
-                vendorinEventId: vendorEvent.vendorinEventId
-            }
+        const vendorInEvent = await eventpaymentRepo.getVendorInEvent(eventId, hostdb);
+        if (vendorInEvent.length === 0) return [];
+
+        const vendorInEventIds = vendorInEvent.map(v => v.vendorinEventId);
+        const eventPayments = await eventpaymentRepo.getEventPaymentsByVendorInEventIds(vendorInEventIds, hostdb);
+
+        const locationIds = eventPayments.map(ep => ep.locationId);
+        const locations = await eventpaymentRepo.getLocationsByIds(locationIds, hostdb);
+
+        const locationTypeIds = locations.map(loc => loc.typeId);
+        const locationTypes = await eventpaymentRepo.getLocationTypesByIds(locationTypeIds, hostdb);
+
+        const vendorIds = vendorInEvent.map(v => v.vendorId);
+        const vendors = await eventpaymentRepo.getVendorsByIds(vendorIds, hostdb);
+
+        const accountIds = vendors.map(v => v.userid);
+        const accounts = await eventpaymentRepo.getAccountsByVendorIds(accountIds, hostdb);
+
+        const eventIds = vendorInEvent.map(v => v.eventId);
+        const events = await eventpaymentRepo.getEventsByIds(eventIds, hostdb);
+
+        const formatDate = (date: Date | null): Date | null => {
+            if (!date) return null;
+            return new Date(date.toISOString().split('T')[0]);
+        };
+
+        const paymentPromises = eventPayments.map(async (eventPayment) => {
+            const location = locations.find(loc => loc.locationId === eventPayment.locationId);
+            const locationType = location ? locationTypes.find(locType => locType.typeId === location.typeId) : null;
+            const event = events.find(e => e.eventId === vendorInEvent.find(v => v.vendorinEventId === eventPayment.vendorinEventId)?.eventId);
+            const vendorInEventItem = vendorInEvent.find(v => v.vendorinEventId === eventPayment.vendorinEventId);
+            const vendorId = vendorInEventItem ? vendorInEventItem.vendorId : null;
+            const vendorItem = vendorId ? vendors.find(v => v.vendorId === vendorId) : null;
+            const account = vendorItem ? accounts.find(a => a.id === vendorItem.userid) : null;
+
+            const paymentValue = new EventPaymentVendorObject(
+                eventPayment.eventPaymentid,
+                locationType?.typeName ?? "Default Location Name",
+                account?.name ?? "Default Name",
+                formatDate(eventPayment.depositPaymentDate),
+                eventPayment.deposit ?? new Decimal(0),
+                eventPayment.total ?? new Decimal(0),
+                event?.deposit ?? new Decimal(0),
+                eventPayment.totalPaymentDate ?? null,
+                eventPayment.status ?? "Pending Deposit"
+            );
+
+            return paymentValue;
         });
-        // console.log(eventPayment, "eventPayment");
-        if(eventPayment) {
-        const location = await hostdb.location.findUnique({
-            where: {
-                locationId: eventPayment?.locationId
-            }
-        });
-        // console.log(location, "location");
-        const locationType = await hostdb.locationType.findUnique({
-            where: {
-                typeId: location?.typeId
-            }
-        });
-        // console.log(locationType, "locationType");
-        const vendor = await hostdb.vendor.findUnique({
-            where: {
-                vendorId: vendorEvent.vendorId
-            }
-        });
-        // console.log(vendor, "vendor");
-        const account = await hostdb.account.findUnique({
-            where: {
-                id: vendor?.userid
-            }
-        });
-        // console.log(account, "account");
-        const event = await hostdb.event.findUnique({
-            where: {
-                eventId
-            }
-        });
-      const formatDate = (date: Date | null): Date | null => {
-    if (!date) {
-        return null; // Trả về null nếu date là null
-    }
-    return new Date(date.toISOString().split('T')[0]); // Trả về một đối tượng Date mới
-};
-        // console.log(event, "event");
-        const paymentValue = new EventPaymentObject(
-  eventPayment.eventPaymentid,
-  locationType?.typeName ?? "Default Location Name",
-  account?.name ?? "Default Name",
-  formatDate(eventPayment.depositPaymentDate),
-  eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
-  eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
-  event?.deposit ?? new Decimal(0),
-  eventPayment.totalPaymentDate ?? null,
-  eventPayment.status ?? "Pending Deposit"
-);
-        payment.push(paymentValue);
-    }
-} 
+
+        const payment = await Promise.all(paymentPromises);
         return payment;
-    
-     }catch (error) {   
+        
+    } catch (error) {
         throw new Error('Error getting event payment in event: ' + error);
-    } 
-}
-const getEventPaymentInVendor = async (vendorId: string,  hostdb: HostDbClient) => {
-    if(!vendorId) {
+    }
+};
+
+const getEventPaymentInVendor = async (vendorId: string, hostdb: HostDbClient) => {
+    if (!vendorId) {
         throw new Error('Vendor ID is required');
     }
+
     try {
-        // console.log(vendorId, "Event");
-        const vendorInEvent = await hostdb.vendorInEvent.findMany({
-            where: {
-                vendorId
-            }
-         });
-        //  console.log(vendorInEvent, "vendorInEvent");
-         let payment: EventPaymentVendorObject[] = [];
-         for(const vendorEvent of vendorInEvent) {
-         const eventPayment = await hostdb.eventPayment.findFirst({
-            where: {
-                vendorinEventId: vendorEvent.vendorinEventId
-            }
+        const vendorInEvent = await eventpaymentRepo.getVendor(vendorId, hostdb);
+        if (vendorInEvent.length === 0) return [];
+
+        const vendorInEventIds = vendorInEvent.map(v => v.vendorinEventId);
+        const eventPayments = await eventpaymentRepo.getEventPaymentsByVendorInEventIds(vendorInEventIds, hostdb);
+
+        const locationIds = eventPayments.map(ep => ep.locationId);
+        const locations = await eventpaymentRepo.getLocationsByIds(locationIds, hostdb);
+
+        const locationTypeIds = locations.map(loc => loc.typeId);
+        const locationTypes = await eventpaymentRepo.getLocationTypesByIds(locationTypeIds, hostdb);
+
+        const vendor = await eventpaymentRepo.getVendorsByIds([vendorId], hostdb);
+        const account = vendor.length > 0 ? await eventpaymentRepo.getAccountsByVendorIds([vendor[0].userid], hostdb) : [];
+
+        const eventIds = vendorInEvent.map(v => v.eventId);
+        const events = await eventpaymentRepo.getEventsByIds(eventIds, hostdb);
+
+        const formatDate = (date: Date | null): Date | null => {
+            if (!date) return null;
+            return new Date(date.toISOString().split('T')[0]);
+        };
+
+        const paymentPromises = eventPayments.map(async (eventPayment) => {
+            const location = locations.find(loc => loc.locationId === eventPayment.locationId);
+            const locationType = location ? locationTypes.find(locType => locType.typeId === location.typeId) : null;
+            const event = events.find(e => e.eventId === vendorInEvent.find(v => v.vendorinEventId === eventPayment.vendorinEventId)?.eventId);
+
+            const paymentValue = new EventPaymentVendorObject(
+                eventPayment.eventPaymentid,
+                locationType?.typeName ?? "Default Location Name",
+                event?.name ?? "Default Name",
+                formatDate(eventPayment.depositPaymentDate),
+                eventPayment.deposit ?? new Decimal(0),
+                eventPayment.total ?? new Decimal(0),
+                event?.deposit ?? new Decimal(0),
+                eventPayment.totalPaymentDate ?? null,
+                eventPayment.status ?? "Pending Deposit"
+            );
+
+            return paymentValue;
         });
-        // console.log(eventPayment, "eventPayment");
-        if(eventPayment) {
-        const location = await hostdb.location.findUnique({
-            where: {
-                locationId: eventPayment?.locationId
-            }
-        });
-        // console.log(location, "location");
-        const locationType = await hostdb.locationType.findUnique({
-            where: {
-                typeId: location?.typeId
-            }
-        });
-        // console.log(locationType, "locationType");
-        const vendor = await hostdb.vendor.findUnique({
-            where: {
-                vendorId
-            }
-        });
-        // console.log(vendor, "vendor");
-        const account = await hostdb.account.findUnique({
-            where: {
-                id: vendor?.userid
-            }
-        });
-        // console.log(account, "account");
-        const event = await hostdb.event.findUnique({
-            where: {
-                 eventId: vendorEvent.eventId
-            }
-        });
-      const formatDate = (date: Date | null): Date | null => {
-    if (!date) {
-        return null; // Trả về null nếu date là null
-    }
-    return new Date(date.toISOString().split('T')[0]); // Trả về một đối tượng Date mới
-};
-        // console.log(event, "event");
-        const paymentValue = new EventPaymentVendorObject(
-  eventPayment.eventPaymentid,
-  locationType?.typeName ?? "Default Location Name",
-  event?.name ?? "Default Name",
-  formatDate(eventPayment.depositPaymentDate),
-  eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
-  eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
-  event?.deposit ?? new Decimal(0),
-  eventPayment.totalPaymentDate ?? null,
-  eventPayment.status ?? "Pending Deposit"
-);
-        payment.push(paymentValue);
-    }
-} 
+
+        const payment = await Promise.all(paymentPromises);
         return payment;
-    
-     }catch (error) {   
+
+    } catch (error) {
         throw new Error('Error getting event payment in event: ' + error);
-    } 
-}
-const createEventPayment = async ( body: any ,hostdb: HostDbClient) => {
+    }
+};
+
+const createEventPayment = async (body: any, hostdb: HostDbClient) => {
     try {
-           const eventpayment = await  hostdb.eventPayment.create({
-                data: {
-                    locationId: body.locationId,
-                    deposit: body.deposit,
-                    vendorinEventId: body.vendorinEventId,
-                    depositPaymentDate: new Date(), 
-                }
-            }) 
+        const vd = await hostdb.vendorInEvent.findUnique({
+            where: { vendorinEventId: body.vendorinEventId }
+        });
+        if (!vd) {
+            throw new Error('Vendor In Event not found');
+        }
+
+        const event = await hostdb.event.findUnique({
+            where: { eventId: vd.eventId }
+        });
+
+        const epayment = await hostdb.eventPayment.findFirst({
+            where: { vendorinEventId: body.vendorinEventId }
+        });
+
+        const total = (Number(epayment?.deposit) || 0) + (Number(event?.deposit) || 0);
+        
+        const eventpayment = await eventpaymentRepo.createEventPayment({
+            locationId: body.locationId,
+            deposit: body.deposit,
+            vendorinEventId: body.vendorinEventId,
+            total: total,
+            depositPaymentDate: new Date(),
+            totalPaymentDate: new Date()
+        }, hostdb);
+
         return {
             message: 'Event payment created successfully',
             id: eventpayment.eventPaymentid
         };
-    } catch (error) {   
+    } catch (error) {
         throw new Error('Location is Booked');
-    } 
-}
-const updateEventPayment = async (vendorInEventId: string, body: any ,hostdb: HostDbClient) => {
-    if(!vendorInEventId) {
+    }
+};
+
+const updateEventPayment = async (vendorInEventId: string, body: any, hostdb: HostDbClient) => {
+    if (!vendorInEventId) {
         throw new Error('vendorInEventId is required');
     }
 
     try {
-        const vd = await hostdb.vendorInEvent.findUnique({
-            where: {
-                vendorinEventId: vendorInEventId
-            }
-        });
-        if(!vd) {
-            throw new Error('Vendor In Event not found');
-        }
-        const event = await hostdb.event.findUnique({
-            where: {
-                eventId: vd.eventId
-            }
-        });
-        const eventpayment = await hostdb.eventPayment.findFirst({
-            where: {
-                vendorinEventId: vendorInEventId
-            }
-        });
-        const updateeventpayment = await hostdb.eventPayment.updateMany({
-            where: {
-                vendorinEventId: vendorInEventId
-            },
-            data: {
+        await eventpaymentRepo.updateEventPayment(vendorInEventId, {
+            status: body.status,
+            totalPaymentDate: new Date()
+        }, hostdb);
 
-                status: body.status,
-            }
-        })
-        return {
-            message: 'Event payment updated successfully',
-        };
-    } catch (error) {   
+        return { message: 'Event payment updated successfully' };
+    } catch (error) {
         throw new Error('Error updating event payment in event: ' + error);
     }
-}
-const deleteEvetPayment = async (vendorInEventId: string, hostdb: HostDbClient) => {
-if(!vendorInEventId) {
+};
+
+const deleteEventPayment = async (vendorInEventId: string, hostdb: HostDbClient) => {
+    if (!vendorInEventId) {
         throw new Error('vendorInEventId is required');
     }
+
     try {
-        await hostdb.eventPayment.deleteMany({
-            where: {
-                vendorinEventId: vendorInEventId
-            }
-        })
-        return {
-            message: 'Event payment deleted successfully',
-        };
-    } catch (error) {   
+        await eventpaymentRepo.deleteEventPayment(vendorInEventId, hostdb);
+        return { message: 'Event payment deleted successfully' };
+    } catch (error) {
         throw new Error('Error deleting event payment in event: ' + error);
     }
-}
+};
+
 const eventpaymentService = {
     getEventPaymentInEvent,
     getEventPaymentInVendor,
     createEventPayment,
     updateEventPayment,
-    deleteEvetPayment
-}
-export default eventpaymentService
+    deleteEventPayment
+};
+
+export default eventpaymentService;

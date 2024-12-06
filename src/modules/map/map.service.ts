@@ -130,7 +130,7 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
 
         const locationTypeIds = locationTypes.map((type) => type.typeId);
         const locationData = await mapRepo.getMapData(locationTypeIds, hostDb);
-
+        console.log("locationData", locationData);
         const locations: LocationGetObject[] = [];
         const shapes: LocationGetObject[] = [];
         const textElements: LocationGetObject[] = [];
@@ -139,12 +139,14 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
             const typeName = locationTypeMap.get(loc.typeId) ?? '';
             const color = locationTypeMapColor.get(loc.typeId) ?? '';
             const locationObject = new LocationGetObject(loc, typeName,color);
-
+            console.log("shape", loc.shape);
             if (loc.shape === 'booth') {
                 locations.push(locationObject);
             } else if (loc.shape === 'text') {
+                     console.log("locationObject", locationObject);
                 textElements.push(locationObject);
             } else {
+                     console.log("locationObject", locationObject);
                 shapes.push(locationObject);
             }
         }
@@ -298,12 +300,7 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
         const allShapesAndTexts = [...inputData.shapes, ...inputData.textElements];
         const allTypeNames = new Set(allShapesAndTexts.map(item => item.name));
         
-        const existingLocationTypes = await hostDb.locationType.findMany({
-            where: {
-                eventId: eventId,
-                typeName: { in: Array.from(allTypeNames) }
-            }
-        });
+        const existingLocationTypes = await mapRepo.findLocationTypeMap(eventId, allTypeNames, hostDb);
 
         // Tạo Map cho tra cứu nhanh
         const locationTypeMap = new Map(existingLocationTypes.map(type => [type.typeName, type.typeId]));
@@ -368,7 +365,7 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
             status: 'blocked'
         }));
 
-        // Tạo dữ liệu trong một lần gọi
+        console.log("shape and text", shapeData, textData);
         await hostDb.location.createMany({
             data: [...boothData, ...shapeData, ...textData]
         });

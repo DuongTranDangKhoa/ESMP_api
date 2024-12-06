@@ -19,8 +19,8 @@ export const mapRepo = {
   async getLocationType(eventId: string, hostDb: HostDbClient) {
     return await hostDb.locationType.findMany({
       where: {
-        eventId,
-        NOT: { status: "blocked" },
+        eventId
+        // NOT: { status: "blocked" },
       },
     });
   },

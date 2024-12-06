@@ -290,7 +290,7 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
 // }
 const createMap = async (hostId: string, eventId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
     try {
-
+        // Cập nhật main template nếu tồn tại
         const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
         if (mainTemplate) {
             await eventRepo.updateEventMap(eventId, mainTemplate, hostDb);
@@ -298,21 +298,43 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
         const allShapesAndTexts = [...inputData.shapes, ...inputData.textElements];
         const allTypeNames = new Set(allShapesAndTexts.map(item => item.name));
         
-        const existingLocationTypes = await mapRepo.findLocationTypeMap(eventId, allTypeNames, hostDb);
+        const existingLocationTypes = await hostDb.locationType.findMany({
+            where: {
+                eventId: eventId,
+                typeName: { in: Array.from(allTypeNames) }
+            }
+        });
 
+        // Tạo Map cho tra cứu nhanh
         const locationTypeMap = new Map(existingLocationTypes.map(type => [type.typeName, type.typeId]));
 
+        // Xác định typeName chưa tồn tại
         const newTypeNames = Array.from(allTypeNames).filter(name => !locationTypeMap.has(name));
         if (newTypeNames.length > 0) {
-            const newLocationTypes = await mapRepo.createShapesOrTexts(eventId, newTypeNames, hostDb);
-                
-            const createdLocationTypes = await mapRepo.findLocationTypesCreated(eventId, newTypeNames ,hostDb);
+            const newLocationTypes = await hostDb.locationType.createMany({
+                data: newTypeNames.map(name => ({
+                    eventId: eventId,
+                    typeName: name,
+                    price: '0',
+                    status: 'blocked'
+                }))
+            });
 
+            // Lấy lại các loại locationType vừa tạo
+            const createdLocationTypes = await hostDb.locationType.findMany({
+                where: {
+                    eventId: eventId,
+                    typeName: { in: newTypeNames }
+                }
+            });
+
+            // Cập nhật Map
             for (const type of createdLocationTypes) {
                 locationTypeMap.set(type.typeName, type.typeId);
             }
         }
 
+        // Gom tất cả dữ liệu cần tạo
         const boothData = inputData.booths.map(loc => ({
             typeId: loc.typeId,
             x: loc.x,
@@ -346,7 +368,10 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
             status: 'blocked'
         }));
 
-        await mapRepo.createMap(boothData, shapeData, textData, hostDb);
+        // Tạo dữ liệu trong một lần gọi
+        await hostDb.location.createMany({
+            data: [...boothData, ...shapeData, ...textData]
+        });
 
         return "Successfully created template";
     } catch (error) {
@@ -380,7 +405,11 @@ const updateMap = async (updateData: LocationObject, hostDb: HostDbClient) => {
 };
 const deleteMap = async (locationId: string, hostDb: HostDbClient) => {
     try {
-        mapRepo.deleteMap(locationId, hostDb);
+        await hostDb.location.delete({
+        where: {
+            locationId,
+        },
+        });
         await hostDb.$disconnect();
         return "Successfully deleted location";
     } catch (error) {
@@ -394,12 +423,20 @@ const deleteLocationType = async (locationTypeId: string, hostDb: HostDbClient) 
         throw new Error("LocationTypeId is required");
     }
     try {
-        const checkLocationinLocationTypeId = await mapRepo.findLocationbyLocationTypeId(locationTypeId, hostDb);
+        const checkLocationinLocationTypeId = await hostDb.location.findMany({
+            where: {
+                typeId: locationTypeId,
+            },
+        });
         if (checkLocationinLocationTypeId.length > 0) {
             throw new Error("Cannot delete locationType because it has associated locations.");
         }
-        
-        await mapRepo.deleteLocationType(locationTypeId, hostDb);
+
+        await hostDb.locationType.delete({
+            where: {
+                typeId: locationTypeId,
+            },
+        });
 
       return "Successfully deleted locationType";
     } catch (error) {

@@ -308,14 +308,7 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
         // Xác định typeName chưa tồn tại
         const newTypeNames = Array.from(allTypeNames).filter(name => !locationTypeMap.has(name));
         if (newTypeNames.length > 0) {
-            const newLocationTypes = await hostDb.locationType.createMany({
-                data: newTypeNames.map(name => ({
-                    eventId: eventId,
-                    typeName: name,
-                    price: '0',
-                    status: 'blocked'
-                }))
-            });
+            const newLocationTypes = await mapRepo.createShapesOrTexts(eventId, newTypeNames, hostDb);
 
             // Lấy lại các loại locationType vừa tạo
             const createdLocationTypes = await hostDb.locationType.findMany({

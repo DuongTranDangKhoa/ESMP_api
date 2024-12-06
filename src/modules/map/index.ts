@@ -2,6 +2,7 @@ import { HostDbClient } from "../../database/dbClient.db"
 import menuService from "../menu/menu.service"
 import mapService from "./map.service";
 import * as commonSchema from '../../common/schema.common'
+import { LocationTypeSchema } from "./map.schema";
 export const mapGroup = (app: any) =>
 app.group('/:hostId/:eventId', (app: any) => 
            app
@@ -55,6 +56,8 @@ app.group('/:hostId/:eventId', (app: any) =>
                     const {hostId, eventId} = params;
                     await mapService.createLocationType(hostId, eventId, body, hostDb)
                     return {message: 'Create Location Type success'}
+                },{
+                    body: LocationTypeSchema
                 }
                 ) 
                          
@@ -68,7 +71,7 @@ app.group('/:hostId/:eventId', (app: any) =>
                 hostDb: HostDbClient
             }) => {
                 return await mapService.updateMap(body, hostDb)
-            },
+            }
 
         ) 
         .delete('/:locationId',
@@ -108,6 +111,9 @@ app.group('/:hostId/:eventId', (app: any) =>
         }) => {
             const {typeId} = params;
             return await mapService.updateLocationType(typeId, body, hostDb)
+        },
+        {
+            body: LocationTypeSchema
         }
         )
         .get('/location/:hostId/:eventId',

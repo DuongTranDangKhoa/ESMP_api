@@ -4,18 +4,12 @@ import { HostDbClient } from "../../database/dbClient.db";
 import eventService from "../event/event.service";
 import { BoothObject, LocationGetObject, LocationObject, LocationTypeObject, LocationTypeType, MainTemplateObject, MapCreateObject, MapObject, ShapeObject } from "./map.schema"
 import { LocationStatus } from '../../common/constant/common.constant';
+import { mapRepo } from './map.repo';
+import { eventRepo } from '../event/event.repo';
 
 const createLocationType = async (hostId: string, eventId: string, inputData: LocationTypeObject, hostDb: HostDbClient) => {
     try {
-      const locationType = await hostDb.locationType.createMany({
-        data: {
-          eventId: eventId,
-          color: inputData.color,
-          typeName: inputData.typeName,
-          price : inputData.price,
-          status: inputData.status,
-        },
-      });
+      const locationType = await mapRepo.createLocationType(eventId, inputData, hostDb);
       
     } catch (error) {
         console.error("Error creating Loction Type:", error);
@@ -46,11 +40,7 @@ const getLocationType = async (hostId: string, eventId: string, hostDb: HostDbCl
 const getLocationTypeofMap = async (hostId: string, eventId: string, hostDb: HostDbClient) => {
   
     try {
-      const locationType = await hostDb.locationType.findMany({
-        where: {
-          eventId: eventId,   
-        }
-      });
+      const locationType = await mapRepo.getLocationType(eventId, hostDb);
         await hostDb.$disconnect();
         return locationType;
     } catch (error) {
@@ -138,13 +128,8 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
             locationTypeMapColor.set(type.typeId, type.color ?? '');
         }
 
-        // Fetch all location data in a single query
         const locationTypeIds = locationTypes.map((type) => type.typeId);
-        const locationData = await hostDb.location.findMany({
-            where: {
-                typeId: { in: locationTypeIds }
-            }
-        });
+        const locationData = await mapRepo.getMapData(locationTypeIds, hostDb);
 
         const locations: LocationGetObject[] = [];
         const shapes: LocationGetObject[] = [];
@@ -305,62 +290,29 @@ const getMap = async (hostId: string, eventId: string, hostDb: HostDbClient): Pr
 // }
 const createMap = async (hostId: string, eventId: string, inputData: MapCreateObject, hostDb: HostDbClient) => {
     try {
-        // Cập nhật main template nếu tồn tại
+
         const mainTemplate: MainTemplateObject = new MainTemplateObject(inputData.mainTemplate);
         if (mainTemplate) {
-            await hostDb.event.update({
-                where: { eventId: eventId },
-                data: {
-                    x: mainTemplate.x,
-                    y: mainTemplate.y,
-                    width: mainTemplate.width,
-                    height: mainTemplate.height,
-                    stageValue: inputData.imageElements[0],
-                }
-            });
+            await eventRepo.updateEventMap(eventId, mainTemplate, hostDb);
         }
-
-        // Gom tất cả typeName để kiểm tra trong một lần
         const allShapesAndTexts = [...inputData.shapes, ...inputData.textElements];
         const allTypeNames = new Set(allShapesAndTexts.map(item => item.name));
         
-        const existingLocationTypes = await hostDb.locationType.findMany({
-            where: {
-                eventId: eventId,
-                typeName: { in: Array.from(allTypeNames) }
-            }
-        });
+        const existingLocationTypes = await mapRepo.findLocationTypeMap(eventId, allTypeNames, hostDb);
 
-        // Tạo Map cho tra cứu nhanh
         const locationTypeMap = new Map(existingLocationTypes.map(type => [type.typeName, type.typeId]));
 
-        // Xác định typeName chưa tồn tại
         const newTypeNames = Array.from(allTypeNames).filter(name => !locationTypeMap.has(name));
         if (newTypeNames.length > 0) {
-            const newLocationTypes = await hostDb.locationType.createMany({
-                data: newTypeNames.map(name => ({
-                    eventId: eventId,
-                    typeName: name,
-                    price: '0',
-                    status: 'blocked'
-                }))
-            });
+            const newLocationTypes = await mapRepo.createShapesOrTexts(eventId, newTypeNames, hostDb);
+                
+            const createdLocationTypes = await mapRepo.findLocationTypesCreated(eventId, newTypeNames ,hostDb);
 
-            // Lấy lại các loại locationType vừa tạo
-            const createdLocationTypes = await hostDb.locationType.findMany({
-                where: {
-                    eventId: eventId,
-                    typeName: { in: newTypeNames }
-                }
-            });
-
-            // Cập nhật Map
             for (const type of createdLocationTypes) {
                 locationTypeMap.set(type.typeName, type.typeId);
             }
         }
 
-        // Gom tất cả dữ liệu cần tạo
         const boothData = inputData.booths.map(loc => ({
             typeId: loc.typeId,
             x: loc.x,
@@ -394,10 +346,7 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
             status: 'blocked'
         }));
 
-        // Tạo dữ liệu trong một lần gọi
-        await hostDb.location.createMany({
-            data: [...boothData, ...shapeData, ...textData]
-        });
+        await mapRepo.createMap(boothData, shapeData, textData, hostDb);
 
         return "Successfully created template";
     } catch (error) {
@@ -431,11 +380,7 @@ const updateMap = async (updateData: LocationObject, hostDb: HostDbClient) => {
 };
 const deleteMap = async (locationId: string, hostDb: HostDbClient) => {
     try {
-        await hostDb.location.delete({
-        where: {
-            locationId,
-        },
-        });
+        mapRepo.deleteMap(locationId, hostDb);
         await hostDb.$disconnect();
         return "Successfully deleted location";
     } catch (error) {
@@ -449,20 +394,12 @@ const deleteLocationType = async (locationTypeId: string, hostDb: HostDbClient) 
         throw new Error("LocationTypeId is required");
     }
     try {
-        const checkLocationinLocationTypeId = await hostDb.location.findMany({
-            where: {
-                typeId: locationTypeId,
-            },
-        });
+        const checkLocationinLocationTypeId = await mapRepo.findLocationbyLocationTypeId(locationTypeId, hostDb);
         if (checkLocationinLocationTypeId.length > 0) {
             throw new Error("Cannot delete locationType because it has associated locations.");
         }
-
-        await hostDb.locationType.delete({
-            where: {
-                typeId: locationTypeId,
-            },
-        });
+        
+        await mapRepo.deleteLocationType(locationTypeId, hostDb);
 
       return "Successfully deleted locationType";
     } catch (error) {

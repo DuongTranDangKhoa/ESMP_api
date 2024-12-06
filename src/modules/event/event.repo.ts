@@ -4,6 +4,7 @@ import { EventStatus } from '../../common/constant/common.constant';
 import { NotFoundError } from 'elysia';
 import { DatabaseError } from '../../errors/database.error';
 import { compareDateToNow } from '../../utilities/datetime.util';
+import { MainTemplateObject } from '../map/map.schema';
 
 export const eventRepo = {
   // Get all events for a specific host
@@ -67,7 +68,17 @@ export const eventRepo = {
       throw new DatabaseError(err.message);
     }
   },
-
+  async updateEventMap( eventId: string,mainTemplate: MainTemplateObject ,hostDb: HostDbClient){
+  return  await hostDb.event.update({
+                where: { eventId: eventId },
+                data: {
+                    x: mainTemplate.x,
+                    y: mainTemplate.y,
+                    width: mainTemplate.width,
+                    height: mainTemplate.height,
+                }
+            });
+  },
   // Delete event by ID
   async deleteEvent(eventId: string, hostDb: HostDbClient) {
     try {

@@ -1,3 +1,4 @@
+import { t } from "elysia";
 import { LocationType,Location } from "../../../prisma/clients/postgres/hostdb";
 import { EventObject } from "../event/event.schema";
 export type LocationTypeType = Location
@@ -15,8 +16,6 @@ export class ShapeObject {
         x: number,
         y: number,
         rotation: number,
-        shape: string,
-         typeId?: string,
     ) {
         this.name = name;
         this.x = x;
@@ -155,3 +154,21 @@ export class LocationObject {
         this.status = status;
     }
 }
+export const LocationTypeSchema = t.Object({
+  typeName: t.String({
+    minLength: 1, 
+    error: 'Type Name is required', 
+  }),
+  color: t.String({
+    pattern: '^#[0-9A-Fa-f]{6}$', 
+    error: 'Color must be a valid hex color',
+  }),
+  price: t.Number({
+    minimum: 0,
+    error: 'Price must be a positive number', 
+  }),
+  status: t.String({
+    enum: ['active', 'inactive'],
+    error: 'Status must be either "active" or "inactive"', 
+  }),
+});

@@ -23,7 +23,7 @@ export class EventObject {
       height?: number | null
       stageValue?: string | null
       onWeb?: boolean
-      profit: Prisma.Decimal
+      deposit: Prisma.Decimal
       status: string 
       constructor(data: any) {
         this.eventId = data.eventId
@@ -42,7 +42,7 @@ export class EventObject {
         this.height = data.height
         this.stageValue = data.stageValue
         this.onWeb = data.onWeb
-        this.profit = data.profit
+        this.deposit = data.deposit
         this.status = data.status
       }
 }
@@ -82,7 +82,7 @@ export const InputEventSchema = t.Required(
       format: 'date',
       error: 'Invalid date',
     }),
-    profit: t.Number({ // Thêm trường profit vào schema
+    deposit: t.Number({ // Thêm trường profit vào schema
       error: 'Profit must be a number',
     }),
      }),

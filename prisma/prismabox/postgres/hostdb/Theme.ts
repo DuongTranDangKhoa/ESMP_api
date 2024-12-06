@@ -29,7 +29,7 @@ export const ThemeRelations = t.Object(
           updatedAt: __nullable__(t.Date({ additionalProperties: true })),
           x: __nullable__(t.Integer({ additionalProperties: true })),
           y: __nullable__(t.Integer({ additionalProperties: true })),
-          profit: t.Number({ additionalProperties: true }),
+          deposit: t.Number({ additionalProperties: true }),
           status: __nullable__(t.String({ additionalProperties: true })),
           height: __nullable__(t.Integer({ additionalProperties: true })),
           hostId: t.String({ additionalProperties: true }),

@@ -164,18 +164,8 @@ export const EventPaymentWhere = t.Partial(
 export const EventPaymentWhereUnique = t.Recursive(
   (Self) =>
     t.Intersect([
-      t.Partial(
-        t.Object({
-          eventPaymentid: t.String(),
-          locationId: t.String(),
-          vendorinEventId: t.String(),
-        }),
-      ),
-      t.Union([
-        t.Object({ eventPaymentid: t.String() }),
-        t.Object({ locationId: t.String() }),
-        t.Object({ vendorinEventId: t.String() }),
-      ]),
+      t.Partial(t.Object({ eventPaymentid: t.String() })),
+      t.Union([t.Object({ eventPaymentid: t.String() })]),
       t.Partial(
         t.Object({
           AND: t.Union([Self, t.Array(Self)]),

@@ -29,7 +29,7 @@ model Event {
   updatedAt     DateTime?       @default(now()) @map("updated_at") @db.Date
   x             Int?            @default(100) @map("x")
   y             Int?            @default(100) @map("y")
-  profit        Decimal         @db.Decimal(10, 2)
+  deposit       Decimal         @db.Decimal(10, 2)
   status        String?         @default("upcomming") @map("status") @db.VarChar(50)
   height        Int?            @default(400) @map("height")
   hostId        String          @map("hostid") @db.Uuid
@@ -48,14 +48,14 @@ model Event {
 
 model EventPayment {
   eventPaymentid     String        @id @default(uuid()) @map("eventPaymentId") @db.Uuid
-  locationId         String        @unique(map: "eventpayment_unique") @map("locationid") @db.Uuid
+  locationId         String        @map("locationid") @db.Uuid
   deposit            Decimal       @map("deposit") @db.Decimal(10, 2)
   depositPaymentDate DateTime?     @map("depositpaymentdate") @db.Date
   total              Decimal?      @map("total") @db.Decimal(10, 2)
   totalPaymentDate   DateTime?     @map("totalpaymentdate") @db.Date
   createDate         DateTime?     @default(now()) @map("create_at") @db.Date
   status             String?       @default("Pending Deposit ") @map("status") @db.VarChar(50)
-  vendorinEventId    String        @unique(map: "eventpayment_unique_1") @map("vendorinEventId") @db.Uuid
+  vendorinEventId    String        @map("vendorinEventId") @db.Uuid
   location           Location      @relation(fields: [locationId], references: [locationId])
   vendorInEvent      VendorInEvent @relation(fields: [vendorinEventId], references: [vendorinEventId])
 
@@ -63,30 +63,30 @@ model EventPayment {
 }
 
 model VendorInEvent {
-  vendorinEventId String        @id @unique @default(uuid()) @db.Uuid
-  eventId         String        @db.Uuid
-  vendorId        String        @db.Uuid
-  status          String?       @default(dbgenerated("true")) @map("status") @db.VarChar
-  EventPayment    EventPayment?
+  vendorinEventId String         @id @unique @default(uuid()) @db.Uuid
+  eventId         String         @db.Uuid
+  vendorId        String         @db.Uuid
+  status          String?        @default(dbgenerated("true")) @map("status") @db.VarChar
+  EventPayment    EventPayment[]
   Menu            Menu?
-  event           Event         @relation(fields: [eventId], references: [eventId])
-  vendor          Vendor        @relation(fields: [vendorId], references: [vendorId])
+  event           Event          @relation(fields: [eventId], references: [eventId])
+  vendor          Vendor         @relation(fields: [vendorId], references: [vendorId])
 
   @@map("vendorinevent")
 }
 
 model Location {
-  locationId   String        @id @unique @default(uuid()) @map("locationid") @db.Uuid
-  typeId       String        @map("typeid") @db.Uuid
-  shape        String        @default("shape") @map("shape") @db.VarChar(50)
-  x            Int?          @map("x")
-  y            Int?          @map("y")
-  width        Int?          @map("width")
-  status       String?       @map("status") @db.VarChar(50)
+  locationId   String         @id @unique @default(uuid()) @map("locationid") @db.Uuid
+  typeId       String         @map("typeid") @db.Uuid
+  shape        String         @default("shape") @map("shape") @db.VarChar(50)
+  x            Int?           @map("x")
+  y            Int?           @map("y")
+  width        Int?           @map("width")
+  status       String?        @map("status") @db.VarChar(50)
   height       Int?
-  rotation     Int?          @map("rotation")
-  EventPayment EventPayment?
-  LocationType LocationType  @relation(fields: [typeId], references: [typeId])
+  rotation     Int?           @map("rotation")
+  EventPayment EventPayment[]
+  LocationType LocationType   @relation(fields: [typeId], references: [typeId])
 
   @@map("location")
 }

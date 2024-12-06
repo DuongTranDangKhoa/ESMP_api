@@ -94,10 +94,6 @@ export const EventPaymentSchema = t.Required(
 export const UpdateEventPayment = t.Required(
   t.Object(
     {
-        totalrevenue: t.Number({
-        min: 0,
-        error: "total must be a non-negative number",
-      }),
       status: t.Optional(
         t.String({ minLength: 1, error: "Status must be a non-empty string" })
       ),

@@ -21,7 +21,7 @@ export const LocationPlain = t.Object(
 
 export const LocationRelations = t.Object(
   {
-    EventPayment: __nullable__(
+    EventPayment: t.Array(
       t.Object(
         {
           eventPaymentid: t.String({ additionalProperties: true }),
@@ -89,11 +89,13 @@ export const LocationRelationsInputCreate = t.Object(
     EventPayment: t.Optional(
       t.Object(
         {
-          connect: t.Object(
-            {
-              id: t.String({ additionalProperties: true }),
-            },
-            { additionalProperties: true },
+          connect: t.Array(
+            t.Object(
+              {
+                id: t.String({ additionalProperties: true }),
+              },
+              { additionalProperties: true },
+            ),
           ),
         },
         { additionalProperties: true },
@@ -120,13 +122,22 @@ export const LocationRelationsInputUpdate = t.Partial(
       EventPayment: t.Partial(
         t.Object(
           {
-            connect: t.Object(
-              {
-                id: t.String({ additionalProperties: true }),
-              },
-              { additionalProperties: true },
+            connect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
             ),
-            disconnect: t.Boolean(),
+            disconnect: t.Array(
+              t.Object(
+                {
+                  id: t.String({ additionalProperties: true }),
+                },
+                { additionalProperties: true },
+              ),
+            ),
           },
           { additionalProperties: true },
         ),

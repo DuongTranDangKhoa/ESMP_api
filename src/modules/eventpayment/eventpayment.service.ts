@@ -17,7 +17,7 @@ const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) =>
         //  console.log(vendorInEvent, "vendorInEvent");
          let payment: EventPaymentObject[] = [];
          for(const vendorEvent of vendorInEvent) {
-         const eventPayment = await hostdb.eventPayment.findUnique({
+         const eventPayment = await hostdb.eventPayment.findFirst({
             where: {
                 vendorinEventId: vendorEvent.vendorinEventId
             }
@@ -67,7 +67,7 @@ const getEventPaymentInEvent = async (eventId: string,  hostdb: HostDbClient) =>
   formatDate(eventPayment.depositPaymentDate),
   eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
   eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
-  event?.profit ?? new Decimal(0),
+  event?.deposit ?? new Decimal(0),
   eventPayment.totalPaymentDate ?? null,
   eventPayment.status ?? "Pending Deposit"
 );
@@ -94,7 +94,7 @@ const getEventPaymentInVendor = async (vendorId: string,  hostdb: HostDbClient) 
         //  console.log(vendorInEvent, "vendorInEvent");
          let payment: EventPaymentVendorObject[] = [];
          for(const vendorEvent of vendorInEvent) {
-         const eventPayment = await hostdb.eventPayment.findUnique({
+         const eventPayment = await hostdb.eventPayment.findFirst({
             where: {
                 vendorinEventId: vendorEvent.vendorinEventId
             }
@@ -144,7 +144,7 @@ const getEventPaymentInVendor = async (vendorId: string,  hostdb: HostDbClient) 
   formatDate(eventPayment.depositPaymentDate),
   eventPayment.deposit ?? new Decimal(0), // Xử lý null thành giá trị mặc định
   eventPayment.total ?? new Decimal(0), // Xử lý null thành giá trị mặc định
-  event?.profit ?? new Decimal(0),
+  event?.deposit ?? new Decimal(0),
   eventPayment.totalPaymentDate ?? null,
   eventPayment.status ?? "Pending Deposit"
 );
@@ -194,26 +194,22 @@ const updateEventPayment = async (vendorInEventId: string, body: any ,hostdb: Ho
                 eventId: vd.eventId
             }
         });
-        const eventpayment = await hostdb.eventPayment.findUnique({
+        const eventpayment = await hostdb.eventPayment.findFirst({
             where: {
                 vendorinEventId: vendorInEventId
             }
         });
-        const totalprofit = 
-  (((Number(body.totalrevenue) || 0) + (Number(eventpayment?.deposit) || 0)) * (Number(event?.profit) || 1)) / 100;
-        const updateeventpayment = await hostdb.eventPayment.update({
+        const updateeventpayment = await hostdb.eventPayment.updateMany({
             where: {
                 vendorinEventId: vendorInEventId
             },
             data: {
-               total: totalprofit,
-               totalPaymentDate: new Date(),
+
                 status: body.status,
             }
         })
         return {
             message: 'Event payment updated successfully',
-            id: updateeventpayment.eventPaymentid
         };
     } catch (error) {   
         throw new Error('Error updating event payment in event: ' + error);
@@ -224,7 +220,7 @@ if(!vendorInEventId) {
         throw new Error('vendorInEventId is required');
     }
     try {
-        await hostdb.eventPayment.delete({
+        await hostdb.eventPayment.deleteMany({
             where: {
                 vendorinEventId: vendorInEventId
             }

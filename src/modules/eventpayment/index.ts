@@ -45,7 +45,7 @@ export const eventPaymentGroup = (app: any) =>
                 body: UpdateEventPayment,
             })
             .delete('/', async ({ vendorInEventId, hostDb }: {  vendorInEventId: string, hostDb: HostDbClient }) => {
-               const payment = await eventpaymentService.deleteEvetPayment(vendorInEventId, hostDb);
+               const payment = await eventpaymentService.deleteEventPayment(vendorInEventId, hostDb);
                 return payment;
             })
         )

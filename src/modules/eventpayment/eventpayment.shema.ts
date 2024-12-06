@@ -11,7 +11,6 @@ export class EventPaymentObject {
   depositpaymentdate: Date | null 
   deposit: Decimal
   totalprofit: Decimal
-  profitpercent: Decimal
   profitpaymentdate: Date | null
   status: string
 
@@ -22,7 +21,6 @@ export class EventPaymentObject {
     depositpaymentdate: Date | null,
     deposit: Decimal | 0.00,
     totalprofit: Decimal | 0.00,
-    profitpercent: Decimal | 0.00,
     profitpaymentdate: Date | null,
     status: string
   ) {
@@ -32,7 +30,6 @@ export class EventPaymentObject {
     this.depositpaymentdate = depositpaymentdate;
     this.deposit =new Decimal(deposit);
     this.totalprofit = new Decimal(totalprofit);
-    this.profitpercent = new Decimal(profitpercent);
     this.profitpaymentdate = profitpaymentdate;
     this.status = status;
   }
@@ -44,7 +41,6 @@ export class EventPaymentVendorObject {
   depositpaymentdate: Date | null 
   deposit: Decimal
   totalprofit: Decimal
-  profitpercent: Decimal
   profitpaymentdate: Date | null
   status: string
 
@@ -55,7 +51,6 @@ export class EventPaymentVendorObject {
     depositpaymentdate: Date | null,
     deposit: Decimal | 0.00,
     totalprofit: Decimal | 0.00,
-    profitpercent: Decimal | 0.00,
     profitpaymentdate: Date | null,
     status: string
   ) {
@@ -65,7 +60,6 @@ export class EventPaymentVendorObject {
     this.depositpaymentdate = depositpaymentdate;
     this.deposit =new Decimal(deposit);
     this.totalprofit = new Decimal(totalprofit);
-    this.profitpercent = new Decimal(profitpercent);
     this.profitpaymentdate = profitpaymentdate;
     this.status = status;
   }
@@ -73,7 +67,7 @@ export class EventPaymentVendorObject {
 export const EventPaymentSchema = t.Required(
   t.Object(
     {
-      deposit: t.Number({
+      total: t.Number({
         min: 0,
         error: "Deposit must be a non-negative number",
       }),

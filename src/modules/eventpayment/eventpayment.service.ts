@@ -51,7 +51,6 @@ const getEventPaymentInEvent = async (eventId: string, hostdb: HostDbClient) => 
                 formatDate(eventPayment.depositPaymentDate),
                 eventPayment.deposit ?? new Decimal(0),
                 eventPayment.total ?? new Decimal(0),
-                event?.deposit ?? new Decimal(0),
                 eventPayment.totalPaymentDate ?? null,
                 eventPayment.status ?? "Pending Deposit"
             );
@@ -108,7 +107,6 @@ const getEventPaymentInVendor = async (vendorId: string, hostdb: HostDbClient) =
                 formatDate(eventPayment.depositPaymentDate),
                 eventPayment.deposit ?? new Decimal(0),
                 eventPayment.total ?? new Decimal(0),
-                event?.deposit ?? new Decimal(0),
                 eventPayment.totalPaymentDate ?? null,
                 eventPayment.status ?? "Pending Deposit"
             );
@@ -136,18 +134,12 @@ const createEventPayment = async (body: any, hostdb: HostDbClient) => {
         const event = await hostdb.event.findUnique({
             where: { eventId: vd.eventId }
         });
-
-        const epayment = await hostdb.eventPayment.findFirst({
-            where: { vendorinEventId: body.vendorinEventId }
-        });
-
-        const total = (Number(epayment?.deposit) || 0) + (Number(event?.deposit) || 0);
-        
+   
         const eventpayment = await eventpaymentRepo.createEventPayment({
             locationId: body.locationId,
-            deposit: body.deposit,
+            deposit: event?.deposit,
             vendorinEventId: body.vendorinEventId,
-            total: total,
+            total: body.total,
             depositPaymentDate: new Date(),
             totalPaymentDate: new Date()
         }, hostdb);

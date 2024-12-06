@@ -15,9 +15,17 @@ const getEventPaymentInLocation = async (locationId: string, hostdb: HostDbClien
     }
 
     const vendorInEvent = await vendorInEventRepo.getVendorInEventById(eventPaymentInfo[0].vendorinEventId);
-
+    const location = await mapRepo.findLocationbyLocationId(eventPaymentInfo[0].locationId, hostdb);
+    if (!location){
+        throw new Error('Location not found');
+    }
+    const locationType = await mapRepo.getLocationTypeByID(location?.typeId, hostdb);
     if (vendorInEvent) {
-        return (await vendorRepository.getVendorById( vendorInEvent.vendorId, hostdb)).name;
+        return { vendor: (await vendorRepository.getVendorById( vendorInEvent.vendorId, hostdb)).name,
+                 name: locationType?.typeName,
+                 status: location.status, 
+                 price: locationType?.price,
+        }
     } else {
          throw new Error('Location is not booked or Location of status is Available ' );
     }
@@ -154,17 +162,13 @@ const getEventPaymentInVendor = async (vendorId: string, hostdb: HostDbClient) =
 
 const createEventPayment = async (body: any, hostdb: HostDbClient) => {
     try {
-        const vd = await hostdb.vendorInEvent.findUnique({
-            where: { vendorinEventId: body.vendorinEventId }
-        });
-        if (!vd) {
-            throw new Error('Vendor In Event not found');
-        }
-
-        const event = await hostdb.event.findUnique({
+        const vendorInEventRepo = new VendorInEventRepository(hostdb);
+        const vd = await vendorInEventRepo.getVendorInEventById(body.vendorinEventId);
+        if (vd) {
+            const event = await hostdb.event.findUnique({
             where: { eventId: vd.eventId }
-        });
-   
+        })
+        
         const eventpayment = await eventpaymentRepo.createEventPayment({
             locationId: body.locationId,
             deposit: event?.deposit,
@@ -178,6 +182,9 @@ const createEventPayment = async (body: any, hostdb: HostDbClient) => {
             message: 'Event payment created successfully',
             id: eventpayment.eventPaymentid
         };
+    }else{
+        throw new Error('Vendor In Event not found');
+    }
     } catch (error) {
         throw new Error('Location is Booked');
     }

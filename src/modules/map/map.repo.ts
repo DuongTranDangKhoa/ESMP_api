@@ -56,7 +56,7 @@ export const mapRepo = {
         });
   },
   async getLocationTypeByID(locationTypeId: string, hostDb: HostDbClient) {
-    return await hostDb.locationType.findFirst({
+    return await hostDb.locationType.findUnique({
       where: { typeId: locationTypeId },
     });
   },

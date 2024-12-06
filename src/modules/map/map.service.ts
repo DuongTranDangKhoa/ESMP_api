@@ -311,12 +311,7 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
             const newLocationTypes = await mapRepo.createShapesOrTexts(eventId, newTypeNames, hostDb);
 
             // Lấy lại các loại locationType vừa tạo
-            const createdLocationTypes = await hostDb.locationType.findMany({
-                where: {
-                    eventId: eventId,
-                    typeName: { in: newTypeNames }
-                }
-            });
+            const createdLocationTypes = await mapRepo.findLocationTypesCreated(eventId, newTypeNames, hostDb);
 
             // Cập nhật Map
             for (const type of createdLocationTypes) {
@@ -359,9 +354,7 @@ const createMap = async (hostId: string, eventId: string, inputData: MapCreateOb
         }));
 
         console.log("shape and text", shapeData, textData);
-        await hostDb.location.createMany({
-            data: [...boothData, ...shapeData, ...textData]
-        });
+        await mapRepo.createMap(boothData, shapeData, textData, hostDb);
 
         return "Successfully created template";
     } catch (error) {

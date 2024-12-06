@@ -9,7 +9,6 @@ const getMenuList = async (hostDb: HostDbClient) => {
 
 const getMenuListByVendorId = async (vendorId: string, eventId: string, hostDb: HostDbClient) => {
     return await menuRepo.getMenuListByVendorId(vendorId, eventId, hostDb);
-    console.log(first)
 };
 
 const createMenu = async (vendorId: string, eventId: string, inputData: ProductItemInMenuObject, hostDb: HostDbClient) => {

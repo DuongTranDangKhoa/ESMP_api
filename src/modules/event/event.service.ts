@@ -50,7 +50,6 @@ const profitOfEvent = async (hostId: string, hostDb: HostDbClient) => {
       .filter(payment => payment.status === 'Finished')
       .reduce((acc, ep) => {
         const total = ep.totalprofit.toNumber(); // Chuyển Decimal thành Number
-        console.log('total',total)
         const deposit = ep.deposit.toNumber(); // Chuyển Decimal thành Number
         if (!isNaN(total) && !isNaN(deposit)) {
           return acc + (total - (deposit * numberOfFinishedVendors)); // Cộng dồn kết quả
@@ -58,19 +57,17 @@ const profitOfEvent = async (hostId: string, hostDb: HostDbClient) => {
         return 100;
       }, 0);
 
-    // Tính tổng chi phí dịch vụ cho sự kiện
+   
     const totalCost = service.reduce((acc, s) => {
       const price = s.price; 
       const quantity = s.quantity; 
-      return acc + (price * quantity); // Cộng dồn chi phí
+      return acc + (price * quantity); 
     }, 0);
-     console.log("totalCost: ", totalEvent, totalCost, numberOfFinishedVendors);
-    // Tính lợi nhuận
     const profit = totalEvent - (totalCost * numberOfFinishedVendors);
 
     // Lưu lại lợi nhuận của sự kiện
     eventProfit.push({
-      eventId: event.eventId,
+      eventName: event.name,
       profit: profit || 0, // Đảm bảo profit không bị undefined
     });
   }

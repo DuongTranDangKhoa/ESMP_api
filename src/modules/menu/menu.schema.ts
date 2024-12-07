@@ -1,3 +1,4 @@
+import { t } from "elysia";
 import { Menu } from "../../../prisma/clients/postgres/hostdb"
 
 export type MenuType = Menu
@@ -46,3 +47,16 @@ export class ProductItemInMenuUpdateObject {
     this.productItem = productItem.productItem
   }
 }
+export const CreateMenuParams = t.Object({
+  menuName: t.String({
+    error: 'Menu name is required',
+  }),
+  productItem: t.Array(
+    t.Object({
+      id: t.String({
+        format: 'uuid',
+        error: 'Product item ID is invalid',
+      }),
+    })
+  ),
+});

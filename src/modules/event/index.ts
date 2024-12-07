@@ -26,6 +26,20 @@ export const eventGroup = (app: any) =>
         //}
       },
     )
+    .get(
+      '/profit/:hostId',
+      async ({params, hostDb }: {params: any, hostDb: HostDbClient }) => {
+        const { hostId }= params
+        const response = await eventService.profitOfEvent(hostId,hostDb)
+        return response
+      },
+      {
+        // T.B.D
+        // response: {
+        //    200: T.B.D
+        //}
+      },
+    )
     /**
      * POST api/event
      * Create event

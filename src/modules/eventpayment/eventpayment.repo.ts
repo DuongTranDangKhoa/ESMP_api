@@ -31,6 +31,13 @@ const getVendor = async (vendorId: string, hostdb: HostDbClient) => {
         where: { vendorId }
     });
 };
+const countVendor = async (vendorinEventId: string, hostdb: HostDbClient)  => {
+    return await hostdb.eventPayment.count({
+        where: { vendorinEventId,
+            status:  'Finished'
+         }
+    });
+}
 const getEventPaymentsByVendorInEventIds = async (vendorInEventIds: string[], hostdb: HostDbClient) => {
     return await hostdb.eventPayment.findMany({
         where: { vendorinEventId: { in: vendorInEventIds } }
@@ -91,6 +98,7 @@ const eventpaymentRepo = {
     getEventPaymentByLocationId,
     getEventPaymentByVendorInEvent,
     getVendor,
+    countVendor,
     getEventPaymentsByVendorInEventIds,
     getLocationsByIds,
     getLocationTypesByIds,

@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia';
 import { HostDbClient } from '../../database/dbClient.db';
 import menuService from './menu.service'; // Corrected to menuService
+import { CreateMenuParams } from './menu.schema';
 
 
 export const menuGroup = (app: any) =>
@@ -29,6 +30,8 @@ app.guard('/', (app: any) =>
         return {
           message: 'Create menuItem success',
         };
+        },{
+            body: CreateMenuParams,
         })
         .put('/:menuId', async ({ params, body, hostDb}: {params: any,body: any, hostDb: HostDbClient}) => {
             const menuId = params.menuId;

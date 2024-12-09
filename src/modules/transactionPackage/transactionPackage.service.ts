@@ -1,48 +1,49 @@
-import { TrasactionStatus } from "../../common/constant/common.constant";
-import { HostDbClient } from "../../database/dbClient.db";
 
-const getTransactionPackage = async ( hostDb: HostDbClient) => {
-    const getTransactionPackage = await hostDb.transaction.findMany();
-    await hostDb.$disconnect();
-    return getTransactionPackage;
-}
+import { HostDbClient } from "../../database/dbClient.db";
+import { DatabaseError } from "../../errors/database.error";
+import * as transactionPackageRepo from "./transactionPackage.repo";
+
+const getTransactionPackage = async (hostDb: HostDbClient) => {
+  try {
+    const transactions = await transactionPackageRepo.getTransactionPackage(hostDb);
+    return transactions;
+  } catch (err: any) {
+    throw new DatabaseError(err.message);
+  }
+};
+
 const createTransactionPackage = async (body: any, hostDb: HostDbClient) => {
-    const createTransactionPackage = await hostDb.transaction.create({
-        data: {
-            hostid: body.hostid,
-            packageid: body.packageid,
-            status: TrasactionStatus.PENDING,
-        },
-    });
-    await hostDb.$disconnect();
-    return createTransactionPackage;
-}
+  try {
+    const transactionPackage = await transactionPackageRepo.createTransactionPackage(body, hostDb);
+    return { message: "Transaction package successfully created", data: transactionPackage };
+  } catch (err: any) {
+    throw new DatabaseError(err.message);
+  }
+};
+
 const updateTransactionPackage = async (id: string, body: any, hostDb: HostDbClient) => {
   try {
-  const updateTransactionPackage = await hostDb.transaction.update({
-    where: { id },
-    data: { status: body.status },
-  });
-  return updateTransactionPackage;
-} catch (err) {
-  console.error("Update failed:", err);
-  throw err; // Ném lỗi để dễ dàng debug
-}
-}
+    const updatedPackage = await transactionPackageRepo.updateTransactionPackage(id, body, hostDb);
+    return { message: "Transaction package successfully updated", data: updatedPackage };
+  } catch (err: any) {
+    throw new DatabaseError("Error updating transaction package: " + err.message);
+  }
+};
+
 const deleteTransactionPackage = async (id: string, hostDb: HostDbClient) => {
-    
-    const deleteTransactionPackage = await hostDb.transaction.delete({
-        where: {
-            id,
-        },
-    });
-    await hostDb.$disconnect();
-    return deleteTransactionPackage;
-}
+  try {
+    const deletedPackage = await transactionPackageRepo.deleteTransactionPackage(id, hostDb);
+    return { message: "Transaction package successfully deleted", data: deletedPackage };
+  } catch (err: any) {
+    throw new DatabaseError("Error deleting transaction package: " + err.message);
+  }
+};
+
 const transactionPackageService = {
-    getTransactionPackage,
-    createTransactionPackage,
-    updateTransactionPackage,
-    deleteTransactionPackage,
-}
+  getTransactionPackage,
+  createTransactionPackage,
+  updateTransactionPackage,
+  deleteTransactionPackage,
+};
+
 export default transactionPackageService;

@@ -7,7 +7,7 @@ import { compareDateToNow } from '../../utilities/datetime.util';
 import { MainTemplateObject } from '../map/map.schema';
 
 export const eventRepo = {
-  // Get all events for a specific host
+
   async getAllEvent(hostId: string, hostDb: HostDbClient) {
     try {
       const eventList = await hostDb.event.findMany({ where: { hostId } });
@@ -29,7 +29,7 @@ export const eventRepo = {
     }
   },
 
-  // Get event by ID
+
   async getEventById(eventId: string, hostDb: HostDbClient) {
     try {
       const event = await hostDb.event.findFirst({ where: { eventId } });
@@ -54,7 +54,7 @@ export const eventRepo = {
     }
   },
 
-  // Update an event by ID
+
   async updateEvent(eventId: string, updateData: EventObject, hostDb: HostDbClient) {
     try {
       const updatedEvent = await hostDb.event.update({
@@ -79,7 +79,7 @@ export const eventRepo = {
                 }
             });
   },
-  // Delete event by ID
+
   async deleteEvent(eventId: string, hostDb: HostDbClient) {
     try {
       await hostDb.event.delete({ where: { eventId } });
@@ -89,7 +89,7 @@ export const eventRepo = {
     }
   },
 
-  // Get vendor list for a specific event
+
   async getEventVendorList(eventId: string, hostDb: HostDbClient) {
     try {
       const eventVendorList = await hostDb.event.findMany({

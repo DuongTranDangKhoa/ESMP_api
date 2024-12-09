@@ -106,7 +106,8 @@ export const authenticateHostUser = async (
   eventstoragetime: host.eventstoragetime,
   bankingaccount: host.bankingaccount,
 };
-  verifyHostContract(hostType);
+  // verifyHostContract(hostType);
+  verifyHostEventStorageTime(hostType, hostDb);
   return hostType;
 };
 
@@ -181,5 +182,10 @@ export const updatePassword = async (
 function verifyHostContract(host: HostType) {
   if (compareDateToNow(host.expiretime) === -1) {
     throw new AuthenticationError('Invalid host contract');
+  }
+}
+function verifyHostEventStorageTime(host: HostType, hostDb: HostDbClient) {
+  if (compareDateToNow(host.eventstoragetime) === -1) {
+    hostRepo.deleteEventWithRelations(host.hostid, hostDb);
   }
 }

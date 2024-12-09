@@ -38,6 +38,13 @@ export const orderRepo = {
       where: { orderId },
     });
   },
-
+  updateOrder: async (orderId: string , orderData: any,  hostDb: HostDbClient) => {
+    return await hostDb.order.update({
+      where: { orderId: orderId },
+      data: {
+        status: orderData.status,
+      },
+    });
+  }
 
 };

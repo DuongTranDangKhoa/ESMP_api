@@ -84,11 +84,22 @@ const getOrderDetails = async (orderId: string, hostDb: HostDbClient) => {
   const orderDetails = await orderRepo.getOrderDetailsByOrderId(orderId, hostDb);
   return orderDetails;
 };
-
+const updateOrder = async (orderId: string, orderData: any, hostDb: HostDbClient) => {
+const order = await orderRepo.updateOrder(orderId, orderData, hostDb);
+if(order){
+  return {
+    message: 'Order updated successfully',
+  };
+}
+else{
+  throw new Error('Failed to update order');
+}
+}
 const orderService = {
   getOrderListOfVendor,
   getOrderListOfEvent,
   createOrder,
+  updateOrder,
   getOrderDetails,
 };
 

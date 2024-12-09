@@ -92,4 +92,74 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
       },
     });
   },
+async deleteEventWithRelations(hostId: string, hostDb: HostDbClient) {
+  // Bước 1: Lấy tất cả eventId của hostId
+  const eventIds = await hostDb.event.findMany({
+    where: { hostId },
+    select: { eventId: true },
+  }).then(events => events.map(event => event.eventId));
+
+  if (eventIds.length === 0) {
+    throw new Error("No events found for this host.");
+  }
+
+  // Thực hiện giao dịch để xóa Event và tất cả các bản ghi liên quan
+  await hostDb.$transaction(async (prisma) => {
+    // Bước 2: Xóa các bản ghi trong EventPayment
+    await prisma.eventPayment.deleteMany({
+      where: {
+        locationId: {
+          in: await prisma.location.findMany({
+            where: {
+              typeId: {
+                in: await prisma.locationType.findMany({
+                  where: {
+                    eventId: { in: eventIds },
+                  },
+                  select: { typeId: true },
+                }).then(locationTypes => locationTypes.map(locationType => locationType.typeId)),
+              },
+            },
+            select: { locationId: true },
+          }).then(locations => locations.map(location => location.locationId)),
+        },
+      },
+    });
+
+    // Bước 3: Xóa các bản ghi trong Location
+    await prisma.location.deleteMany({
+      where: {
+        typeId: {
+          in: await prisma.locationType.findMany({
+            where: {
+              eventId: { in: eventIds },
+            },
+            select: { typeId: true },
+          }).then(locationTypes => locationTypes.map(locationType => locationType.typeId)),
+        },
+      },
+    });
+
+    // Bước 4: Xóa các bản ghi trong LocationType
+    await prisma.locationType.deleteMany({
+      where: {
+        eventId: { in: eventIds },
+      },
+    });
+
+    // Bước 5: Xóa các bản ghi trong VendorInEvent
+    await prisma.vendorInEvent.deleteMany({
+      where: {
+        eventId: { in: eventIds },
+      },
+    });
+
+    // Bước 6: Xóa các bản ghi trong Event
+    await prisma.event.deleteMany({
+      where: {
+        hostId,
+      },
+    });
+  });
+}
 };

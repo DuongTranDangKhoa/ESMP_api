@@ -1,115 +1,50 @@
-import { NotFoundError } from 'elysia'
+
 import { HostDbClient } from '../../database/dbClient.db'
-import { ProductObject, ProductType } from './product.schema'
 import categoryService from '../category/category.service'
+import * as productRepo from './product.repo'
+import { ProductObject } from './product.schema'
 
-const getProductListByVendorId = async (
-  vendorid: string,
-  hostDb: HostDbClient,
-) => {
-  const product = await hostDb.product.findMany({
-    where: {
-      vendorid,
-    },
-  })
-   await hostDb.$disconnect();
-  return product
+const getProductListByVendorId = async (vendorId: string, hostDb: HostDbClient) => {
+  return await productRepo.getProductListByVendorId(vendorId, hostDb)
 }
+
 const getProductList = async (hostDb: HostDbClient) => {
-  const product = await hostDb.product.findMany()
-   await hostDb.$disconnect();
-  return product
+  return await productRepo.getProductList(hostDb)
 }
-const createVendorProduct = async (
-  vendorId: string,
-  inputData: ProductObject,
-  hostDb: HostDbClient,
-) => {
+
+const createVendorProduct = async (vendorId: string, inputData: ProductObject, hostDb: HostDbClient) => {
   try {
-    categoryService.getCategoryById(inputData.categoryId, hostDb)
-    const product = await hostDb.product.create({
-      data: {
-        categoryId: inputData.categoryId,
-        productName: inputData.productName,
-        description: inputData.description,
-        quantity: inputData.quantity,
-        count: inputData.count,
-        status: inputData.status,
-        vendorid: vendorId,
-      },
-    });
-    return product;
+    await categoryService.getCategoryById(inputData.categoryId, hostDb)
+    return await productRepo.createVendorProduct(inputData, vendorId, hostDb)
   } catch (error) {
-    console.error('Error creating product:', error);
-    throw new Error('Failed to create product: ' + error);
-  } finally {
-    await hostDb.$disconnect();
+    console.error('Error creating product:', error)
+    throw new Error('Failed to create product: ' + error)
   }
-};
+}
 
-const getProductById = async (
-  productId: string,
-  hostDb: HostDbClient,
-) => {
-  const product = await hostDb.product.findUnique({
-    where: {
-        productId,
-
-    },
-  })
+const getProductById = async (productId: string, hostDb: HostDbClient) => {
+  const product = await productRepo.getProductById(productId, hostDb)
   if (!product) {
-    throw new Error('Product not existed!')
+    throw new Error('Product not found!')
   }
-   await hostDb.$disconnect();
   return product
 }
 
-const updateProduct = async (
-  vendorId: string,
-  productid: string,
-  updateData: ProductObject,
-  hostDb: HostDbClient,
-) => {
-  console.log('Product updated', productid)
+const updateProduct = async (vendorId: string, productId: string, updateData: ProductObject, hostDb: HostDbClient) => {
+  console.log('Updating product:', productId)
   await categoryService.getCategoryById(updateData.categoryId, hostDb)
-  await hostDb.product.update({
-    where: {
-      productId: productid 
-    },
-    data: {
-      productId: productid,
-      vendorid: vendorId,
-      categoryId: updateData.categoryId,
-      productName: updateData.productName,
-      description: updateData.description,
-      quantity: updateData.quantity,
-      count: updateData.count,
-      status: updateData.status
-    }
-  });
-   await hostDb.$disconnect();
-};
-const deleteProduct = async (
-  productid: string,
-  hostDb: HostDbClient,
-) => {
+  return await productRepo.updateProduct(productId, vendorId, updateData, hostDb)
+}
+
+const deleteProduct = async (productId: string, hostDb: HostDbClient) => {
   try {
-    console.log('Product updated', productid);
-    await hostDb.product.delete({
-      where: {
-        productId: productid,
-      },
-    });
+    console.log('Deleting product:', productId)
+    await productRepo.deleteProduct(productId, hostDb)
   } catch (error) {
-    console.error('Error updating product status:', error);
-    throw error; 
-  } finally {
-    await hostDb.$disconnect();
+    console.error('Error deleting product:', error)
+    throw new Error('Failed to delete product: ' + error)
   }
-};
-
-
-
+}
 
 const productService = {
   getProductListByVendorId,

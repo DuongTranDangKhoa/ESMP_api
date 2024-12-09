@@ -87,4 +87,18 @@ export const orderGroup = (app: any) =>
         );
         return orderDetails;
       },
-    );
+    )
+    .put('/:orderId', async ({
+      params,
+      body,
+      hostDb,
+    }: {
+      params: any,
+      body: any,
+      hostDb: HostDbClient;
+    }) => {
+      const { orderId } = params;
+      const order = await orderService.updateOrder(orderId, body, hostDb);
+      return order;
+    }
+  );

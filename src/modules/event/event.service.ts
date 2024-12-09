@@ -49,12 +49,12 @@ const profitOfEvent = async (hostId: string, hostDb: HostDbClient) => {
     const totalEvent = eventPayment
       .filter(payment => payment.status === 'Finished')
       .reduce((acc, ep) => {
-        const total = ep.totalprofit.toNumber(); // Chuyển Decimal thành Number
-        const deposit = ep.deposit.toNumber(); // Chuyển Decimal thành Number
+        const total = ep.totalprofit.toNumber(); 
+        const deposit = ep.deposit.toNumber(); 
         if (!isNaN(total) && !isNaN(deposit)) {
-          return acc + (total - (deposit * numberOfFinishedVendors)); // Cộng dồn kết quả
+          return acc + (total - deposit ); 
         }
-        return 100;
+        return acc;
       }, 0);
 
    

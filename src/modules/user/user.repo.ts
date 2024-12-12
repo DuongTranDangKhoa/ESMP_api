@@ -41,5 +41,18 @@ export const userRepository = {
       throw new Error('Failed to fetch user');
     }
   },
+  getRoleAdmin: async (role: string, hostDb: HostDbClient) => {
+    try {
+      const users = await hostDb.account.findMany({
+        where: { role: RoleType.ADMIN },
+        select: { id: true }, 
+      });
+      return users; 
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      throw new Error('Failed to fetch users');
+    }
+  }
+
 }
 

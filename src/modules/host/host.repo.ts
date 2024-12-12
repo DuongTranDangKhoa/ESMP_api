@@ -43,6 +43,7 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         name: data.name,
          phone: data.phone,
          email: data.email,
+         
         host: {
           create: {
             expiretime: data.expiretime,
@@ -80,6 +81,7 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         name: data.name,
         phone: data.phone,
         email: data.email,
+        status: data.status
       },
     });
   },

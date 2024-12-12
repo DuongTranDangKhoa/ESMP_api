@@ -1,3 +1,4 @@
+import { CreateNotificationInput } from './../notification/notification.schema';
 import {  HostDbClient } from '../../database/dbClient.db'
 // import { MongoDbClient, MongoDbUserType } from '../../database/mongo.db'
 import { LoginResponseType } from './user.schema'
@@ -10,6 +11,7 @@ import staffService from '../staff/staff.service'
 import { verifyEncrypted } from '../../utilities/crypting.util'
 import { JsonValue } from '../../../prisma/clients/postgres/hostdb/runtime/library'
 import { userRepository } from './user.repo'
+import { notificationRepo } from '../notification/notification.repo';
 /**
  * Create user session
  * @param {MongoDbUserType} userInfo
@@ -224,5 +226,30 @@ export async function getRole(username: string, hostDb: HostDbClient): Promise<s
     throw new Error('User not found');
   }
   return role;
+}
+export async function CreateNotificationRegister(body: any, hostDb: HostDbClient) {
+  try {
+    const users = await userRepository.getRoleAdmin(RoleType.ADMIN, hostDb);
+
+    if (!users || users.length === 0) {
+      throw new Error('No admins found to notify.');
+    }
+
+   
+    const notifications = users.map(user => ({
+      userid: user.id, 
+      source: body.source,
+      status: false, 
+    }));
+
+    await Promise.all(
+      notifications.map(notification =>
+        notificationRepo.createNotification(notification, hostDb)
+      )
+    );
+    return 'Notifications created successfully.';
+  } catch (error) {
+    throw new Error('Failed to create notifications');
+  }
 }
 

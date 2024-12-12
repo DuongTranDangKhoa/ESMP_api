@@ -140,7 +140,7 @@ model Account {
   name         String         @db.VarChar(100)
   createdat    DateTime?      @default(now()) @db.Timestamp(6)
   updatedat    DateTime?      @default(now()) @db.Timestamp(6)
-  status       Boolean?       @default(true)
+  status       Boolean?       @default(false)
   phone        String?        @db.VarChar(10)
   email        String?        @unique(map: "account_unique_1") @db.VarChar(50)
   host         host?

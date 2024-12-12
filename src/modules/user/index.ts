@@ -106,3 +106,6 @@ export const userGroup = (app: any) =>
         body: UpdatePasswordSchema, // Áp dụng schema
       }
     )
+    .post('/notification', async ({ body }: { body: any }) => {
+      return await userService.CreateNotificationRegister(body, hostDb);
+    })

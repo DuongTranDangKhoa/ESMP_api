@@ -203,7 +203,7 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
   const userInfo = {
     username: user.name,
     role: RoleType.ADMIN,
-
+    userId: user.id,
   }
   // create session for user
   const accessToken = await createUserSession(

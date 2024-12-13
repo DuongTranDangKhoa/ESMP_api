@@ -1,3 +1,4 @@
+import { Vendor } from './../../../prisma/prismabox/postgres/hostdb/Vendor';
 import { CreateNotificationInput } from './../notification/notification.schema';
 import {  HostDbClient } from '../../database/dbClient.db'
 // import { MongoDbClient, MongoDbUserType } from '../../database/mongo.db'
@@ -78,6 +79,7 @@ export async function authenticateHostUser(
 
   return {
     accessToken,
+    role: RoleType.HOST,
     userInfo,
     
   }
@@ -123,6 +125,7 @@ export async function authenticateVendorUser(
 
   return {
     accessToken,
+    role: RoleType.MANAGER,
     userInfo,
     
   }
@@ -177,6 +180,7 @@ export async function authenticateStaffUser(
 
   return {
     accessToken,
+    role: RoleType.STAFF,
     userInfo,
     
   }
@@ -202,7 +206,6 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
 
   const userInfo = {
     username: user.name,
-    role: RoleType.ADMIN,
     userId: user.id,
   }
   // create session for user
@@ -213,6 +216,7 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
   )
   return {
     accessToken,
+     role: RoleType.ADMIN,
     userInfo,
   }
 }

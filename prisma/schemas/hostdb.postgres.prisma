@@ -7,8 +7,8 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  typeboxImportDependencyName = "elysia"
   additionalProperties        = "true"
+  typeboxImportDependencyName = "elysia"
   inputModel                  = "true"
   typeboxImportVariableName   = "t"
 }
@@ -54,7 +54,7 @@ model EventPayment {
   total              Decimal?      @map("total") @db.Decimal(10, 2)
   totalPaymentDate   DateTime?     @map("totalpaymentdate") @db.Date
   createDate         DateTime?     @default(now()) @map("create_at") @db.Date
-  status             String?       @default("Pending Deposit ") @map("status") @db.VarChar(50)
+  status             String?       @default("Deposit Success ") @map("status") @db.VarChar(50)
   vendorinEventId    String        @map("vendorinEventId") @db.Uuid
   location           Location      @relation(fields: [locationId], references: [locationId])
   vendorInEvent      VendorInEvent @relation(fields: [vendorinEventId], references: [vendorinEventId])

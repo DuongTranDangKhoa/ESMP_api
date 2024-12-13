@@ -57,7 +57,6 @@ export const UserInfoSchema = t.Object({
 export const LoginResponseSchema = t.Object({
   accessToken: t.String(),
   // refreshToken: t.String(),s
-  role: t.String(),
   userInfo: UserInfoSchema,
 })
 

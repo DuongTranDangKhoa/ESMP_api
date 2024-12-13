@@ -62,6 +62,7 @@ export async function authenticateHostUser(
 
   const userInfo = {
     username,
+    role: RoleType.HOST,
     hostInfo: {
       hostName: host.name as string,
       email: host.email as string,
@@ -79,7 +80,6 @@ export async function authenticateHostUser(
 
   return {
     accessToken,
-    role: RoleType.HOST,
     userInfo,
     
   }
@@ -125,7 +125,6 @@ export async function authenticateVendorUser(
 
   return {
     accessToken,
-    role: RoleType.MANAGER,
     userInfo,
     
   }
@@ -180,7 +179,6 @@ export async function authenticateStaffUser(
 
   return {
     accessToken,
-    role: RoleType.STAFF,
     userInfo,
     
   }
@@ -217,7 +215,6 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
   )
   return {
     accessToken,
-     role: RoleType.ADMIN,
     userInfo,
   }
 }

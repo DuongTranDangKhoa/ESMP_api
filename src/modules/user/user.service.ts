@@ -217,7 +217,7 @@ export async function authenticateAdminUser(username: any, password: any, hostDb
   )
   return {
     accessToken,
-    //  role: RoleType.ADMIN,
+     role: RoleType.ADMIN,
     userInfo,
   }
 }

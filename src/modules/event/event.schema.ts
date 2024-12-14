@@ -83,7 +83,7 @@ export const InputEventSchema = t.Required(
       error: 'Invalid date',
     }),
     deposit: t.Number({ // Thêm trường profit vào schema
-      error: 'Profit must be a number',
+      error: 'Deposit must be a number',
     }),
      }),
      {

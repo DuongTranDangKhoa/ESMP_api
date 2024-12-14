@@ -13,6 +13,7 @@ export const eventRepo = {
       const eventList = await hostDb.event.findMany({ where: { hostId } });
       if (eventList) {
         for (const event of eventList) {
+          if (event.status !== EventStatus.cancelled){
           if (
             compareDateToNow(event.startDate) === -1 && compareDateToNow(event.endDate) === 1
           ) {
@@ -20,6 +21,7 @@ export const eventRepo = {
           } else if (compareDateToNow(event.endDate) === -1) {
             await hostDb.event.update({ where: { eventId: event.eventId }, data: { status: EventStatus.past } });
           }
+        }
         }
       }
       await hostDb.$disconnect();

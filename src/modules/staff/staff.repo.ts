@@ -88,6 +88,8 @@ export const staffRepository = {
         username: account.username,
         password: decryptedPassword,
         name: account.name,
+        phone: account.phone,
+        email: account.email,
         role: account.role,
         status: account.status,
       });

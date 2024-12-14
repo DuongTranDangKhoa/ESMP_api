@@ -10,9 +10,10 @@ const getEventPaymentByLocationId = async (locationId: string, hostdb: HostDbCli
     return await hostdb.eventPayment.findMany({
         where: {
             locationId,
-            status: {
-                not: 'Cancel'
-            }
+             AND: [
+                { status: { not: 'Refunding Deposit' } },
+                { status: { not: 'Finished' } }
+            ]
         }
     });
 };
@@ -20,9 +21,10 @@ const getEventPaymentByVendorInEvent = async (vendorinEventId: string, hostdb: H
     return await hostdb.eventPayment.findMany({
         where: {
             vendorinEventId,
-            status: {
-                not: 'Cancel'
-            }
+             AND: [
+                { status: { not: 'Refunding Deposit' } },
+                { status: { not: 'Finished' } }
+            ]
         }
     });
 };

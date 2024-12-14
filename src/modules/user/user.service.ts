@@ -1,3 +1,4 @@
+import { Vendor } from './../../../prisma/prismabox/postgres/hostdb/Vendor';
 import { CreateNotificationInput } from './../notification/notification.schema';
 import {  HostDbClient } from '../../database/dbClient.db'
 // import { MongoDbClient, MongoDbUserType } from '../../database/mongo.db'
@@ -61,6 +62,7 @@ export async function authenticateHostUser(
 
   const userInfo = {
     username,
+    role: RoleType.HOST,
     hostInfo: {
       hostName: host.name as string,
       email: host.email as string,

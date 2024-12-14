@@ -3,7 +3,7 @@ export const LoginType = { HOST: 'host', VENDOR: 'manager', STAFF: 'staff', ADMI
 export const DEFAULT_SESSION_DURATION = 30  // 30 
 export const RoleType = { ADMIN: 'admin', HOST: 'host', MANAGER: 'manager', STAFF: 'staff' }
 export const EventStatus = {
-  ongoing: 'upcomming',
+  ongoing: 'upcoming',
   running: 'running',
   past: 'finished',
   cancelled: 'cancelled',

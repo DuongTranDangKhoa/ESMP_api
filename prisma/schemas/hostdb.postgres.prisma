@@ -7,8 +7,8 @@ generator client {
 generator prismabox {
   provider                    = "prismabox"
   output                      = "../prismabox/postgres/hostdb"
-  additionalProperties        = "true"
   typeboxImportDependencyName = "elysia"
+  additionalProperties        = "true"
   inputModel                  = "true"
   typeboxImportVariableName   = "t"
 }
@@ -30,7 +30,7 @@ model Event {
   x             Int?            @default(100) @map("x")
   y             Int?            @default(100) @map("y")
   deposit       Decimal         @db.Decimal(10, 2)
-  status        String?         @default("upcomming") @map("status") @db.VarChar(50)
+  status        String?         @default("upcoming") @map("status") @db.VarChar(50)
   height        Int?            @default(400) @map("height")
   hostId        String          @map("hostid") @db.Uuid
   stageValue    String?         @map("stagevalue") @db.VarChar

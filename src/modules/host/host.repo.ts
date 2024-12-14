@@ -95,7 +95,7 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
     });
   },
 async deleteEventWithRelations(hostId: string, hostDb: HostDbClient) {
-  // Bước 1: Lấy tất cả eventId của hostId
+  // Fetch all event IDs associated with the host
   const eventIds = await hostDb.event.findMany({
     where: { hostId },
     select: { eventId: true },
@@ -105,63 +105,56 @@ async deleteEventWithRelations(hostId: string, hostDb: HostDbClient) {
     throw new Error("No events found for this host.");
   }
 
-  // Thực hiện giao dịch để xóa Event và tất cả các bản ghi liên quan
-  await hostDb.$transaction(async (prisma) => {
-    // Bước 2: Xóa các bản ghi trong EventPayment
-    await prisma.eventPayment.deleteMany({
-      where: {
-        locationId: {
-          in: await prisma.location.findMany({
-            where: {
-              typeId: {
-                in: await prisma.locationType.findMany({
-                  where: {
-                    eventId: { in: eventIds },
-                  },
-                  select: { typeId: true },
-                }).then(locationTypes => locationTypes.map(locationType => locationType.typeId)),
-              },
-            },
-            select: { locationId: true },
-          }).then(locations => locations.map(location => location.locationId)),
-        },
-      },
-    });
+  // Fetch related type IDs for events
+  const typeIds = await hostDb.locationType.findMany({
+    where: { eventId: { in: eventIds } },
+    select: { typeId: true },
+  }).then(locationTypes => locationTypes.map(locationType => locationType.typeId));
 
-    // Bước 3: Xóa các bản ghi trong Location
-    await prisma.location.deleteMany({
-      where: {
-        typeId: {
-          in: await prisma.locationType.findMany({
-            where: {
-              eventId: { in: eventIds },
-            },
-            select: { typeId: true },
-          }).then(locationTypes => locationTypes.map(locationType => locationType.typeId)),
-        },
-      },
-    });
-
-    // Bước 4: Xóa các bản ghi trong LocationType
-    await prisma.locationType.deleteMany({
-      where: {
-        eventId: { in: eventIds },
-      },
-    });
-
-    // Bước 5: Xóa các bản ghi trong VendorInEvent
-    await prisma.vendorInEvent.deleteMany({
-      where: {
-        eventId: { in: eventIds },
-      },
-    });
-
-    // Bước 6: Xóa các bản ghi trong Event
-    await prisma.event.deleteMany({
-      where: {
-        hostId,
-      },
-    });
+  // Fetch related location IDs for type IDs
+  const locationIds = await hostDb.location.findMany({
+    where: { typeId: { in: typeIds } },
+    select: { locationId: true },
+  }).then(locations => locations.map(location => location.locationId));
+  
+  // Fetch vendor-in-event IDs related to the events
+  const vendorInEventIds = await hostDb.vendorInEvent.findMany({
+    where: { eventId: { in: eventIds } },
+    select: { vendorinEventId: true },
+  }).then(vendors => vendors.map(vendor => vendor.vendorinEventId));
+  await hostDb.menu.deleteMany({
+    where: { menuId: { in: vendorInEventIds } },
+  })
+  // Delete related entities in order
+  await hostDb.productItemInMenu.deleteMany({
+    where: { menuId: { in: vendorInEventIds } },
   });
+
+  await hostDb.eventPayment.deleteMany({
+    where: { locationId: { in: locationIds } },
+  });
+
+  await hostDb.location.deleteMany({
+    where: { typeId: { in: typeIds } },
+  });
+
+  await hostDb.locationType.deleteMany({
+    where: { eventId: { in: eventIds } },
+  });
+
+  await hostDb.vendorInEvent.deleteMany({
+    where: { eventId: { in: eventIds } },
+  });
+
+  await hostDb.service.deleteMany({
+    where: { eventid: { in: eventIds } },
+  });
+
+  // Finally, delete the events
+  await hostDb.event.deleteMany({
+    where: { hostId },
+  });
+
+  console.log("Deleted all related entities for events.");
 }
 };

@@ -92,10 +92,6 @@ export const CreateAccount = t.Object({
     format: 'email',
     error: 'Email must be a valid email address',
   }),
-  address: t.String({
-    default: '',
-    error: 'Address must be a valid string',
-  }),
   urlQr: t.String({
     default: '',
     error: 'URL QR must be a valid string',

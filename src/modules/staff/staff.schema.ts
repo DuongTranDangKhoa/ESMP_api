@@ -28,10 +28,14 @@ export class RegisterVendorObject {
   username: string
   password: string
   name: string 
+  phone: string
+  email: string
   constructor(data: any) {
     this.username = data.username
     this.password = data.password
     this.name = data.name
+    this.phone = data.phone
+    this.email = data.email
   }
 }
 export const RegisterStaff = t.Object({
@@ -55,6 +59,16 @@ export const RegisterStaff = t.Object({
     minLength: 1,
     maxLength: 50,
     error: 'Name is required',
+  }),
+  email: t.String({
+    minLength: 1,
+    maxLength: 50,
+    error: 'Email is required',
+  }),
+  phone: t.String({
+    minLength: 1,
+    maxLength: 10,
+    error: 'Phone number is required',
   }),
 })
 export const UpdateStaffSchema = t.Object({

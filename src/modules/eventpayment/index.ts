@@ -26,7 +26,11 @@ export const eventPaymentGroup = (app: any) =>
                return await eventpaymentService.createEventPayment(body, hostDb);
             },{
                 body: EventPaymentSchema,
-            })    
+            })  
+        .put('refunding/:id', async ({ params, body, hostDb }: { params: any, body: any, hostDb: HostDbClient }) => {
+                 const id = params.id
+                return await eventpaymentService.updateEventPaymentByid(id ,body, hostDb);
+        })  
       .group('/:vendorInEventId', (app: any) =>
         app.guard(
             {

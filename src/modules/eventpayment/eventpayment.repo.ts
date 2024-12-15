@@ -88,7 +88,12 @@ const updateEventPayment = async (vendorInEventId: string, data: any, hostdb: Ho
         data
     });
 };
-
+const updateEventPaymentByid = async (id: string, data: any, hostdb: HostDbClient) => {
+    return await hostdb.eventPayment.update({
+        where: { eventPaymentid: id },
+        data
+    });
+}
 const deleteEventPayment = async (vendorInEventId: string, hostdb: HostDbClient) => {
     return await hostdb.eventPayment.deleteMany({
         where: { vendorinEventId: vendorInEventId }
@@ -109,6 +114,7 @@ const eventpaymentRepo = {
     getEventsByIds,
     createEventPayment,
     updateEventPayment,
+    updateEventPaymentByid,
     deleteEventPayment
 };
 

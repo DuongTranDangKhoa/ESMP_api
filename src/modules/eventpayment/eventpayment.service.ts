@@ -207,7 +207,20 @@ const updateEventPayment = async (vendorInEventId: string, body: any, hostdb: Ho
         throw new Error('Error updating event payment in event: ' + error);
     }
 };
-
+const updateEventPaymentByid = async (id: string , body: any, hostdb: HostDbClient) => {
+    if (!id) {
+        throw new Error('id is required');
+    }
+    try {
+        await eventpaymentRepo.updateEventPaymentByid(id, {
+            status: body.status,
+            totalPaymentDate: new Date()
+        }, hostdb);
+        return { message: 'Event payment updated successfully' };
+    } catch (error) {
+        throw new Error('Error updating event payment in event: ' + error);
+    }
+}
 const deleteEventPayment = async (vendorInEventId: string, hostdb: HostDbClient) => {
     if (!vendorInEventId) {
         throw new Error('vendorInEventId is required');
@@ -228,6 +241,7 @@ const eventpaymentService = {
     getEventPaymentInVendor,
     createEventPayment,
     updateEventPayment,
+    updateEventPaymentByid,
     deleteEventPayment
 };
 

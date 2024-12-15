@@ -19,6 +19,7 @@ export const createCategory = async (category: Category, hostDb: HostDbClient) =
     data: {
       categoryName: category.categoryName,
       hostid: category.hostid,
+      status: category.status,
     },
   });
 };

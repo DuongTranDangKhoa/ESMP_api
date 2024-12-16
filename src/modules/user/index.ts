@@ -10,7 +10,7 @@ import { LoginType } from '../../common/constant/common.constant'
 import * as userService from './user.service'
 // import { dbClient } from '../../database/mongo.db'
 import { hostDb, HostDbClient,  } from '../../database/dbClient.db'
-import { createHost, updatePassword } from '../host/host.service'
+import { createHost, deleteHost, updatePassword } from '../host/host.service'
 import { CreateHostSchema, UpdatePasswordSchema } from '../host/host.schema'
 
 export const userGroup = (app: any) =>
@@ -109,3 +109,9 @@ export const userGroup = (app: any) =>
     .post('/notification', async ({ body }: { body: any }) => {
       return await userService.CreateNotificationRegister(body, hostDb);
     })
+    .delete('/deletehost/:id',
+      async ({ params}: { params: any}) => {
+        const { id } = params;
+        return await deleteHost(id, hostDb);
+      }
+    )

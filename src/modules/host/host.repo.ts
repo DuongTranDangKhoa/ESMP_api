@@ -35,7 +35,7 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
 },
   async createHost(data: any, hostDb: HostDbClient) {
     const inputpassword = encrypt(data.password)
-    return await hostDb.account.create({
+    const account = await hostDb.account.create({
       data: {
         username: data.username,
         password: inputpassword,
@@ -51,6 +51,7 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         },
       },
     });
+    return account;
   },
 
   async updateHost(hostId: string, data: any, hostDb: HostDbClient) {
@@ -94,6 +95,17 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
       },
     });
   },
+async deleteHost(accountId: string, hostDb: HostDbClient) {
+   try{
+    console.log("accountId", accountId)
+    await hostDb.host.delete({ where: { userid: accountId}});
+    await hostDb.account.delete({ where: { id: accountId}});
+    return 'Delete Successfull Host'
+   } catch (error) {
+     console.error('Error deleting host:', error);
+     throw new Error('Failed to delete host');
+   }
+},
 async deleteEventWithRelations(hostId: string, hostDb: HostDbClient) {
   // Fetch all event IDs associated with the host
   const eventIds = await hostDb.event.findMany({
@@ -122,13 +134,15 @@ async deleteEventWithRelations(hostId: string, hostDb: HostDbClient) {
     where: { eventId: { in: eventIds } },
     select: { vendorinEventId: true },
   }).then(vendors => vendors.map(vendor => vendor.vendorinEventId));
+  console.log("vendorInEventIds", vendorInEventIds);
+  await hostDb.productItemInMenu.deleteMany({
+    where: { menuId: { in: vendorInEventIds } },
+  });
   await hostDb.menu.deleteMany({
     where: { menuId: { in: vendorInEventIds } },
   })
   // Delete related entities in order
-  await hostDb.productItemInMenu.deleteMany({
-    where: { menuId: { in: vendorInEventIds } },
-  });
+  
 
   await hostDb.eventPayment.deleteMany({
     where: { locationId: { in: locationIds } },

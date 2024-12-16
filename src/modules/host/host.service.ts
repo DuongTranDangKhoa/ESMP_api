@@ -156,9 +156,20 @@ export const getAllHosts = async (hostDb: HostDbClient) => {
   return await hostRepo.getAllHosts(hostDb);
 };
 export const createHost = async (data: any) => {
-  return await hostRepo.createHost(data, hostDb);
+ const account = await hostRepo.createHost(data, hostDb);
+const otp = account.id.split('-')[0];
+return {
+  message: 'Create Successfull Host',
+  otp: otp,
+  id: account.id
+}
 };
-
+export const deleteHost = async (id: string, hostDb: HostDbClient) => {
+    await hostRepo.deleteHost(id, hostDb);
+  return{ message:  'Delete Successfull Host',
+          id: id
+        }
+};
 export const updateHost = async (hostId: string, data: any, hostDB: HostDbClient) => {
   const host = await hostRepo.updateHost(hostId, data, hostDB);
   await hostRepo.updateAccount(host.userid, data , hostDb);
@@ -186,6 +197,7 @@ function verifyHostContract(host: HostType) {
 }
 function verifyHostEventStorageTime(host: HostType, hostDb: HostDbClient) {
   if (compareDateToNow(host.eventstoragetime) === -1) {
+    console.log('host.eventstoragetime:', host.eventstoragetime);
     hostRepo.deleteEventWithRelations(host.hostid, hostDb);
   }
 }

@@ -74,6 +74,7 @@ import { decrypt, verifyEncrypted } from '../../utilities/crypting.util';
 import { compareDateToNow } from '../../utilities/datetime.util';
 import { HostType } from './host.schema';
 import { message } from 'statuses';
+import { generateOTP } from '../../utilities/otp.util';
 
 export const authenticateHostUser = async (
   username: string,
@@ -157,7 +158,7 @@ export const getAllHosts = async (hostDb: HostDbClient) => {
 };
 export const createHost = async (data: any) => {
  const account = await hostRepo.createHost(data, hostDb);
-const otp = account.id.split('-')[0];
+const otp = generateOTP(6);
 return {
   message: 'Create Successfull Host',
   otp: otp,

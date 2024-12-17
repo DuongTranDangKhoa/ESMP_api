@@ -21,6 +21,14 @@ const createVendorProduct = async (vendorId: string, inputData: ProductObject, h
     throw new Error('Failed to create product: ' + error)
   }
 }
+const createProductByExcel = async (inputData: any, vendorId: string, hostId: string ,hostDb: HostDbClient) => {
+  try{
+   return await productRepo.createProductByExcel(inputData, vendorId, hostId ,hostDb);
+  }catch (error) {
+    console.error('Error creating product:', error)
+    throw new Error('Failed to create product: ' + error)
+  }
+}
 
 const getProductById = async (productId: string, hostDb: HostDbClient) => {
   const product = await productRepo.getProductById(productId, hostDb)
@@ -50,6 +58,7 @@ const productService = {
   getProductListByVendorId,
   getProductList,
   createVendorProduct,
+  createProductByExcel,
   getProductById,
   updateProduct,
   deleteProduct,

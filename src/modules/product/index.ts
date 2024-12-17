@@ -12,6 +12,26 @@ export const productGroup = (app: any) =>
         return response
       }, 
     )
+    .post('excel/:vendorId/:hostId',
+            async ( { params, body,set, hostDb }: { params: any,body: any, set : any, hostDb: HostDbClient }) => {
+      const  hostId = params.hostId;
+      const vendorId = params.vendorId;
+      console.log(vendorId);
+      const product = await productService.createProductByExcel(
+        body,
+        vendorId,
+        hostId,
+        hostDb
+      );
+
+      // Set success status
+      set.status = status('OK');
+      return {
+        message: 'Create product success',
+        id: product.productId,
+      };
+          }
+          )
   // group that require vendorId
   .group('/:vendorId', (app: any) =>
     app.guard(
@@ -92,6 +112,7 @@ export const productGroup = (app: any) =>
               },
             
           )
+          
           // group that require productId
           .group('/:productId', (app: any) =>
             app.guard(

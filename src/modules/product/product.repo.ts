@@ -27,7 +27,35 @@ export const createVendorProduct = async (inputData: ProductObject, vendorId: st
     },
   })
 }
+export const createProductByExcel = async (inputData: any, vendorId: string, hostId: string ,hostDb: HostDbClient) => {
+  
+  const categories = await hostDb.category.findMany({
+    where: { hostid: hostId },
+  });
 
+
+  const matchedCategory = categories.find(
+    (category) => category.categoryName === inputData.categoryname
+  );
+  const categoryId = matchedCategory ? matchedCategory.categoryId : null;
+
+  if (!categoryId) {
+    throw new Error(`Category not found for name: ${inputData.categoryname}`);
+  }
+
+  const product = await hostDb.product.create({
+    data: {
+      categoryId: categoryId,
+      productName: inputData.productName,
+      description: inputData.description,
+      quantity: inputData.quantity,
+      status: true,
+      vendorid: vendorId,
+    },
+  });
+
+  return product;
+}
 export const getProductById = async (productId: string, hostDb: HostDbClient) => {
   return await hostDb.product.findUnique({
     where: {

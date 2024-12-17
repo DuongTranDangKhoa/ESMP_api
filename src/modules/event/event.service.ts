@@ -15,7 +15,7 @@ const getEventById = async (eventId: string, hostDb: HostDbClient) => {
 
 const createEvent = async (event: EventObject, hostDb: HostDbClient) => {
 if (event.startDate && event.endDate && event.startDate > event.endDate) {
-  throw new Error('End date must be greater than start date');
+  throw new Error('End Date must be after Start Date!');
 }
   return await eventRepo.createEvent(event, hostDb);
 };

@@ -76,6 +76,18 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
     if(checkemail > 1){
       throw new Error('Email already exists')
     }
+    const account = await hostDb.account.findUnique({where: { id: accountId }});
+    if(account?.status === data.status){
+    return await hostDb.account.update({
+      where: { id: accountId },
+      data: {
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        status: data.status,
+      },
+    });
+  } else {
     return await hostDb.account.update({
       where: { id: accountId },
       data: {
@@ -85,8 +97,9 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         status: data.status,
         updatedat: new Date(),
       },
-    });
-  },
+  });
+  }
+},
   async updatePassword(accountId: string, data: any, hostDb: HostDbClient) {
     const inputpassword = encrypt(data.password)
     return await hostDb.account.update({

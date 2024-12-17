@@ -82,7 +82,8 @@ async findHostByHostId(hostId: string, hostDb: HostDbClient) {
         name: data.name,
         phone: data.phone,
         email: data.email,
-        status: data.status
+        status: data.status,
+        updatedat: new Date(),
       },
     });
   },

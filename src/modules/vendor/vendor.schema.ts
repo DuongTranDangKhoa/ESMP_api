@@ -96,8 +96,4 @@ export const CreateAccount = t.Object({
     default: '',
     error: 'URL QR must be a valid string',
   }),
-  address: t.String({
-    default: '',
-    error: 'Address must be a valid string',
-  }),
 });
